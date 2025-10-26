@@ -1,0 +1,386 @@
+<title>ASICs: CAD tools</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+h3 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>Design (& production) flow</h2>
+
+<center><a href="figures/CAD_flow.png" target=_blank><img src="figures/CAD_flow.png" alt="CAD flow diagram." width=70%></a></center>
+
+<h2>Laying out the chip</h2>
+
+<p>
+Of course the flows are not as simple(!) as in the figure but this
+captures the &lsquo;spirit&rsquo; of the processes involved.
+</p>
+
+<h4>Place and Route (P&amp;R)</h4>
+
+<p>
+<b>Placement</b> is the act of mapping cells onto the surface of the
+silicon so that they abut (as necessary) but do not overlap.  Ideally,
+cells which are connected together ought to be placed adjacently
+although this is not always possible.  In addition there may be
+constraints from the boundary of the area &lsquo;pulling&rsquo; cells
+in different directions.  Finding &lsquo;the optimal&rsquo; placement
+is prohibitively expensive but finding something close is desirable
+because it makes routeing easier.  By shortening the interconnection
+wires it will also increase performance and reduce the power
+consumption.
+</p>
+
+<p>
+An &lsquo;ideal&rsquo; placement would have all the required cells
+clumped tightly together.  However this is infeasible in practice for
+several reasons.  Firstly, doing this may make routeing impossible.
+Secondly, the placement must leave space for some later modifications
+such as <i>buffer insertion</i>, so the utilisation cannot be 100%.
+</p>
+
+<p>
+When the cells are placed the <b>routeing</b> process will try and
+interconnect them with wires.  Obviously, wires cannot touch or cross
+but they can use a number of the wiring layers.  The preference is to
+use lower layers only &ndash; especially for local interconnection
+&ndash; to minimise parasitic load capacitance.
+</p>
+
+<p>
+If the placement and wiring is too dense, full routeing may not be
+possible and an error is fed back to the user to relax the
+utilisation/area constraints.
+</p>
+
+<h4>Floorplanning</h4>
+
+<p>
+Floorplanning is the placement of logic blocks rather than individual
+cells.  Often it is useful to be able to &lsquo;harden&rsquo; a
+placement and then place multiple instances of it (e.g. for a
+multiprocessor) with the same characteristics.  Another use of
+floorplanning is to determine the space available for a particular
+block (e.g.  if expensive, capacitive buses are placed early on) to
+constrain a later P&amp;R.
+</p>
+
+<p>
+Macrocells (e.g.  memories) come with a constrained size and aspect
+ratio.
+</p>
+
+<p>
+Floorplanning is often hierarchical and hardened blocks may be placed
+and routed along with other &lsquo;glue&rsquo; logic cells.
+</p>
+
+<h4>Buffer insertion</h4>
+
+<p>
+When a network is routed it may be discovered that it has excessive
+capacitance, which will result in slow signal edges.  This is
+particularly common on data buses, which often have to traverse long
+distances.
+</p>
+
+<p>
+Modern placement processes will allow automatic insertion of buffers
+(electrical amplifiers) at intervals along a wire.  Clearly there has
+to be space reachable from the wire &ndash; and somewhere near to
+avoid even more wiring &ndash; to place the buffer.  This is a reason
+why 100% utilisation is impractical.
+</p>
+
+<p>
+Despite adding some propagation delay, buffers save time overall by
+speeding up edges; they also improve electrical integrity, e.g.  noise
+immunity.
+</p>
+
+<h4>Thresholds and edge speeds</h4>
+
+<p>
+A gate input has a nominal <b>threshold</b> which is the input voltage
+where it is discerned as changing from &lsquo;0&rsquo; to
+&lsquo;1&rsquo;, or vice versa.  For CMOS this is usually somewhere
+close to half the power supply voltage.
+</p>
+
+<p>
+Note: this is not the same as the individual transistor's threshold.
+</p>
+
+<p>
+A heavily loaded network may have a slow edge which retards the time
+at which the threshold is crossed.  Buffering may speed up the signal
+despite introducing more &lsquo;gates&rsquo; in series.
+</p>
+
+<center><img src="figures/edge_speeds.png" alt="Buffering to improve
+					edge speeds." width=70%></center>
+
+<p>
+If buffering is added it will change the timing of a signal.
+</p>
+
+<p>
+If the buffering is in the form of a tree (likely) then it may be
+important to minimise skew.  Clocks (and, arguably, resets) which have
+very high fan-out may be treated as special cases for buffering.
+Clock skew minimisation is, of course, very important.
+</p>
+
+
+<h4>Back annotation</h4>
+
+<p>
+A physical chip has gates interconnected by wires: these all have
+capacitance which imposes signal delays.  <i>Historically</i> the wire
+delay was nearly negligible, but nowadays it is dominant &ndash; and
+it's not known accurately<sup>&dagger;</sup> until after layout.
+</p>
+
+<p>
+<b>Back annotation</b> is the process of <b>extracting</b> the
+physical characteristics and feeding them back to improve the accuracy
+of earlier models.  Here we think of the functional (e.g. Verilog)
+simulation where we can rerun testbenches with the Device Under Test
+(DUT) including delays.  Tests may now fail<sup>&Dagger;</sup> because
+performance is below expectation; on the other hand, if successful
+this gives added confidence in the design.
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>A <i>rough</i> estimate may be added based on (e.g.) the
+number of gates the signal is &lsquo;fanned out&rsquo; to.<br>
+<sup>&Dagger;</sup>Though, hopefully the won't!
+</blockquote>
+<hr>
+
+<h2>Other layout considerations</h2>
+
+<ul>
+<li> Power Analysis
+<ul>
+	<li> Find potential hotspots
+	<li> Ensure sufficient power &lsquo;grid&rsquo; wiring
+</ul>
+<li> Design Rule Checks (DRC)
+<ul>
+	<li> see that the layout obeys geometry rules for fabrication
+</ul>
+<li> Electrical Rule Checks (ERC)
+<ul>
+	<li> ensure that electrical connections, (power etc.) are legal
+</ul>
+<li> Antenna Checks
+<ul>
+	<li> test that device will not be destroyed during manufacture
+</ul>
+<li> Layout Versus Schematic
+	<li> check that what is laid out is the same as what was wanted
+</ul>
+
+<h2>More verification software</h2>
+
+<p>
+You may think that the toolchain will synthesise a functional layout
+without help.  This is unlikely for various reasons.  Thus, a number
+of additional tools are used to verify the layout and identify
+potential problems.
+</p>
+
+<p>
+Don't try to learn all the details here; this is mostly to introduce
+some names (and abbreviations) which you may encounter later.  The
+important thing to remember is that there are potential problems (and
+fixes).
+</p>
+
+<p>
+Undoubtedly more such checks will become necessary in future as the
+manufacturing processes become more &hellip; challenging.
+</p>
+
+<h4>Layout Versus Schematic</h4>
+
+<p>
+The &lsquo;schematic&rsquo; in question is probably a
+machine-generated list of cells.  Nevertheless it is reassuring to
+extract the layout and compare it with what it is supposed to
+represent.
+</p>
+
+<p>
+If some part of a circuit has been laid-out or modified by hand, the
+benefits of this check should be obvious.
+</p>
+
+<h4>Design Rule Checks (DRC)</h4>
+
+<p>
+All layout is subject to &lsquo;design rules&rsquo; which specify
+things such as the minimum space between metal tracks on the same
+layer.  If these are violated there is a risk that they may be shorted
+in manufacture.
+</p>
+
+<p>
+Design rule violations can occur, for example, if there is an error in
+a standard cell.  If a metal layer comes illegally close to the edge
+of a cell there might be a violation with a passing track when the
+cell is used.  This is not guaranteed to happen so the fault may go
+unnoticed for some time.  The routeing software may work on the basis
+that all cells obey certain rules and not check inside.
+</p>
+
+<p>
+A DRC of a completed design will highlight these potential problems
+and allow a chance for remedial action.
+</p>
+
+<h4>Electrical Rule Checks (ERC)</h4>
+
+<p>
+Ensure that electrical connections, (power etc.) are legal: e.g.
+power is connected, signal outputs are not connected to power
+supplies, <b>well contacts</b> are present within certain distances of
+all transistors etc.
+</p>
+
+<span style="color:blue">
+
+<p>
+<h4>Antenna Checks (don't memorise)</h4>
+</p>
+
+<p>
+Antenna checks are necessary because of the structure of CMOS circuits
+and the way they are fabricated.  They don't matter once the device
+has been made.
+</p>
+
+<p>
+Picture a piece of layout in three dimensions.  Somewhere there is a
+transistor gate which is isolated from the substrate.  It is
+&lsquo;connected&rsquo; via the transistor(s) which drive it and this
+&lsquo;connection&rsquo; is sufficient to leak away any excessive
+charge.
+</p>
+
+
+<center><img src="figures/antenna_1.png" alt="Transistor gate after
+		      connection to silicon." width=60%></center>
+
+<p>
+Because the connection may be made through high layers of metal it
+comes into existence at a later manufacturing step than the one making
+the gate.  Before it exists there is no &lsquo;easy&rsquo; path for
+charge to leak away through and it can build up.  This is likely
+because some manufacturing steps use plasma etching with ionised gas.
+Build-up is more likely if the metal track (&lsquo;antenna&rsquo;) to
+the gate is larger.  Too much charge &rArr; too many volts &rArr;
+pffft! dielectric breakdown.
+</p>
+
+<center><img src="figures/antenna_2.png" alt="Transistor gate before
+		      connection to silicon." width=60%></center>
+
+<p>
+There are a couple of ways to alleviate this:
+</p>
+
+<ul>
+<li> keep the track to the gate short until connected
+<i>at all stages of manufacture</i>
+<ul>
+	<li> may impose unreasonable restrictions on routeing
+</ul>
+<li> add a (reverse biased) discharge diode next to the gate
+<ul>
+	<li> adds capacitance: compromises speed and power efficiency
+</ul>
+</ul>
+
+<p>
+A common expedient is to include diodes on all standard cell inputs;
+this is safe and easy but it does have its price in efficiency.
+</p>
+
+<p>
+Antenna checks will probably be performed as part of the DRC process.
+</p>
+</span>
+
+<center>
+<div class="inset">
+
+<h3>GDS II</h3>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/GDSII">GDS II</a>
+(&ldquo;GDS-two&rdquo;) is a term you will hear
+when an ASIC is prepared for production.  It is a standardised format
+for representing the &ldquo;polygons&rdquo; &ndash; i.e. the physical
+representation of the various features {diffusion, gates, wires etc.}
+which form the actual device.
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<p><a href="09_tape_out.html#index">Up/back</a> to ASIC index.</p>
+<p><a href="09b_production.html">Forwards</a> to production testing.</p>
+
+<hr><hr>
+
+</body>

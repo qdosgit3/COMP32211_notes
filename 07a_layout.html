@@ -1,0 +1,817 @@
+<title>CMOS</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column_70 {
+  float: left;
+  width: 70%;
+  padding: 10px;
+}
+
+.column_30 {
+  float: left;
+  width: 30%;
+  padding: 10px;
+}
+
+.column_40 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+}
+
+.column_60 {
+  float: left;
+  width: 60%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>MOSFETs on chips</h2>
+
+<!--<h3>Basic structure of the MOSFET</h3>-->
+
+<img src="figures/MOSFET_1.png" alt="Reverse-biased diode
+ junctions illustrating component isolation." width=40% align=left>
+
+<p>
+The diagrams here describe &lsquo;classic&rsquo; <i>planar</i>
+MOSFETs; here the <b>channel</b> is formed just under the surface of
+the silicon with the controlling gate built above that surface.  This
+technology has served for half a century through almost incredible
+scaling in size; it is still in regular use.
+</p>
+
+<p>
+However once feature sizes drop below ~22&nbsp;nm  the
+channel <b>L</b>ength is so small that it is
+difficult&nbsp;&rArr;&nbsp;impossible to turn a transistor made this
+way &lsquo;off&rsquo; and more exotic (expensive) constructions have
+to be made
+</p>
+
+<p>
+More on that, later.
+</p>
+
+<center><img src="figures/MOSFET_2.png" alt="Reverse-biased diode
+ junctions illustrating component isolation." width=50%></center>
+
+<br clear=left>
+
+<img src="figures/MOSFET_operation.png" alt="Reverse-biased diode
+ junctions illustrating component isolation." width=30% align=right>
+
+
+<h3>CMOS transistor structure</h3>
+
+<ul>
+<li> <b>M</b>etal &ndash; gate (first metal, then polysilicon, now typically
+  metal again)
+<li> <b>O</b>xide &ndash; insulator (SiO<sub>2</sub>); these days usually a
+  &lsquo;high-k dielectric&rsquo; instead
+<li> <b>S</b>ilicon &ndash; substrate doped with Boron, Arsenic,
+  Phosphorus &hellip;
+<li> <b>F</b>ield &ndash; no current flows in the gate; the electric
+  field causes an
+<li> <b>E</b>ffect &ndash; which &lsquo;sucks in&rsquo; (or &lsquo;drives
+  away&rsquo;) electrons to control the
+<li> <b>T</b>ransistor
+</ul>
+
+<h3>MOS transistor operation</h3>
+
+<p>
+In this <b>n-channel</b> FET, the <b>p-type substrate</b> (or well)
+will have a contact to ground.  If the gate is also at ground
+(logic&nbsp;'0') then there are reverse-biased diode junctions
+preventing conduction: the transistor is &lsquo;off&rsquo;.
+</p>
+
+<p>
+If the gate is raised to a positive voltage (logic&nbsp;'1') electrons
+are attracted which temporarily alters the local silicon properties to
+have a surfeit of charge carriers (electrons being <b>n</b>egative;
+the diodes &lsquo;disappear&rsquo; and the channel conducts&nbsp;&ndash;
+the transistor is &lsquo;on&rsquo;.
+</p>
+
+<p>
+The gate voltage at which the transistor &lsquo;switches&rsquo;
+is known as its <b>threshold</b> voltage (V<sub>th</sub>); it can be
+set by the silicon doping concentrations.  For the nMOS transistor
+this is its voltage above the <i>local</i> &lsquo;low&rsquo; voltage.
+</p>
+
+<p>
+p-channel transistor operation is <i>complementary</i> to this,
+operation otherwise being basically the same principle. for a pMOS
+transistor V<sub>th</sub> is a voltage difference <i>below</i> the
+local &lsquo;high&rsquo;.<br clear=right>
+</p>
+
+
+<p>
+Here we see the basic construction of a MOSFET.  Note the gate
+electrode sits above the channel and is separated from it by a thin
+layer of &lsquo;oxide&rsquo;.  When a positive voltage is applied to
+the gate a negative charge is induced in the channel.  If the source
+and drain are n-type material then they need a negative charge in the
+channel to make the device conduct.  This is an n-channel device and
+the channel will initially be p-type and hence have no negative charge
+carriers to allow it to conduct.
+</p>
+
+<p>
+The opposite is true for p-channel devices (swap &lsquo;n&rsquo; and
+&lsquo;p&rsquo;).  The major geometrical parameters (dimensions) of
+importance are the length of the channel (L), the width of the channel
+(W) and the thickness of the gate &lsquo;oxide&rsquo; t<sub>ox</sub>.
+</p>
+
+<blockquote>
+The channel length is the usual figure quoted for the
+manufacturing geometry (e.g. &ldquo;28&nbsp;nm&rdquo;).<br>
+Or, at least it used to be: some of the newest processes are using
+numbers more suggestive of <i>marketing</i> than geometry to
+suggest <a href="https://en.wikipedia.org/wiki/Dennard_scaling">Dennard
+    scaling</a> is continuing, unabated!
+</blockquote>
+
+<p>
+In VLSI design we can control L and W easily using our layout
+tools.  We can also have some control over t<sub>ox</sub>, but this is
+usually fixed by the CMOS process we wish to use (i.e. by the
+manufacturer or fabrication house).
+</p>
+
+<p>
+The doping levels may also vary which will change the number of free
+conductors in the &lsquo;off&rsquo; state and thus the threshold
+voltage (V<sub>th</sub>) of the transistor.  A low-threshold
+transistor will start to conduct early on as it is switched on and so
+can be used in a &lsquo;fast&rsquo; gate; however it does not turn
+&lsquo;off&rsquo; so well and thus tends to leak charge, thus
+increasing power dissipation.  A high-threshold transistor is slower
+but better for low-power applications.
+</p>
+
+<p>
+The pictured device is an nMOS FET.  For a pMOS FET swap &lsquo;N&rsquo;
+and &lsquo;P&rsquo; and use a negative gate voltage to repel electrons
+from the channel to make it conduct.
+</p>
+
+<!--
+<h3>Operation</h3>
+
+<p>
+The n-channel (NMOS) device has electron-poor (lightly) p-doped
+silicon under the gate.  If the gate is negatively charged even more
+electrons are repelled and there is no conducting path between the two
+n-doped regions.  As the gate is made more positive, some more
+electrons will be available from the &lsquo;bulk&rsquo; silicon; they
+will preferentially be attracted to the (positive)
+&lsquo;source&rsquo; connection.
+</p>
+
+<p>
+As the gate becomes more positive, more electrons are attracted,
+eventually &lsquo;inverting&rsquo; the channel doping to become
+n-type.  Current can now flow from source to drain.
+</p>
+
+<p>
+When the gate voltage is reduced again the electrons are not so strongly
+attracted and return to the bulk until the transistor &lsquo;pinches
+off&rsquo;, ceasing to conduct any substantial current.  This gate
+voltage is known as the <b>threshold</b> voltage (V<sub>th</sub>).
+</p>
+
+<p>
+The operation of a p-channel device is complementary; the (lightly)
+n-doped channel has a surfeit of electrons which prevents conduction
+between the p-doped source and drain.  Taking the gate low repels many
+of these electrons, causing the channel to conduct.
+</p>
+-->
+
+<h4>&hellip; as drawn</h4>
+
+<p>
+When drawing layout by hand (a.k.a. &lsquo;polygon pushing&rsquo;) the
+diffusion area is drawn both over the gates and the channel (see
+below); during the &lsquo;implant&rsquo; stage(s) of manufacture the
+drawn areas are exposed whilst the others are masked.  This stage
+occurs after the gates have been manufactured; the transistor gate
+acts as an additional mask, protecting the silicon below from the ion
+implant.  (The gate will receive some doping in the process but this
+is harmless or even beneficial.) This is a <b>self-aligning</b>
+process which ensures accurate relative placement of the gate and
+channel automatically.
+</p>
+
+<hr>
+
+<h3>Transistor layout</h3>
+
+<center><img src="figures/transistor_layout.png" alt="Series and
+ parallel CMOS layout." width=60%></center>
+
+
+<p>
+&lsquo;Plan&rsquo; view where coloured (or textured) polygons
+represent different vertical layers.
+</p>
+
+<h3>Transistor layout</h3>
+
+<p>
+The figure shows a &lsquo;plan view&rsquo; of a transistor structure as
+it might appear in a CAD layout tool.  The schematic on the right shows
+the &lsquo;circuit&rsquo; implemented.
+</p>
+
+<p>
+The central area is the diffusion area with the (polysilicon) gates
+striped across it.  The small dark squares are the contacts between the
+layers.
+</p>
+
+<p>
+Across the bottom is a metal ground rail which contacts diffusion in
+two places.  This between these points are three transistors, one to
+the left of the output contact and two, in series to the right.  Making
+structures like this, without intervening metal wires, reduces area
+and parasitic capacitance.
+</p>
+
+<p>
+The inputs arrive on metal (middle one not shown) and contact down
+onto the gates.
+</p>
+
+<p>
+The polysilicon is physically above the substrate (and not connected
+to it); it is below the metal and could pass under it without contact.
+</p>
+
+<p>
+The additional contacts in the metal rail are well contacts which
+supply charge to the substrate.
+</p>
+
+<ul>
+<li> The transistor's <b>length</b> is the distance through the
+  channel the smaller (horizontal) dimension here.  It will typically
+  be as small as it can be manufactured.
+  <ul>
+  <li> Longer transistors are occasionally made to deliberately
+  &lsquo;weaken&rsquo; the structure.  (See later.)
+  </ul>
+<li> The transistor's <b>width</b> is the vertical dimension in the
+  figure.  A wider transistor has &lsquo;more&rsquo; channel and so
+  more transconductance (i.e. more &lsquo;drive strength&rsquo;).
+</ul>
+
+<p>
+There are minimum &ndash; and, sometimes, maximum &ndash; widths of
+and clearances between features (e.g. minimum gate length, minimum
+metal 1 width, minimum overlap of gate at end of diffusion &hellip;)
+which are known as the <b>design rules</b>.   These must be observed if
+the fabricated layout is to work (stand a good chance of working).  CAD
+tools provide an appropriate Design Rule Checker (<b>DRC</b>).
+</p>
+
+<h3>Chip layout</h3>
+
+<p>
+Above the silicon there are several layers of metal wires.  Three are
+shown here; in a modern device there might be ten or more.  In
+reality, especially on higher metal layers, the wires will be
+proportionally taller (vertically) with respect to their width than
+shown here.  This allows a greater wiring density whilst retaining
+reasonable conduction paths.
+</p>
+
+<center>
+<img src="figures/IC.png" alt="Physical structure of IC.."
+ width=55%>
+</center>
+
+<p>
+The layers are built up from the silicon in sequence.  Inevitably there
+is some increase in surface roughness so higher level wires may need
+to be (drawn) wider to ensure good connections.  Typically there are
+also <i>planarisation</i> steps during construction so that subsequent
+layers have a (reasonably) flat surface to bond to.
+</p>
+
+<p>
+The wires were formerly made of aluminium &ndash; now typically copper
+(which is harder to work) because it has lower resistivity.
+</p>
+
+<hr>
+
+<h3>The CMOS inverter</h3>
+
+<center><img src="figures/inverter.png" alt="CMOS inverter
+ architecture and operation." width=70%></center>
+
+<img src="figures/inverter_transfer.png" alt="CMOS inverter
+ transfer function." width=20% align=left>
+
+<p>
+&nbsp;<br>
+The <i>gate</i> threshold is the input voltage where the gate
+output switches.
+</p>
+
+<ul>
+<li> Not to be confused with the transistor threshold</li>
+<li> Not <i>necessarily</i> at &lsquo;halfway point&rsquo;</li>
+</ul>
+
+<br clear=left>
+<hr>
+
+<h3>CMOS gate operation</h3>
+
+<p>
+CMOS is Complementary MOS technology.  The pMOS and nMOS transistors
+complement each other, one being good at pulling outputs high, the other at
+pulling outputs low.
+</p>
+
+<p>
+The simplest demonstration is the inverter.
+</p>
+
+<ul>
+<li> With a low input the pMOS transistor is &lsquo;on&rsquo; and the
+  nMOS transistor is &lsquo;off&rsquo;; the output is
+  &lsquo;connected&rsquo; to &lsquo;power&rsquo;.
+<li> With a high input the pMOS transistor is &lsquo;off&rsquo; and
+  the nMOS transistor is &lsquo;on&rsquo;; the output is
+  &lsquo;connected&rsquo; to ground.
+<li> Whilst the gate is switching the situation is changing over; as the
+input swings one transistor turns &lsquo;off&rsquo; whilst the other
+  turns &lsquo;on&rsquo;
+  <ul>
+  <li> The amplification tends to &lsquo;sharpen&rsquo; the edge
+  </ul>
+</ul>
+
+<p>
+Sadly, the two types of transistors are not quite complementary.
+Refer to the sub-section &lsquo;<a href="07b_gates.html#sizes_II">
+transistor sizes II</a>&rsquo; (next section).
+</p>
+
+<p>
+The transfer characteristics shown above are &lsquo;DC
+characteristics&rsquo; i.e. what happens if the input is left
+indefinitely at a particular voltage.  In practice the input would
+normally be changing &lsquo;rapidly&rsquo; and the capacitive load on
+the output would slow down the output voltage change.
+</p>
+
+<p>
+A <i>simplified</i> model of the dynamic behaviour of CMOS switching.
+</p>
+
+<center><img src="figures/charge_discharge.png" alt="CMOS inverter
+ architecture and operation." width=60%></center>
+
+<p>
+Exponential curves in both cases.
+</p>
+
+
+<h3>Transistor sizes I</h3>
+
+<p>
+The bigger the load, the slower the output edge.  Load is imposed by
+the inputs of other gates (each transistor gate is a capacitor) and
+&ndash; nowadays dominantly &ndash; by the interconnection wiring.
+Both of these depend on the network <b>fanout</b>; in practice a count
+of the gates wired to will give some approximation of the scale of the
+wiring load.
+</p>
+
+<p>
+When fanout becomes big, edges can become slow.  To alleviate this, use
+bigger transistors! It is common for a gate library to contain a range
+of implementations of each logic function (for example {INVd1, INVd2,
+INVd3, INVd4 &hellip;} where the drive strength of the gate can be
+selected.
+</p>
+
+<p>
+There are also disadvantages to bigger gates: more space occupied and
+more load for whatever is driving <i>them</i>.
+</p>
+
+<p>
+To get bigger FETs it is legitimate to place two or more <b>devices in
+parallel</b>.  For example, here are some inverter layouts:
+</p>
+
+<center>
+<img src="figures/inverters_dx.png" alt="Differently sized standard
+					 cell inverters." width=60%>
+</center>
+
+<p>
+As before, layout is structured to minimise area and parasitic
+capacitance.  The only place where capacitance is not a problem is on
+the power rails (where additional capacitance <i>helps</i> keep the
+rail voltage stable).
+</p>
+
+<hr id="standard">
+
+<h3>Standard cells</h3>
+
+<center>
+<img src="figures/standard_cells.png" alt="Standard cells as
+ layout components." width=80%>
+</center>
+
+<div class="row">
+<div class="column">
+
+<ul>
+<li> The basis of most &lsquo;random&rsquo; logic.</li>
+  <ul>
+  <li> Each cell is a gate, flip-flop, etc.</li>
+  </ul>
+<li> Designed to be placed edge-to-edge.</li>
+  <ul>
+  <li> &lsquo;Heights&rsquo; (&ldquo;pitch&rdquo;) identical.</li>
+  <li> &lsquo;Widths&rsquo; may differ.</li>
+  <li> May be &lsquo;reflected&rsquo;.</li>
+  </ul>
+</ul>
+
+</div>
+
+<div class="column">
+<ul>
+<li> Wiring superimposed on metal layers, above.</li>
+<br>
+<li> Libraries of cells from the silicon manufacturer.</li>
+</ul>
+</div>
+
+</div>
+
+<p>
+The majority of (digital) VLSI is built from standard cells.  These
+are implementations of widely used components, largely equivalent to a
+single gate.  There will probably be a selection of complex gates
+present too.
+</p>
+
+<p>
+This process is similar to a compiler mapping a programmer's
+statements to machine instructions: most microprocessors have roughly
+the same sort of instruction set but particular details vary.
+</p>
+
+<p>
+Each library component will have a counterpart in layout.  The layout
+may be visible to the user although sometimes manufacturers will
+protect these and only a &lsquo;phantom&rsquo; which shows the size
+and connection points will be seen; in this case the phantoms will be
+substituted at the foundry.  What will be available will be a
+characterised model of the cell which can be used with appropriate CAD
+tools to simulate its behaviour with its true capacitive loads, output
+drive etc.
+</p>
+
+<h4>Standard cell properties</h4>
+
+<p>
+Standard cells will be designed with a fixed height with power rails
+of a known width in defined places.  They will be different widths
+although it may be the case that these are all multiples of some
+standard unit (to fit more easily on a &lsquo;grid&rsquo;).
+</p>
+
+<p>
+Cells will already be <b>DRC correct</b> internally and will be DRC
+correct when abutted; this will usually include when reflected
+&lsquo;left-right&rsquo; and, sometimes also &lsquo;top-bottom&rsquo;
+where power rails may be abutted or even shared.
+</p>
+
+<h4>Standard cell layout</h4>
+
+<p>
+Layout is typically in rectangular blocks with power fed from (wider)
+rails at the edges.  (Other power rails may be placed on higher metal
+layers and linked down.)  Typically standard cells can be
+<i>reflected</i> laterally if it makes routeing<sup>&dagger;</sup>
+easier.  Some standard cells may be designed so that their power rails
+may be overlapped/abutted so that ever alternate rows are
+&lsquo;upside-down&rsquo;, thus sharing the conductor and saving some
+space; this also shares the <i>wells</i> (see figures).
+</p>
+
+<p>
+Dummy &lsquo;spacer&rsquo; cells will be added to fill in any gaps and
+may fulfil other functions such as providing <b>well contacts</b>.  In
+modern processes it is likely that (at least initial) layout will add
+extra spacers to give room for later &lsquo;in-situ&rsquo;
+modifications such as buffer insertion.  The keyword here is
+&ldquo;<b>utilization</b>&rdquo;<sup>&Dagger;</sup> which represents
+the proportion of the available space which is actually being used.
+</p>
+
+<p>
+In an ASIC the available space is the chip <i>area</i> allowed for
+that particular synthesised block.  This may be reversed so that the
+designer <i>specifies</i> a utilization as a <i>constraint</i> for the
+layout tools and it claims an appropriate area having estimated the
+necessary cell area from the design.  Higher utilization makes more
+efficient use of space (reduces cost) but makes it harder to route
+successfully; a typical starting point might be around&nbsp;70%,
+subsequently adjusted in an attempt at optimisation.
+</p>
+
+<p>
+A given FPGA has a fixed set of resources so the utilization is based
+on this.  It can be a guide to how much &lsquo;room&rsquo; is
+remaining for design changes or might indicate that you could use a
+smaller (cheaper!) device.  By the time you've completed this module
+you should have looked at some real FPGA utilization figures.
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>&nbsp;Spelled the British way. &#x1F642;<br>
+<sup>&Dagger;</sup>&nbsp;Probably spelled the American way.
+</blockquote>
+
+<h3>Cell Libraries</h3>
+
+<p>
+The exact mix of cells in a cell library will vary but it can be
+expected that there will be most or all of the &lsquo;common&rsquo;
+gates such as inverters, AND, NAND, OR, NOR, XOR and XNOR with a range
+of input counts.  These will typically come in a range of drive
+strengths too.
+</p>
+
+<p>
+There will probably be a number of the simpler complex gates
+(and-or-invert, or-and-invert) because these can often reduce the
+logic depth (and hence the critical path) of a logic block.
+</p>
+
+<p>
+The design as specified needs to be converted into cells which can be
+laid out on chip.  This phase is called &lsquo;technology
+mapping&rsquo;.  CAD tools convert the circuit specification into
+cells from a component cell library.
+</p>
+
+<p>
+Some latching elements will be present, including a number of D-type
+flip-flop variants (with/without resets, enables etc.) and probably
+some transparent latches.
+</p>
+
+<p>
+Other cells are less likely but multiplexers (exploiting
+transmission-gate technology for speed) are not uncommon.
+</p>
+
+
+<img src="figures/ANDs.png" alt="Possible substructure of 2-
+ and 4-input AND cells." width=30% align=right>
+
+<p>
+Remember that a single CMOS logic stage has an inverting output {INV,
+NAND, NOR}.  A standard AND gate will typically therefore be a
+NAND-INV combination, which will be slower although the output
+inverter gives it good drive strength.  However if &lsquo;large&rsquo;
+fan-in gates are present they may be compounds of other structures and
+non-inverting cells may be preferred.
+</p>
+
+<p>
+This second case is because there is a practical limit to the number
+of <i>series</i> MOS transistors in any given stack.<br clear=right>
+</p>
+
+
+<center>
+<div class="inset">
+
+<h3>&hellip; maybe not quite &hellip;</h3>
+
+<p>
+In some modern processes standard cells may be available
+in <i>different</i> pitches, allowing of cells with different
+effective &lsquo;widths&rsquo; (or number of <i>fins</i>: see later
+lecture) to be interspersed in different rows.
+</p>
+
+<p>
+It's another way of cramming more into the space.
+</p>
+
+</div>
+</center>
+
+<hr id="macrocells">
+
+<h3>Macrocells</h3>
+
+<p>
+Some components would be very inefficient in speed/area/power if made
+from standard gates and are sufficiently common that they are worth
+generating differently.  The most common examples are memories.
+</p>
+
+<p>
+For example there may be a &lsquo;RAM generator&rsquo; tool which can
+be fed parameters (such as the number and size of the words) and will
+produce a block of layout accordingly.  This is facilitated by the
+regular, tessellating structure of RAM cells.
+</p>
+
+<p>
+Memories such as Static RAM (SRAM) and ROM generated this way will be
+much more compact than a &lsquo;DIY&rsquo; approach using D-type
+flip-flops etc.  (Maybe 10&times; denser or more.)
+</p>
+
+<p>
+Similarly, a &lsquo;flat&rsquo; netlist may serve for small devices.
+</p>
+
+<ul>
+<li> Place-and-Route all the gates in one go.</li>
+</ul>
+
+<p>
+For an SoC it may be &lsquo;better&rsquo; to layout a
+device <i>hierarchically</i>.
+</p>
+
+<ul>
+<li> Example: a for a multiprocessor device, layout one processor core
+  and then duplicate the layout for the others.</li>
+  <ul>
+  <li> Arguably slightly suboptimal.</li>
+  <li> Faster to perform (much smaller problem).</li>
+  <li> MUCH easier to verify timing (only one version to test).</li>
+  </ul>
+<li> Part of a design which has been transformed to layout is referred
+  to as &lsquo;hardened&rsquo;.</li>
+<li> Some parts of a SoC will &lsquo;arrive&rsquo; hardened.</li>
+  <ul>
+  <li> e.g. memories (SRAM, ROM): custom synthesized by a specialist tool.</li>
+  <li> e.g. analogue parts where layout matters significantly.</li>
+  </ul>
+<li> The placement of macrocells is often called
+  &lsquo;<b>floor-planning</b>&rsquo;.</li>
+</ul>
+
+<hr>
+
+<h4>FPGAs</h4>
+
+<p>
+Modern FPGAs can make extensive use of macrocells, although these have
+to be designed in at manufacture.  Typical examples include:
+</p>
+
+<ul>
+<li> Memory (in blocks) &ndash; SRAM but may be preloaded as ROM.</li>
+<li> Adder components (esp. carry logic).</li>
+<li> Multiplier building blocks.</li>
+<li> Complete microprocessors.</li>
+<li> Specialist systems (such as high-speed serial interfaces).</li>
+</ul>
+
+<hr>
+
+<h3>Full-custom design</h3>
+
+<p>
+It is, of course, possible to layout components by hand, lovingly
+crafting every transistor to exactly the desired dimensions.  Of
+course, in practice this is not economic on an SoC scale.
+</p>
+
+<p>
+Hand design may still be done to create standard cells and specialist
+structures but, except when trying to squeeze the last bit of
+performance out of a design, higher level structures will be built of
+pre-prepared cells.  Hand composition of standard cells is also
+possible (to simplify and reduce wiring runs) but is, again, unusual.
+</p>
+
+<p>
+One of the major problems with hand-building layout is that it is
+non-portable.  The <b>design rules</b> &ndash; the geometrical
+parameters for the manufacturing process &ndash; will differ in each
+silicon foundry and, within a foundry, change from process to process.
+Design at a higher abstraction level may lose a small amount of
+performance but gains portability (and reduces development time).
+</p>
+
+<p>
+Hand placement, especially of large components (macrocells) may still
+be valuable as a &lsquo;hint&rsquo; to the place-and-route tools.
+Perhaps ironically this can help particularly with performance on
+FPGAs.
+</p>
+
+<h4>Analogue components</h4>
+
+<p>
+Although <i>we</i> are really concerned with digital design it is
+possible, and sometimes necessary, to build analogue circuits too.  An
+example would be a voltage controlled oscillator used in a PLL clock
+multiplier.  In practice a significant proportion of a SoC will
+contain analogue components.
+</p>
+
+<p>
+When analogue and digital parts are both present on a chip it is known
+as a &lsquo;<b>mixed signal</b>&rsquo; design.
+</p>
+
+<p>
+Analogue circuits are usually constructed using the same types of
+MOSFETs as the digital devices; this keeps manufacturing cost down.
+Some other devices, especially capacitors may be included.  (For
+example, a capacitor may be formed from the gate of an otherwise
+unused FET or from interleaving &lsquo;fingers&rsquo; of metal
+wiring.)
+</p>
+
+<p>
+Analogue design is a separate &ndash; and specialist &ndash; skill.
+</p>
+
+<hr>
+
+<p><a href="07_CMOS.html#index">Back/up</a> to CMOS index.</p>
+<p><a href="07b_gates.html">Forwards</a> to gate structures.</p>
+
+<hr><hr>
+
+</body>

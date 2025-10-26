@@ -1,0 +1,573 @@
+<title>More complex interconnect</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>More complex interconnect</h2>
+
+<hr>
+
+<h3>Bus hierarchy</h3>
+
+<p>Simple example:</p>
+
+<center>
+<img src="figures/AT91.png" alt="Example SoC bus structure" width=90%>
+</center>
+
+<p>
+This is an ARM-based microcontroller/SoC we formerly used in the
+laboratories.  It uses:
+</p>
+<ul>
+<li> AHB interfaces for the high-performance devices.</li>
+<li> a bus switch to facilitate parallel operations.</li>
+<li> APB for the low-performance peripherals.</li>
+</ul>
+
+
+<h4>Example SoC</h4>
+
+<p>
+The example given here is the Atmel
+<a href="https://www.microchip.com/en-us/product/at91sam9261">AT91SAM9261</a>
+ARM-based microcontroller.  The view shows the interconnection
+structure around the processor.
+</p>
+
+<p>
+The processor masters two buses (instruction and data) which are fed
+into a bus switch matrix.  Other devices can also be bus masters as
+the USB host interface, the LCD controller and the APB bridge all have
+DMA capability.
+</p>
+
+<p>
+Dependent on the matrix are:
+</p>
+
+<ul>
+<li> APB
+<li> ROM
+<li> USB host and LCD controller (for programming)
+<li> External bus interface
+<li> RAM
+</ul>
+
+<p>
+The crossbar switch allows parallel operations so different masters
+can have access to different slave devices simultaneously.  Clashes
+have to resolved by inserting wait states.
+</p>
+
+<p>
+Bus occupancy can be reduced because the processor has:
+</p>
+
+<ul>
+<li> separate instruction and data caches.</li>
+<li> direct access to the on-chip RAM as Tightly Coupled Memory (TCM).</li>
+</ul>
+<h4>Tightly coupled memory</h4>
+
+<p>
+Tightly Coupled Memory (TCM) maps fast SRAM to specific addresses.
+(This device has ten individually switched 16&nbsp;KiB blocks.) This
+can allow parallel instruction and data access and still leave the I/O
+buses free for DMA.
+</p>
+
+<p>
+TCM is sometimes preferred over cache in microcontroller applications
+because its timing behaviour is easy to predict.  Cache accesses may
+be faster <i>on average</i> (as the hit rate may be better optimised)
+but predictability means that a worst case response can be guaranteed
+&ndash; important in some real-time applications.
+</p>
+
+<h4>APB</h4>
+
+<p>
+The APB hosts numerous lower performance peripherals.  It may be run at a
+lower clock speed than the AHBs as a power saving measure.
+</p>
+
+<h4>Bridge</h4>
+
+<p>
+A bus bridge is simple a means of converting from one protocol to
+another.  Usually a bridge is a slave on one bus and a master of
+another, although bidirectionality is possible.
+</p>
+
+<h4>Split transactions</h4>
+
+<p>
+When a bus structure becomes sufficiently complicated it can be an
+advantage to allow transactions to complete out-of-order.
+</p>
+
+
+<center>
+<img src="figures/split_trans.png" alt="Split transaction sequence" width=80%>
+</center>
+
+<p>
+This gives decreased latency for some (urgent) operations at the expense of
+greater complexity, especially at the master where dependencies between reordered transactions may have to be resolved.
+</p>
+
+
+<img src="figures/CMP.png" alt="Simple CMP bus structure" width=30% align=right>
+
+<h3>Chip Multi-Processors (CMPs)</h3>
+
+<p>
+Current generation CMPs typically share a bus to a level-2 cache.
+This is satisfactory for a small number of processor cores but as the
+number increases the pressure on this bus increases too.  Such designs
+will not scale well.  More elaborate &ndash; sometimes hierarchical
+&ndash; bus structures are evolving, although these exacerbate
+problems with maintaining cache coherency.
+</p>
+
+<p>
+Another bus descends to the next level of memory hierarchy.<br clear=right>
+</p>
+
+<hr>
+
+<h2>Network on Chip (NoC)</h2>
+
+<p>
+With integration levels increasing, simple bus structures become inadequate.
+</p>
+
+<p>
+Starting to develop networks on chip.
+</p>
+
+<p>
+There broadly fall into two categories:
+</p>
+
+<div class="row";>
+
+<div class="column";>
+
+<center>
+<img src="figures/NoC_1.png" alt="Regular NoC structure" width=60%>
+</center>
+
+<ul>
+<li> 2D grids
+  <ul>
+  <li> conveniently make regular structures on silicon surface.</li>
+  </ul>
+</ul>
+
+</div>
+
+<div class="column";>
+
+<p>&nbsp;</p>
+
+<center>
+<img src="figures/NoC_2.png" alt="Irregular NoC structure" width=60%>
+</center>
+
+<ul>
+<li> &lsquo;random&rsquo; networks
+  <ul>
+  <li> like &lsquo;conventional&rsquo; computer networks.</li>
+  <li> may use dedicated paths or be packet- or circuit-switched.</li>
+  </ul>
+</ul>
+
+</div>
+
+</div>
+
+<center>
+<div class="inset";>
+
+<div class="row";>
+
+<div class="column";>
+
+<h4><a href="https://en.wikipedia.org/wiki/Packet_switching">Packet switching</a></h4>
+
+<p>
+A communications mechanism which sends each part
+(&lsquo;packet&rsquo;) of a correspondence individually.  Potentially,
+unrelated packets may interleave on the same route and/or packets from
+one session may take different routes.
+</p>
+</div>
+
+<div class="column";>
+
+<h4><a href="https://en.wikipedia.org/wiki/Circuit_switching">Circuit switching</a></h4>
+
+<p>
+A communications mechanism which sets up a &lsquo;permanent&rsquo;
+link (for the duration of the communications) dedicated between
+corresponding units.
+</p>
+
+</div>
+
+</div>
+
+</div>
+</center>
+
+<p>&nbsp;</p>
+
+<center>
+<div class="inset";>
+
+<h3><a href="https://en.wikipedia.org/wiki/Crossbar_switch">Crossbar switches</a></h3>
+
+<img src="figures/crossbar.png" alt="Crossbar switch example"
+     width=30% align="right">
+
+<p>
+A &ldquo;crossbar&rdquo; switch is a many-to-many switch, capable of
+supporting multiple simultaneous connections simultaneously &mdash;
+naturally subject to the constraint that each individual input or
+output can only have one correspondent at a time.<br>
+They are sometimes referred to as a &ldquo;switch matrix&rdquo;.
+</p>
+
+<p>
+For example, in a multi-processor system a <i>bus switch</i> crossbar
+can allow different processors simultaneous access to different
+resources.<br clear="right">
+</p>
+
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<h3>GALS</h3>
+
+<p>
+As clock speeds increase and wiring delays become more significant it
+is difficult to maintain a synchronous clock model across a whole
+chip.  This problem was discussed in the section on timing (q.v.).
+</p>
+
+<p>
+However one solution to this problem is to allow different IP blocks
+to be clocked independently with an arbitrary phase and, possibly, at
+different frequencies.  It is then the job of the interconnection to
+cross the clock domains.
+(See also <a href="05b_clock_domains.html#crossing">clocking notes</a>.)
+</p>
+
+<p>
+This form of interconnection is known as GALS (<b>Globally Asynchronous,
+Locally Synchronous</b>).  GALS frees the SoC designers from a number of
+timing constraints which makes timing closure much easier.  Each block
+is developed as a synchronous circuit but there is no need for
+chip-wide skew-free clock distribution.
+</p>
+
+<p>
+Another advantage is the ability to run each block at its own
+&lsquo;best&rsquo; frequency with the possibility of consequent power
+reduction.
+</p>
+
+<p>
+There can also be a reduction in power supply noise.  In a synchronous circuit
+logic begins to switch just after each active clock edge.  Typically the number of
+gates switching over time diminishes during the clock period because not all
+logic paths are the same length.  When gates switch they pull charge from the
+power supply or dump it onto the ground.  The demand for charge (a.k.a.  &ldquo;current&rdquo;) therefore varies periodically setting up a regular AC signal in the (extensive) power wiring.  This both acts as a transmitting aerial (especially the wiring
+into the chip) and may affect other gates' switching.  If a whole chip is synchronous then this problem is at its worst; if there are several clocks with different
+phases (or frequencies) the demand tends to even out, reducing noise problems.
+</p>
+
+<p>
+There are also disadvantages to GALS' unsynchronised communication.
+The biggest is the need for synchronisation of signals when they
+arrive at their destination.  This inherently adds some <i>latency</i>
+to the signal; more if the reliability is increased by adding longer
+waits for the resolution of any metastability.  Communication is
+therefore slowed down in some way.
+</p>
+
+
+<h4>Handshaking</h4>
+
+<p>
+The simplest communication mechanism is synchronous on a one-item-per
+clock basis; this relies on assumptions that data will always be available and
+accepted on every cycle.
+</p>
+
+<p>
+If data is not available on every cycle a &lsquo;validity&rsquo; (or
+&ldquo;request&rdquo;) signal can be used to indicate when data is
+available.
+</p>
+
+<p>
+If the receiver may not always accept data then some sort of flow
+control must be included.  Across a synchronous interface &ndash; such
+as AXI, discussed earlier &ndash; this can be another status bit.
+</p>
+
+<p>
+With an asynchronous interface various assumptions cannot be made and
+some form of handshake protocol is needed.  This must be subject to
+synchronisation to the local clock, with a concomitant latency
+penalty.
+</p>
+
+<center>
+<img src="figures/handshake.png" alt="Handshake protocol" width=60%>
+</center>
+
+<h4>Block transfers</h4>
+
+<p>
+A simple method of communication between asynchronous blocks is to
+synchronise each data request and, subsequently, latch the data from
+the bus.  This results in a moderate latency but quite a low bandwidth
+because every transmission requires two synchronisations, one for the
+forward request and another for the reverse acknowledge.
+</p>
+
+<p>
+Higher bandwidth can be achieved by buffering several data elements for a single synchronisation.  The transmitter &lsquo;owns&rsquo; a RAM into which it writes a message.  When this is complete it passes the RAM to the receiver.  After
+synchronising with the receiver's clock the data can be read out at full speed.
+The overall latency is greater but the average bandwidth is also higher.  This type
+of mechanism may be further enhanced (at additional hardware cost) by double
+buffering so that one RAM is filled whilst the previous one is emptied.
+</p>
+<p>
+At its most extreme the interconnection may be asynchronous logic which can
+implement an elastic FIFO between transmitter and receiver.  This could be a
+dual-port RAM which is written and read at different rates &ndash; synchronisation is
+only necessary when the FIFO is almost empty or almost full &ndash; or truly clock-free circuits.
+</p>
+
+<hr>
+
+<h3>Serial buses</h3>
+
+<p>
+<b>This last subsection is something of an aside, in that it is
+chiefly concerned with systems <i>off</i> chip!</b>
+</p>
+
+<p>
+For wider system interconnection it is common to use serial interconnection:
+</p>
+
+<ul>
+<li> Inherently slower.</li>
+<li> Far fewer chip-pins required.</li>
+<li> Cheaper interconnection medium (wires, connectors &hellip;).</li>
+<li> Suitable for wireless applications.</li>
+</ul>
+
+<p>
+Examples include:
+</p>
+
+<ul>
+<li> Ethernet</li>
+<li> USB</li>
+<li> I<sup>2</sup>C</li>
+</ul>
+
+<h3>
+On SoC
+</h3>
+
+<p>
+Pin restrictions do not apply to intra-chip connections.
+</p>
+
+<p>
+Nevertheless the reduction in wiring is becoming attractive for some
+SoC applications.
+</p>
+
+<h3>Serial buses</h3>
+
+<p>
+In a serial bus transactions must occur as packets, so that the
+various signals are time-domain multiplexed onto the medium.  Thus it
+may be that a transmitter sends a packet which contains
+&lsquo;C&rsquo; bits of a command (such as read or write),
+&lsquo;A&rsquo; bits of address (which may be a subsystem and/or a
+memory address) and &lsquo;D&rsquo; bits of data.
+</p>
+
+
+<h4>Ethernet</h4>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/Ethernet">Ethernet</a> probably
+seems familiar to you already.  It is a peer-to-peer interconnection
+medium.  Originally all the devices simply <i>shared</i> a common
+communications medium (the
+&lsquo;<a href="https://en.wikipedia.org/wiki/Aether_theories">Ether</a>&rsquo;<sup>&dagger;</sup>)
+although modern Ethernet is typically packet-switched with
+point-to-point links.
+</p>
+
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>It was an intellectual joke: it wasn't historically
+contemporary!
+</blockquote>
+
+
+<h4>USB</h4>
+
+<p>
+You are probably more familiar with
+<a href="https://en.wikipedia.org/wiki/Usb">USB</a> (Universal
+Serial Bus) as a user than aware of its operation.  It is a
+hierarchical structure where devices (slaves) are polled by the host
+(master) to allow them to transfer data.  Data is communicated across
+a simplex (one direction at once) <i>differential pair</i> (see
+opposite) serial line.
+</p>
+
+<p>
+Communication is asynchronous so each device has to have a precise
+clock reference matching the specification.
+</p>
+
+<h4>I<sup>2</sup>C</h4>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/I2c">I<sup>2</sup>C</a>
+(Inter-Integrated Circuit) is a
+<a href="https://en.wikipedia.org/wiki/Philips">Philips</a> invention;
+to avoid legal complications it is sometimes referred to as Two Wire
+Interface (TWI) by other manufacturers.
+</p>
+
+<p>
+I<sup>2</sup>C is a fairly slow interconnection, suitable for driving
+entirely in software with two PIO bits if required.  It is typically
+used as a PCB level interconnection, for example for adding memory to
+small microcontrollers.  However it is a multi-master bus where
+arbitration for mastery takes place via the same two wires.
+</p>
+
+<p>
+Communication is synchronous as one wire is used as data, the other as
+a clock.  However the &lsquo;clock&rsquo; &ndash; really more a strobe
+&ndash; need not be regular as it may be software driven or paused by
+the receiving device if it is not ready.
+</p>
+
+
+<h4>SPI</h4>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/Serial_Peripheral_Interface">SPI</a>
+(Serial Peripheral Interface) &ndash; originally from
+<a href="https://en.wikipedia.org/wiki/Motorola">Motorola</a>
+&ndash; uses a four-wire (sometimes three-wire) serial interface for
+peripheral chip communications and I/O expansion.  It's purpose is
+much the same as I<sup>2</sup>C.
+</p>
+
+<center>
+<div class="inset";>
+
+<h3>Differential signalling</h3>
+
+<p>
+A differential signal is where a single logic state is represented by
+two digital wires which are always in &lsquo;opposite&rsquo; states.
+Legal states are low/high and high/low.
+</p>
+
+<p>
+The state of the signal is interpreted by looking at the difference
+between the wires, which will either be positive or negative &ndash; a
+binary choice.
+</p>
+
+<p>
+Differential signalling is used for <b>noise immunity</b>.  If two
+wires are physically close to each other any induced noise is likely
+to affect them in a similar way.  A single wire compared to an
+unmoving &lsquo;ground&rsquo; signal may have its state altered but
+the difference should be (largely) preserved.  This is known
+as <b>common-mode rejection</b>.
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<p><a href="06_interconnect.html">Up</a> to Interconnection.</p>
+<p><a href="06a_buses.html">Back</a> to buses.</p>
+<p><a href="07_CMOS.html">Forwards</a> to CMOS circuits.</p>
+
+<hr><hr>
+
+</body>

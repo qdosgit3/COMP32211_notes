@@ -1,0 +1,207 @@
+<title>CMOS</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column_70 {
+  float: left;
+  width: 70%;
+  padding: 10px;
+}
+
+.column_30 {
+  float: left;
+  width: 30%;
+  padding: 10px;
+}
+
+.column_40 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+}
+
+.column_60 {
+  float: left;
+  width: 60%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>Puzzle and answer</h2>
+
+<h3>The puzzle</h3>
+
+<div class="row">
+  <div class="column_40">
+
+<center>
+<img src="figures/puzzle.png" alt="A specialised transistor structure." width=90%>
+</center>
+ </div>
+
+  <div class="column_60">
+
+<p>
+This figure shows the transistor-level schematic of a specialised
+structure <i>based</i> on a complex gate and optimised to exploit
+common inputs.  It has only two series transistors in each
+&lsquo;tree&rsquo;.  Fewer series transistors&nbsp;&rArr;&nbsp;smaller
+(width) transistors&nbsp;&rArr;&nbsp;less capacitive load.
+</p>
+
+<p>In increasing order of difficulty, can you:</p>
+
+<ol>
+<li>Deduce the truth table.</li>
+<li>Identify a credible (familiar?!) application.</li>
+<li>The input labelled &lsquo;<span style="font-family: 'Courier New',
+ monospace;">C</span>&rsquo; has a lower input load than the other
+ inputs (only two transistors): how may this be exploited?</li>
+</ol>
+ </div>
+ </div>
+
+<hr>
+
+<h3>The answers</h3>
+
+<div class="row">
+  <div class="column">
+
+  <p>1. This is the truth table. </p>
+  <p>
+  You can reason like this:<br>
+  IF ((A == 0) & (B == 0)) THEN Q := 0<br>
+  OR IF ((C == 0) & ((A == 0) | (B == 0))) THEN Q := 0<br>
+  ELSE Q := 1<br>
+  </p>
+
+  <p>
+  Note the output inverter, which also gives good output
+  &lsquo;drive&rsquo;.
+  </p>
+  </div>
+
+  <div class="column">
+  <center>
+  <table>
+  <tr>
+  <th>A</th>  <th>B</th>  <th>C</th>  <th>Q</th>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  </table>
+  </center>
+  </div>
+</div>
+
+<p>
+2. From the truth table it should be apparent that this is
+a <b>majority gate</b> &mdash; i.e. its output is &ldquo;1&rsquo; when
+at least two (i.e. most) of its inputs are &ldquo;1&rsquo;.
+</p>
+
+<p>
+An application you should have met before is <b>carry generation</b>
+in a full adder.
+</p>
+
+<p>&nbsp;</p>
+
+<p>
+3. If used as a component in an adder, the <i>critical path</i>
+runs through the carries.  Using &ldquo;C&rsquo; for the carry (clue
+in the label!) will make this slightly faster than &ldquo;A&rsquo; or
+&ldquo;B&rsquo; which have double the input load.
+</p>
+
+<p>
+The cell, as a whole, is implementing: <span style="font-family: 'Courier New',
+ monospace;">Q&nbsp;=&nbsp;(A&nbsp;&&nbsp;B)&nbsp;|&nbsp;(A&nbsp;&&nbsp;C)&nbsp;|&nbsp;(B&nbsp;&&nbsp;C)</span><br>
+which could be done with an AND-OR-INVERT but we've optimised and
+ saved <<i><span style="color:green">how many?</span></i>> transistors
+ <i>and</i> kept the maximum logic tree depth to two series
+ transistors <<i><span style="color:green">instead of?</span></i>>.
+</p>
+
+<hr><hr>
+
+</body>

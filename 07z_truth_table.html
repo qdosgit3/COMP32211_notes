@@ -1,0 +1,132 @@
+<title>O2A22OI explanation</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column_30 {
+  float: left;
+  width: 30%;
+  padding: 10px;
+}
+
+.column_40 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+</head>
+
+<body>
+
+<h2>O2A22OI revisited</h2>
+
+<div class="row">
+  <div class="column_30">
+
+<center>
+<img src="figures/O2A22OI.png" alt="An *even more* complex gate
+				    schematic." width=90%>
+</center>
+ </div>
+
+  <div class="column_40">
+
+Puzzled?<br>
+Here's a &lsquo;walk-through&rsquo; description of the schematic.
+
+<p>
+Imagine
+&lsquo;<span style="font-family: 'Courier New',
+ monospace;">C1</span>&rsquo; and
+&lsquo;<span style="font-family: 'Courier New',
+ monospace;">C2</span>&rsquo; are both high: this
+&lsquo;disconnects&rsquo; the pull-up tree and guarantees a pull down:
+<b>else</b> if &lsquo;<span style="font-family: 'Courier New',
+ monospace;">B1</span>&rsquo; is low the other pull-down tree is
+ disconnected and the pull-up asserted:
+<b>else</b> &hellip; you have a NOR gate remaining.
+</p>
+
+ </div>
+
+  <div class="column_30">
+
+<b>Truth table</b>
+
+<body>
+  <table>
+  <tr>
+  <th>A1</th>  <th>A2</th>  <th>B1</th>  <th>C1</th>  <th>C2</th>  <th>Q</th>
+  </tr>
+
+  <tr>
+  <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  <tr>
+  <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; 1 &nbsp;</td> <td>&nbsp; &ndash; &nbsp;</td> <td>&nbsp; 0 &nbsp;</td> <td>&nbsp; 0 &nbsp;</td>
+  </tr>
+
+  </table>
+
+ </div>
+
+</div>
+
+<hr>
+
+</body>

@@ -1,0 +1,318 @@
+<title>Power dissipation</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Create four equal columns that float next to each other */
+.column3 {
+  float: left;
+  width: 33%;
+  padding: 10px;
+}
+
+.column4 {
+  float: left;
+  width: 25%;
+  padding: 10px;
+}
+
+.column80 {
+  float: left;
+  width: 80%;
+  padding: 10px;
+}
+
+.column20 {
+  float: left;
+  width: 20%;
+  padding: 10px;
+}
+
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>Power dissipation in CMOS logic</h2>
+
+<div class="row";>
+
+<div class="column3";>
+<p>Energy = work done.</p>
+</div>
+<div class="column3";>
+<p>Power = work done per unit time</p>
+</div>
+<div class="column3";>
+<p>Energy stored = &frac12;&#160;C.V<sup>2</sup></p>
+</div>
+</div>
+
+<img src="figures/power_goes.png" alt="CMOS power dissipation mechanisms" width=100%>
+
+<div class="row";>
+
+<div class="column4";>
+<center>
+Charging/discharging load<br>
+Important factors:<br>
+f &alpha; C <b>V<sub>dd</sub><sup>2</sup></b>
+</center>
+</div>
+
+<div class="column4";>
+<center>
+Crowbar when switching<br>
+Important factors:<br>
+f &alpha; V<sub>dd</sub> V<sub>th</sub>
+</center>
+</div>
+
+<div class="column4";>
+<center>
+Channel leakage<br>
+Important factors:<br>
+V<sub>dd</sub> V<sub>th</sub>
+</center>
+</div>
+
+<div class="column4";>
+<center>
+Gate leakage<br>
+Important factor:<br>
+V<sub>dd</sub>
+</center>
+</div>
+
+</div>
+
+<p>
+The dominant dissipation in active (switching) logic is the dynamic
+dissipation due to charging/ discharging load capacitance.  This
+depends on the network load,
+the <span style="color:red"><b>square</b></span> of the supply voltage
+and the amount of activity.
+</p>
+
+<p>
+The other dynamic component depends on the supply voltage, the
+transistor thresholds and the input edge speed.
+</p>
+
+<p>
+Static (leakage) currents depend on the supply voltage and (for
+sub-threshold leakage) the transistor thresholds.
+</p>
+
+<p style="color:green">
+[&lsquo;&alpha;&rsquo; is the &lsquo;activity factor&rsquo;,
+representing the probability of a signal switching on a given clock
+edge.]
+</p>
+
+
+<h3>Dynamic power dissipation</h3>
+
+<p>
+Dynamic dissipation is that which is caused by switching gates.  It is
+therefore proportional to the clock frequency; at double the frequency
+gates switch twice as often so power is doubled.  It is also related
+to the activity in the circuit: not every gate will switch on every
+cycle (except for the clock drivers) and, sometimes, logic blocks can
+be idle for long periods.
+</p>
+
+<p>
+Dynamic dissipation in CMOS circuits is made up from two components:
+the first component is related to the load capacitance of a network.
+To switch a node to &lsquo;high&rsquo; it is connected &ndash; via a
+pull-up tree &ndash; to the power supply and charge flows from there
+into the net (wires and transistors) until the voltage equalises.
+</p>
+
+<p>
+This charge is defined by: &nbsp; <span style="font-family:
+'Courier New', monospace;">Q&nbsp;=&nbsp;C.V&nbsp;</span>
+</p>
+
+<p>
+When the node discharges via the pull-down tree the charge flows to ground.
+The effect of the cycle is to move charge <span style="font-family:
+'Courier New', monospace;">Q</span> through the potential between the
+rails V, so the energy required/dissipated per cycle is: &nbsp;
+<span style="font-family:
+'Courier New', monospace;">E&nbsp;=&nbsp;Q.V&nbsp;=&nbsp;C.V<sup>2</sup></span>.
+</p>
+
+<p>
+This term does not depend on edge speeds, etc.  Note, particularly,
+that this is proportional to the <i>square</i> of the voltage: halving
+the supply voltage will reduce the energy dissipation by a factor of
+four.
+</p>
+
+<p>
+In more detail, this assumes a rail-to-rail swing of the signal.  In
+some cases this change can be reduced, saving energy, but other
+problems may ensue.
+</p>
+
+<p>
+The other dynamic dissipation comes from &lsquo;short circuit&rsquo;
+or &lsquo;crowbar&rsquo; current which results from both the pull-up
+and pull-down trees conducting (to some extent) as one turns off and
+the other turns on.  This is difficult to quantify in general as it
+depends on a number of factors, including transistor widths and which
+transistors are switching.  However there are two &lsquo;simple&rsquo;
+ways to reduce this:
+</p>
+
+<ul>
+<li> keep input edges fast &ndash; reduce the time both trees are on
+simultaneously.  This can be done by increasing the
+&lsquo;strength&rsquo; (transistor widths) of the input driving gate;
+however that, in turn, increases their capacitive load, slowing down
+their own inputs.
+
+<li> Use high threshold transistors &ndash; these will turn
+&lsquo;on&rsquo; later and &lsquo;off&rsquo; sooner, as appropriate,
+minimising time spent when charge is wasted.  However this slows down
+switching and increases the propagation delay of the gate.  This is a
+strategy better employed on gates off the <i>critical path</i>.
+</ul>
+
+
+<center>
+<div class="inset">
+
+<h4>Minimising power dissipation</h4>
+
+<p>
+Improving power efficiency is a win-win strategy: improved battery
+life and fewer cooling problems.  One thing a designer can do <u>at
+    RTL</u> is to <b>limit switching activity</b>, particularly on
+&lsquo;large&rsquo; buses (such as those connecting to memories which
+are physically large and therefore have significant parasitic
+capacitance).
+</p>
+
+<p>
+Sometimes this is as simple as adding an &lsquo;enable&rsquo; signal
+to registers to stop them switching when a component is not in use.
+</p>
+
+</div>
+</center>
+
+
+<h3>Static power dissipation</h3>
+
+<p>
+Static power dissipation happens continuously, regardless of switching
+activity.  Historically it has been close to zero and therefore
+negligible except in very low power systems which are intended to do
+very little activity over very long periods using tiny batteries.
+However this source of inefficiency is increasing with technology
+advances.
+</p>
+
+<p>
+Static dissipation is basically charge <b>leakage</b> through paths where
+charge is not supposed to go.
+</p>
+
+<p>
+<b>Subthreshold leakage</b> is current through a transistor which is
+&lsquo;turned off&rsquo;.  Transistors are not switches and will
+conduct to some extent at all times.  A small current therefore flows
+through a gate even when it is not switching.
+</p>
+
+<p>
+Subthreshold leakage can be reduced by having a high transistor
+threshold.  However this slows down the gate switching speed by
+slowing &lsquo;turn on&rsquo; and possibly also decreasing the
+&lsquo;on&rsquo; transconductance.  It is gradually becoming a more
+significant component in the overall power budget as the transistor
+threshold is forced down by the need to reduce the overall supply
+voltage.
+</p>
+
+<p>
+<b>Gate leakage</b> is the leakage of charge from the transistor's
+gate to the silicon channel.  Electrons go through the thin insulating
+(&lsquo;oxide&rsquo;<sup>&dagger;</sup>) layer by quantum tunnelling;
+this effect increases exponentially with distance and so is an
+increasing problem as geometries shrink: the insulator thickness
+diminishes as well as the &lsquo;horizontal&rsquo; dimensions.
+</p>
+
+<p>
+Static power dissipation is still relatively small for most logic
+circuits but can account for a significant proportion of the power in
+memories, which have many transistors in a small space, most of which
+switch very infrequently.
+</p>
+
+<p>
+Static dissipation in logic can be reduced by power gating: placing a
+high threshold transistor in series with the power supply which is
+switched &lsquo;off&rsquo; when a set of gates is not in use.  See
+later notes.
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>Not usually SiO<sub>2</sub> any more.
+</blockquote>
+
+<hr>
+
+<p><a href="08_power.html#index">Up/back</a> to power index.</p>
+<p><a href="08b_thresholds.html">Forwards</a> to transistor thresholds.</p>
+
+<hr><hr>
+
+</body>

@@ -1,0 +1,679 @@
+<title>SystemVerilog</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column3 {
+  float: left;
+  width: 30%;
+  padding: 10px;
+}
+
+.column_space {
+  float: left;
+  width: 5%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<h1>SystemVerilog</h1>
+
+<center>
+<p style="color:green;">This is not a complete guide!<br>
+This is just here to give some glimpses at some SystemVerilog
+    additional features.</p>
+<p style="color:green;">This is included here more for interest: you
+  don't need to learn this material but you are welcome to use what
+  you can if you wish.</p>
+
+<p>You can find the full IEEE standard for SystemVerilog
+  (legitimately!) via the University's subscription to <a href="https://ieeexplore.ieee.org/document/8299595">IEEE&nbsp;Xplore</a></p>
+
+</center>
+
+<h2>For design-and-build</h2>
+
+<p>
+<a href="https://en.wikipedia.org/wiki/SystemVerilog">SystemVerilog</a>
+expands Verilog in numerous ways.  A very useful addition is the
+declaration (data type)
+<font style="font-family: 'Courier New', monospace;"><b>logic</b></font>,
+which is almost the same as
+<font style="font-family: 'Courier New', monospace;">reg</font>
+(which, remember, is not always driven by a physical <u>reg</u>ister)
+but can be driven with
+<font style="font-family: 'Courier New', monospace;">assign</font>
+too.  This is one of the extensions you're most likely to encounter
+first if you do this sort of thing in future.<br>
+Another new type is
+<font style="font-family: 'Courier New', monospace;">bit</font>
+(it can still come in arrays to form variables); these bits always
+have binary values and can't adopt 
+<font style="font-family: 'Courier New', monospace;">x</font> or
+<font style="font-family: 'Courier New', monospace;">z</font> states.
+</p>
+
+  <table>
+  <tr>
+  <th>type</th>
+  <th>Language</th>
+  <th>Effect</th>
+  <th>States</th>
+  </tr>
+  <tr>
+  <td><font style="font-family: 'Courier New', monospace;">wire&nbsp;aaa;</font></td> <td>Verilog</td> <td>Declare a <b>net</b>: a combinatorial logic value.</td>
+  <td>{0,&nbsp;1,&nbsp;X,&nbsp;Z}</td> 
+  </tr>
+
+  <tr>
+  <td><font style="font-family: 'Courier New', monospace;">reg bbb;</font></td> <td>Verilog</td> <td>A signal which may (or may not) be state holding.</td>  <td>{0,&nbsp;1,&nbsp;X,&nbsp;Z}</td> 
+  </tr>
+
+  <tr>
+  <td><font style="font-family: 'Courier New', monospace;">logic
+  &hellip;</font></td> <td>SystemVerilog</td> <td>Declare either a <b>net</b>
+  or a <b>variable</b>, depending on
+  usage.</td>  <td>{0,&nbsp;1,&nbsp;X,&nbsp;Z}</td> 
+  </tr>
+
+  <tr>
+  <td><font style="font-family: 'Courier New', monospace;">bit
+  &hellip;</font></td> <td>SystemVerilog</td> <td>Like <font style="font-family: 'Courier New', monospace;">logic</font> but can
+  only adopt one of two states.  Can still be a <i>multibit</i> variable.</td>  <td>{0,&nbsp;1}</td> 
+  </tr>
+
+  </table>
+
+<ul>
+<li>A <b>net</b> is a signal which is <i>not state-holding</i> but can
+  always be derived from its inputs at any instant.</li>
+
+<li>A <b>variable</b> is state-holding: <i>typically</i> it is the
+  output of a D-type flip-flop/register.</li>
+</ul>
+
+<p>
+These can be assigned by &lsquo;<b>Procedural
+Blocks</b>&rsquo; to help avoid pitfalls resulting from
+potential ambiguities in its predecessor.  For example
+<font style="font-family: 'Courier New', monospace;"><b>always_comb</b></font>
+can help to avoid accidental omissions in a sensitivity list, thus:
+</p>
+
+<p style="text-align:center">
+<font style="font-family: 'Courier New', monospace;">always_comb
+  a&nbsp;=&nbsp;b&nbsp;&amp;&nbsp;c;</font></p>
+<p style="text-align:center">can replace</p>
+<p style="text-align:center">
+<font style="font-family: 'Courier New', monospace;">always&nbsp;@&nbsp;(*)&nbsp;a&nbsp;=&nbsp;b&nbsp;&amp;&nbsp;c;</font></p>
+<p style="text-align:center">(although there are some subtle
+  differences here, such as the former also executing at
+  t&nbsp;=&nbsp;0).
+</p>
+
+<p>
+<font style="font-family: 'Courier New', monospace;">always_comb</font>
+blocks are also sensitive to changes in inputs to any functions called
+from within, while
+<font style="font-family: 'Courier New', monospace;">always&nbsp;@&nbsp(*)</font>
+blocks are not.
+</p>
+
+<p>
+This is restricted to <b>comb</b>inatorial blocks.  Presumably the
+idea is to ensure only &lsquo;proper&rsquo; code is enclosed, so
+providing an additional security check.  With
+<font style="font-family: 'Courier New', monospace;">always_comb</font>
+the sensitivity list is inferred by the tools (plus a
+&lsquo;bonus&rsquo; execution after
+<font style="font-family: 'Courier New', monospace;">initial</font>isation).
+Plus, any particular assigned (written) value can only be assigned
+within one such block.<br>
+(The Verilog <i>language</i> allows a variable to be written to in multiple
+<font style="font-family: 'Courier New', monospace;">always</font>
+blocks: this is generally <b>Bad Practice</b> and will be rejected by
+most/all(?) logic synthesizers.)
+<br>
+</p>
+
+<center>
+<div class="inset">
+
+<h3>Danger: a &lsquo;trap&rsquo; in Verilog</h3>
+
+<p>
+There is a nasty &lsquo;trap&rsquo; in &lsquo;old-fashioned&rsquo;
+Verilog style which, presumably, arises from it beginning as a
+Hardware <b><i>Description</i></b> Language: this is the inadvertent
+introduction of latches.
+</p>
+
+<p style="font-family: 'Courier New', monospace; text-align:left">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; always&nbsp;@&nbsp;(*)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (X) &nbsp; &nbsp; &nbsp;a&nbsp;=&nbsp;b&nbsp;+&nbsp;c;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else if (Y) a&nbsp;=&nbsp;b&nbsp;-&nbsp;c;<br>
+</p>
+
+<p>
+Verilog acts as a <i>programming</i> language, where 
+<font style="font-family: 'Courier New', monospace;">a</font> will not
+change if <i>neither</i>
+<font style="font-family: 'Courier New', monospace;">X</font> nor
+<font style="font-family: 'Courier New', monospace;">Y</font> is
+&lsquo;true&rsquo;.  This is &lsquo;natural&rsquo; in programming but
+<i>assumes</i> variable storage: when synthesized this means including
+an extra <b>latch</b> structure, which is (almost certainly) unwanted,
+and (definitely) expensive in area, power, timing and may introduce
+timing (glitch) problems in implementation.</p>
+
+<p>
+Logic synthesizers typically spot this issue and produce
+&lsquo;<font style="color:red">Warning</font>&rsquo; messages &mdash;
+which developers typically ignore!
+</p>
+
+<p>
+To avoid problems always include a definition for <i>every</i> output
+state in a <u>combinatorial</u> logic description: if/when you don't
+care, make this explicit and the synthesizer will (hopefully!) choose
+the cheapest possible implementation.  Thus:
+</p>
+
+<p style="font-family: 'Courier New', monospace; text-align:left">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; always&nbsp;@&nbsp;(*)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (X) &nbsp; &nbsp; &nbsp;a&nbsp;=&nbsp;b&nbsp;+&nbsp;c;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else if (Y)
+a&nbsp;=&nbsp;b&nbsp;-&nbsp;c;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else 
+&nbsp; &nbsp; &nbsp; &nbsp;a&nbsp;=&nbsp;'hx;
+&nbsp; &nbsp; // Don't care<br>
+</p>
+
+<p>
+It's strongly suggested this is applied as a 
+<font style="font-family: 'Courier New', monospace;">default:</font>
+in <i>all</i>
+<font style="font-family: 'Courier New', monospace;">case</font>
+ statements too, as a good habit.
+</p>
+
+</div>
+</center>
+
+<p>Similarly there are also
+<font style="font-family: 'Courier New', monospace;">always_ff</font> and
+<font style="font-family: 'Courier New', monospace;">always_latch</font>
+for registers and latches respectively, although these are (arguably)
+less of a boon.
+</p>
+
+<p>
+Finally (here) there is
+<font style="font-family: 'Courier New', monospace;"><b>final</b></font>
+which is the scheduler's complement to
+<font style="font-family:'Courier New', monospace;">initial</font>.
+This(/these) run(s) after a simulation has &lsquo;<font style="font-family:
+'Courier New', monospace;">$finish</font>ed&rsquo;.  They can be useful for
+(e.g.)  outputting results and statistics or closing files.  This is
+only useful for test code, of course.
+</p>
+
+<center>
+<div class="inset">
+
+<h3><font style="font-family: 'Courier New', monospace;"><b>initial</b></font>
+in ASICs vs. FPGAs</h3>
+
+<p>
+<font style="font-family: 'Courier New', monospace;"><b>initial</b></font>
+is used in verification code to run a thread at start-up time.  When a
+design is synthesised into an <b>FPGA</b> the synthesiser can interpret some
+<font style="font-family: 'Courier New', monospace;">initial</font>
+statements and set up the contents of memories and the state of
+registers and flip-flops.  This is because these values are downloaded
+when the FPGA is configured.
+</p>
+
+<p>
+In an <b>ASIC</b> there is no downloading!  Registers will not be
+initialised and (in Verilog terms) start with a value 
+&lsquo;<font style="font-family: 'Courier New', monospace;">X</font>&rsquo;.
+<i>This can be very important when implementing state machines, et al.</i>
+where an active &lsquo;reset&rsquo; is usually needed.  RAM must also
+be actively loaded; ROM contents must have been preprogrammed when the
+appropriate macrocell was specified.
+</p>
+
+</div>
+</center>
+
+
+<p>
+There are explicit <b>enumerated</b> types which save listing
+definitions by hand.  
+</p>
+
+
+<h4>Interfaces</h4>
+
+<p>
+For large hierarchies the inter-block wiring can become very complex
+with bundles of buses all heading in the same direction.  In old-style
+Verilog this gets complicated/messy/error-prone.  <b>Interfaces</b>
+provide a means of &lsquo;wrapping&rsquo; associated signals into more
+complex buses which can be connected as single units.
+</p>
+
+<!-- <center><p style="font-size:20pt;color:red">*** FIGURE --
+  -- (schematic) ***</p></center> -->
+
+
+<div class="row">
+  <div class="column";>
+
+<center><img src="figures/SV_schematic_A.png" alt="Schematic depicting code below." width=70%></center>
+
+<p style="font-family: 'Courier New', monospace; font-size:80%">
+module top();<br>
+&nbsp; logic &nbsp;clk;<br>
+&nbsp; logic &nbsp;reset;<br>
+&nbsp; logic &nbsp;bits_0;<br>
+&nbsp; logic &nbsp;bobs_0;<br>
+&nbsp; logic &nbsp;pieces_0;<br>
+&nbsp; logic &nbsp;bits_1;<br>
+&nbsp; logic &nbsp;bobs_1;<br>
+&nbsp; logic &nbsp;pieces_1;<br>
+<br>
+source &nbsp;source_0(.clk(clk),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.reset(reset),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bits(bits_0)),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bobs(bobs_0)),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.pieces(pieces_0));<br><br>
+source &nbsp;source_1(.clk(clk),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.reset(reset),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bits(bits_1)),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bobs(bobs_1)),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.pieces(pieces_1));<br><br>
+destination dest(.clk(clk),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.reset(reset),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bits_0(bits_0),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bobs_0(bobs_0),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.pieces_0(pieces_0),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bits_1(bits_1),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.bobs_1(bobs_1),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.pieces_1(pieces_1));<br>
+<br>
+endmodule : top<br>
+<br>
+module source(input &nbsp;logic clk,<br>
+ &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; input &nbsp;logic reset,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; output logic bits,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; output logic bobs,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; output logic pieces);<br>
+...<br>
+endmodule : source<br>
+<br>
+module destination(input &nbsp;logic clk,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;input &nbsp;logic reset,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ &nbsp;input &nbsp;logic bits_0,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ &nbsp;input &nbsp;logic bobs_0,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ &nbsp;input &nbsp;logic pieces_0,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ &nbsp;input &nbsp;logic bits_1,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ &nbsp;input &nbsp;logic bobs_1,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ &nbsp;input &nbsp;logic pieces_1);<br>
+...<br>
+endmodule : destination<br>
+
+  </div>
+
+  <div class="column";>
+
+<center><img src="figures/SV_schematic_B.png" alt="Schematic depicting code below." width=70%></center>
+
+<p style="font-family: 'Courier New', monospace; font-size:80%">
+interface bundle;<br>
+&nbsp; logic bits;<br>
+&nbsp; logic bobs;<br>
+&nbsp; logic pieces;<br>
+endinterface<br>
+<br>
+module top();<br>
+&nbsp; logic &nbsp;clk;<br>
+&nbsp; logic &nbsp;reset;<br>
+&nbsp; bundle stuff_0;<br>
+&nbsp; bundle stuff_1;<br>
+<br>
+source &nbsp;source_0(.clk(clk),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.reset(reset),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.stuff_out(stuff_0));<br><br>
+source &nbsp;source_1(.clk(clk),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.reset(reset),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.stuff_out(stuff_1));<br><br>
+destination dest(.clk(clk),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.reset(reset),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.stuff_in_0(stuff_0),<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.stuff_in_0(stuff_1));<br>
+<br>
+endmodule : top<br>
+<br>
+module source(input &nbsp;logic clk,<br>
+ &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; input &nbsp;logic reset,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; bundle stuff_out);<br>
+...<br>
+endmodule : source<br>
+<br>
+module destination(input &nbsp;logic clk,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;input &nbsp;logic reset,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;bundle stuff_in_0,<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;bundle stuff_in_1);<br>
+...<br>
+endmodule : destination<br>
+
+</p>
+
+  </div>
+
+</div>
+
+<p>
+Access to the fields within an interface follows the convention you
+might guess at.  Thus, for example, in the instance
+<font style="font-family: 'Courier New', monospace">dest</font> above,
+fields can be broken out as
+&lsquo;<font style="font-family: 'Courier New', monospace">stuff_in_0.bits</font>&rsquo;,
+&lsquo;<font style="font-family: 'Courier New', monospace">stuff_in_0.bobs</font>&rsquo;
+etc.
+</p>
+
+<h4>Structures</h4>
+
+<p>
+<i>Interfaces</i> bundle together associated wiring so multiple buses
+can be handled as one entity.  <b>Structures</b> serve a similar role
+for other elements, such as associated registers.  The syntax is very
+C-like and should be more or less intuitive for anyone used to
+programming.
+</p>
+
+<p style="font-family: 'Courier New', monospace;">
+ &nbsp; &nbsp; struct { bit [7:0] opcode; bit [23:0] addr; } IR;
+</p>
+
+<p style="color:red">(Nicked definitions from standard.)</p>
+
+<p style="font-family: 'Courier New', monospace;">
+ &nbsp; &nbsp; typedef struct {<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;bit &nbsp;[7:0] opcode;<br>
+ &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;bit [23:0] addr;<br>
+ &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;} instruction;
+ &nbsp; &nbsp; // Type defined<br>
+ &nbsp; &nbsp; instruction IR;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ &nbsp; &nbsp;
+// Stucture variable defined<br>
+</p>
+
+<h4>Arrays</h4>
+
+<p>
+Verilog syntax can be both somewhat confusing and somewhat restrictive
+in this area.  SystemVerilog at least alleviates some of the
+restrictions!  First, some terminology:
+</p>
+
+<ul>
+<li>An array can be <b>packed</b>
+ <font style="font-family: 'Courier New', monospace">logic [31:0] data;</font></li>
+<li>or <b>unpacked</b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+ <font style="font-family: 'Courier New', monospace">logic memory [0:1023];</font></li></ul>
+
+<p>
+In both cases the index is expanded across the specified range.  The
+index can be ascending or descending although it is typically
+conventional to number bits-in-a-bus, at least, in a descending
+(little-endian) sequence.<br>  A one dimensional packed array (as
+here) is sometimes called a &lsquo;<b>vector</b>&rsquo;.  Only certain
+data types may be &lsquo;packed&rsquo; although these are the elements
+you might expect, such as
+<font style="font-family: 'Courier New', monospace">reg</font></li>,
+<font style="font-family: 'Courier New', monospace">logic</font></li> etc.
+</p>
+
+<p>
+The two types can be combined, such as:
+</p>
+
+<p style="font-family: 'Courier New', monospace;">
+ &nbsp; &nbsp; logic [31:0] mem [0:1023];
+</p>
+
+<p>
+which declares a 1&nbsp;KiW memory of 32-bit words.  Access is then
+available with statements such as:
+</p>
+
+<p style="font-family: 'Courier New', monospace;">
+ &nbsp; &nbsp; data = mem[addr];
+</p>
+
+<p>
+&hellip; and this is sometimes referred to explicitly as a
+&lsquo;<b>memory</b>&rsquo;.<br>
+SystemVerilog allows more detailed indexing so that (for example) a
+byte could be extracted from the memory:
+</p>
+
+<p style="font-family: 'Courier New', monospace;">
+ &nbsp; &nbsp; data = mem[addr]<font style="color:blue">[15:8]</font>;
+</p>
+
+<p>
+(Note the position of the indices!)<br>
+It is possible to have &ndash; and combine &ndash; multiple packed and
+unpacked dimensions in arrays. <i>This can get quite confusing, so
+don't be too tempted and take care (and read the documentation!)
+before getting in too deeply.</i>
+</p>
+
+<h3>Nesting</h3>
+
+<p>
+SystemVerilog allows modules to be declared <i>within</i> other
+modules, limiting their <i>scope</i> accordingly.
+</p>
+
+
+<center>
+<div class="inset">
+
+<h3>Did you know &hellip;</h3>
+
+<p>
+Verilog can &lsquo;get at&rsquo; any signal using the
+appropriate <i>hierarchical</i> name<br>(with 
+
+&lsquo;<font style="font-family: 'Courier New', monospace;"><b>.</b></font>&rsquo;
+separators).
+</p>
+
+
+<p style="font-family: 'Courier New', monospace;">
+ &nbsp; &nbsp; local_signal = module_X.submodule_Y.signal_of_interest;
+</p>
+
+<p>
+This can be handy in verification to &lsquo;probe&rsquo; the insides
+of nested modules &ndash; perhaps with some logic functions.
+</p>
+
+</div>
+</center>
+
+
+<h2>For verification</h2>
+
+<p>
+The improvement is testbench facilities is probably the most
+significant addition.  These include (presumably) familiar concepts
+such as <b>object-oriented programming</b> and <b>string handling</b>.
+</p>
+
+<p>
+Debugging is eased with
+<a href="01d_assertions.html"><b>assertions</b></a> (also present
+in some earlier Verilog extensions, but not as formalised).
+</p>
+
+
+<center>
+<div class="inset">
+
+<h3>Debug suggestion</h3>
+
+<p>
+Typically bus signals &lsquo;hang around&rsquo; even when not in use:
+for example a memory address will possibly remain on the address bus
+after a transfer is complete.  <i><b>For display and
+      verification</b></i> (only) it can be convenient to highlight
+the value <u>only</u> during the actual transfer.<br>
+A means of doing this is to create (within the testbench) some extra
+signals for display purposes.  Something like:
+</p>
+
+
+<p style="font-family: 'Courier New', monospace;">
+ &nbsp; &nbsp; assign disp_address = (read || write) ? address : 'hXXXX;
+</p>
+
+<p>
+This makes the signal &lsquo;undefined&rsquo; (you could choose
+<font style="font-family: 'Courier New', monospace;">Z</font>
+if preferred) when not in use which makes the transfers much more
+obvious in a trace.
+</p>
+
+<p>
+<center><img src="figures/waves.png" alt="Schematic depicting code below." width=90%></center>
+</p>
+
+</div>
+</center>
+
+
+<h2>Miscellaneous</h2>
+
+<p>
+Lots of syntactic features (such as
+&lsquo;<font style="font-family: 'Courier New', monospace;">x++</font>&rsquo;)
+now work the way you might expect; loops can 
+<font style="font-family: 'Courier New', monospace;">break</font> or
+<font style="font-family: 'Courier New', monospace;">continue</font>
+and so on.  There's plenty more detailed stuff if interested and not
+enough time/space here to delve into it all.
+</p>
+
+<!--  TO DO
+
+<hr>
+Emphasis on multithreading.<p>
+
+module, program, interface, checker, package, primitive, configuration<p>
+
+subroutines, packages, configurations, hierarchy, name spaces<p>
+
+force (??)<p>
+
+arrays (vectors)<p>
+
+'logic'   ('bit' ?? - 2 state): 'logic' is 4 state.<br>
+nets and variables (s. 6.5: p.89)<p>
+
+net is a connection - value always determinable from inputs<br>
+variable is storage<p>
+
+enumeration<p>
+
+(more on parameters (assertion) ???)<p>
+
+aggregates ('structure')  ... union ... array<p>
+
+
+class (C++y stuffy) objects<p>
+
+processes {initial, always, always_comb} (last is kinda superset of<br>
+"always @ *" (always_latch, always_ff)<p>
+
+'final'<p>
+
+
+hierarchy/nesting<p>
+
+
+'logic'<p>
+
+Interfaces - encapsulate communications (clause 25)<p>
+
+
+Testbench<p>
+
+program ... endprogram (a bit like modules)<p>
+
+<hr>
+
+-->
+
+<p><a href="01_Verilog.html#index">Up</a> to Verilog index</p>
+<p>Onward to <a href="01d_assertions.html">assertions</a>.</p>
+
+<hr><hr>
+
+</body>

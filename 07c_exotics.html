@@ -1,0 +1,377 @@
+<title>CMOS</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column_70 {
+  float: left;
+  width: 70%;
+  padding: 10px;
+}
+
+.column_30 {
+  float: left;
+  width: 30%;
+  padding: 10px;
+}
+
+.column_40 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+}
+
+.column_60 {
+  float: left;
+  width: 60%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<p style="color:blue">
+This page delves into some esoteric details.  Hopefully it's a bit
+interesting and shows how the available components (MOSFETs) can be
+used in different ways; these techniques will normally be confined to
+the <i>inside</i> of standard cells (e.g. latches) or macrocells
+(e.g. SRAM) so this is low-level detail.
+</p>
+
+<h2>Pass transistors</h2>
+
+<p>
+Transistors not &lsquo;explicitly&rsquo; stacked to appropriate power supply.
+</p>
+
+<p>
+Transistor as a switch: nMOS transistor passes &lsquo;0&rsquo; but
+poor at passing a &lsquo;1&rsquo;
+</p>
+
+<center><img src="figures/pass_transistors.png" alt="Pass transistors
+ as logic elements (almost)." width=60%></center>
+
+<p>
+pMOS transistors can be employed in a similar way.
+<ul>
+  <li> pMOS passes &lsquo;1&rsquo; well
+  <li> pMOS passes &lsquo;0&rsquo; badly
+</ul>
+</p>
+
+<p>
+Note FETs are symmetrical so a &lsquo;signal&rsquo; can pass in either direction.
+</p>
+
+<hr>
+
+<h3>Pass transistors</h3>
+
+<p>
+If the gate on an nMOS transistor is grounded it is not going to be
+higher voltage than the channel (bulk) thus the transistor is
+&lsquo;off&rsquo;.  In Verilog terms the far side will be
+&lsquo;Z&rsquo; (high impedance) unless something else is driving it.
+</p>
+
+<p>
+If the gate is &lsquo;high&rsquo; then the transistor will be
+&lsquo;on&rsquo; provided that it has something to be
+&lsquo;high&rsquo; relative to.  Thus it will &lsquo;pass&rsquo; a
+&lsquo;0&rsquo; quite happily.  It will not &lsquo;pass&rsquo; a
+&lsquo;1&rsquo; because, as the output approaches &lsquo;1&rsquo; the
+transistor turns &lsquo;off&rsquo; and thus never quite gets there.
+</p>
+
+<p>
+On the other hand a pMOS transistor will happily pass a
+&lsquo;1&rsquo; but is not very good at passing a &lsquo;0&rsquo;.
+</p>
+
+<p>
+Sometimes this is adequate on its own: a lot of the time it is not so
+satisfactory.
+</p>
+
+<img src="figures/SRAM_cell.png" alt="Basic SRAM bit cell."
+ width=40% align=right>
+
+<p>
+An example of n-pass transistors is typically found in SRAM cells.
+When writing to a cell the word line is &lsquo;high&rsquo; and the bit
+lines are (strongly) driven to opposite states; the inverters are
+small<sup>&dagger;</sup> so the struggle is unequal and one side of the
+cell is pulled to (near) &lsquo;0&rsquo;.  The other side is pulled
+&lsquo;high-ish&rsquo;.  This is enough to ensure the cell is in the
+desired state and the full voltage swing will be made up (relatively
+slowly) by the back-to-back inverters.
+</p>
+
+<p>
+The inverters are small, the bit lines are big (capacitive) so when
+reading an analogue amplifier is used to compare the bit lines so a
+full-rail swing is not required.
+</p>
+
+<p>
+nMOS pass transistors are chosen because their transconductance is
+better for a given size than pMOS.<br clear=right>
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>As small as possible to get the most bits in the least area.
+</blockquote>
+
+
+<h3>Transmission Gates</h3>
+
+<img src="figures/transmission_gate.png" alt="Transmission gate schematic."
+ width=30% align=left>
+
+<p>
+nMOS passes &lsquo;0&rsquo; well but &lsquo;1&rsquo; badly.  pMOS
+passes &lsquo;1&rsquo; well but &lsquo;0&rsquo; badly.
+</p>
+
+<p>
+Acting together they can make a useful digital switch; one transistor
+dominates when switching in each direction.
+</p>
+
+<p>
+Note that <i>complementary</i> enables are required.
+</p>
+
+<p>
+A transmission gate is a switch: it will pass current (thus signals)
+in either direction.  This is useful but can also cause problems:
+without buffering &lsquo;outputs&rsquo; may have unwanted effects on
+&lsquo;inputs&rsquo;.<br clear=left>
+</p>
+
+<img src="figures/transmission_mux.png" alt="Multiplexer using
+ transmission gates internally." width=30% align=right>
+
+<p>
+Example: a multiplexer can be built using transmission gate switches
+internally; some <b>standard cells</b> may contain such structures.
+The example shown may be superior to the same functional cell using
+CMOS gates, particularly as its output driver is a simple inverter
+which has the best drive-strength-per-size of any &lsquo;gate&rsquo;.
+</p>
+
+<p>
+This type of structure also scales quite well, e.g to a 4:1 mux.<br clear=right>
+</p>
+
+
+<center>
+<div class="inset">
+
+<h3><a href="https://en.wikipedia.org/wiki/Three-state_logic">Tri-state
+    drivers</a></h3>
+
+<p>
+Whilst once using bidirectional signal wires on-chip was not unusual
+it is rarely (if ever) expedient in contemporary technology; this is
+now largely confined to inter-chip connections such as a <i>data
+    bus</i> to external devices where pin limitations and the
+particular circumstances (e.g. reading <i>or</i> writing but not both
+simultaneously) pertain.
+</p>
+
+<div class="row">
+  <div class="column_30">
+  <center><img src="figures/tristate_1.png" alt="Simple tri-state
+ driver." width=80%></center>
+  </div>
+
+  <div class="column_40">
+
+  <p>
+  The &lsquo;third&rsquo; signal state &ndash; high impedance
+  (&lsquo;Z&rsquo;) can be achieved by effectively disconnecting the
+  logic driver from the power rails (left).
+  </p>
+
+  <p>
+  <b>Buffers</b> frequently need to drive large capacitive loads.  To
+  do this effectively it may be expedient to use larger (wider)
+  transistors with only a single transistor &lsquo;stacked;&rsquo;
+  between the load and supply rail (right).  The additional gate stage
+  can provide amplification for driving a more powerful output stage.
+  </p>
+
+
+  </div>
+
+  <div class="column_30">
+  <center><img src="figures/tristate_2.png" alt="Tri-state driver
+                for large loads." width=100%></center>
+  </div>
+
+</div>
+</center>
+<hr>
+
+<p>
+<h3>Example: transparent latch</h3>
+
+<p align="center" style="color:green;">If the concept of the
+  transparent latch is not familiar there is a description in the
+  lab. manual.</p>
+
+<center><img src="figures/latch_1.png" alt="Example transparent latch schematic." width=65%></center>
+
+<p>
+This structure demonstrates:
+</p>
+
+<ul>
+<li> Transmission gates being used as a multiplexer
+<li> Fast (forward) switching path
+  <ul>
+  <li> Inverters have the &lsquo;best&rsquo; drive because they have
+    only 1 (series) transistor in the pMOS and nMOS stacks</li>
+  <li> Transmission gates are not switching the
+    signal&nbsp;&rarr;&nbsp;fast (although they add some more
+    impedance to the source)</li>
+  </ul>
+</ul>
+
+
+<h4>Latch operation</h4>
+
+<p>
+Omitting the &lsquo;off&rsquo; transmission gates:
+</p>
+
+<div class="row">
+  <div class="column">
+
+<center><img src="figures/latch_1a.png" alt="Example transparent latch
+					     schematic." width=80%><br>
+Latch enabled: transparent
+</center>
+
+
+</div>
+
+  <div class="column">
+
+<center><img src="figures/latch_1b.png" alt="Example transparent latch schematic." width=80%><br>
+Latch disabled: retaining
+</center>
+</div>
+</div>
+
+<p>
+When enabled the input flows freely through the two inverters.  The
+feedback is gated &lsquo;off&rsquo;.
+</p>
+
+<p>
+When disabled the input is disconnected and a feedback path is used to
+retain the value.  Feedback could be taken from &lsquo;Q&rsquo; but,
+typically, a separate inverter is used so that any &lsquo;noise&rsquo;
+(&lsquo;interference&rsquo;) on the output network will not risk
+flipping the state.  The feedback inverter may be made &lsquo;minimum
+size&rsquo; because it never switches a node; it is simply there to
+retain charge.
+</p>
+
+<img src="figures/latch_1c.png" alt="Example transparent latch
+				     schematic." width=40% align=right>
+
+<p>
+If the feedback inverter is sufficiently weak (maybe made weaker by
+having lengthened transistor gates) a transmission gate may be
+removed.
+</p>
+
+<p>
+Now, when switching the latch the input and feedback will drive in
+opposing directions.  As long as the input drive can switch the
+&lsquo;middle&rsquo; inverter the feedback will soon
+&lsquo;surrender&rsquo; and agree.<br clear=right>
+</p>
+
+<h4>Another latch</h4>
+
+<p>
+Just to demonstrate: a latch can be made reasonably efficiently with a
+(very) complex gate and a couple of inverters:
+</p>
+
+<center><img src="figures/latch_3.png" alt="Transparent latch using
+					     complex logic gate." width=50%><br>
+
+<p>
+Note that this has also been arranged to drive the output from an
+inverter, which gives the best output drive for its transistor sizes.
+</p>
+</center>
+
+<p>
+This is still bigger (14 transistors vs. 12 or 10) and liable to be
+slower than the transmission gate/weak feedback design.
+</p>
+
+<p>
+[More efficient latch structures are possible: space precludes &hellip;]
+</p>
+
+<hr>
+
+<p><a href="07_CMOS.html#index">Up</a> to CMOS index.</p>
+<p><a href="07b_gates.html">Back</a> to CMOS gates.</p>
+<p><a href="08_power.html">Forwards</a> to power consumption.</p>
+
+<hr><hr>
+
+</body>

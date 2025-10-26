@@ -1,0 +1,143 @@
+<title>Interconnect</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h1>Block Interconnection</h1>
+
+<p>This topic can be divided into two:</p>
+
+<div class="row";>
+
+<div class="column";>
+
+<h3>Problems of logical interfacing</h3>
+
+<ul>
+<li> Standardization of interfaces
+  <ul>
+  <li> AMBA</li>
+  <li> OCP</li>
+  <li> Wishbone</li>
+  <li> &hellip;</li>
+  </ul>
+<li> Interface operation
+</ul>
+
+
+</div>
+
+<div class="column";>
+
+<h3>Problems of physical interfacing</h3>
+
+<ul>
+<li> Skew
+  <ul>
+  <li> clock skew source to destination</li>
+  <li> bit skew in buses</li>
+  </ul>
+<li> Round trip signal delays</li>
+<li> Drive capacity</li>
+</ul>
+
+</div>
+</div>
+
+<hr>
+
+<center>
+<div class="inset">
+
+<h3>Intellectual Property (IP)</h3>
+
+<p>
+In any sizeable SoC it is likely that you will not build everything
+yourself.  Various blocks of &lsquo;Intellectual Property&rsquo; (IP)
+are available, freely or at a price, for incorporation.  into other
+designs.  This is the business model of, for example, ARM Ltd; they do
+not make chips themselves but license processors and other designs to
+Apple, Nokia &hellip;  These equipment designers will purchase rights to
+use IP blocks from multiple sources and integrate those with their own
+application-specific logic to make a purpose built chip.
+</p>
+
+<p>
+IP blocks typically come as &lsquo;black boxes&rsquo; and it is the
+function and the <i>interface</i> which are of interest to the
+developer.  Having some <b>standard interfaces</b> allows blocks to be
+composed easily.
+</p>
+
+</div>
+</center>
+
+<hr id="index";>
+
+<h3>Interconnection: links</h3>
+
+<h4>In this session</h4>
+<ul>
+<li><a href="06a_buses.html">Buses.</a></li>
+<li><a href="06b_NoC_etc.html">More complex interconnection.</a></li>
+<li><a href="09_tape_out.html">Jump ahead to packaging etc.</a></li>
+</ul>
+
+<h4>Other</h4>
+<ul>
+<li><a href="05_timing.html">Previous session's notes</a>: timing.</li>
+<li><a href="07_CMOS.html">Next session's notes</a>: CMOS circuits.</li>
+<li><a href="contents.html">Up to contents.</a></li>
+</ul>
+
+<hr>
+<hr>
+
+</body>

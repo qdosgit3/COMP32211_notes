@@ -1,0 +1,472 @@
+<title>Power domains</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Create four equal columns that float next to each other */
+.column4 {
+  float: left;
+  width: 25%;
+  padding: 10px;
+}
+
+.column80 {
+  float: left;
+  width: 80%;
+  padding: 10px;
+}
+
+.column20 {
+  float: left;
+  width: 20%;
+  padding: 10px;
+}
+
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+<hr>
+
+<h2>Power domains</h2>
+
+<img src="figures/power_domains.png" alt="Supply voltage switching" width=25% align="right">
+
+<p>
+Extending the idea of power gating, <b>different parts</b>
+of a SoC may be powered from <b>different voltages</b>.
+</p>
+
+<p>
+Slower regions can be run off reduced voltage rails.
+</p>
+
+<h4>Problems</h4>
+
+<ul>
+<ul>
+  <li> More supply distribution networks.</li>
+  <li> Different signal levels need to cross borders between domains.</li>
+</ul>
+</ul>
+
+
+<h3>Domains</h3>
+
+<p>
+On a SoC it may be appropriate to run different parts of the device
+under different conditions, such as different supply voltages.
+</p>
+
+<p>
+Lower supply voltages typically mean slower switching speeds but that
+may be acceptable for some units on a SoC.  Lower voltages will also
+reduce power consumption.
+</p>
+
+<p>
+A problem encountered with different supply voltages is the
+interpretation of signals at domain boundaries.  (This is similar to
+the problem of crossing boundaries between differently clocked
+domains, but can be resolved reliably.)
+</p>
+
+<hr>
+
+<h4>Clock Gating</h4>
+
+<p>
+A clock distribution network is a high-load net (it fans out to many
+places) which switches frequently (twice per clock cycle).  It
+therefore can be a major contributor to power dissipation.
+</p>
+
+<p>
+It is now quite common to employ clock-gating to blocks which are
+idle, even if the rest of the logic is not switching.  CAD tools will
+support this.  Note &ndash; DIY gating is dangerous: clock gating must
+not introduce <i>glitches</i> when turned on and off, nor impose
+arbitrary clock <i>skew</i>.
+</p>
+
+<p>
+The power can remain on so register/memory state is retained.
+</p>
+
+<h4>Example</h4>
+
+<p>
+It is not uncommon for an embedded processor core to go into a gated
+&lsquo;sleep&rsquo; mode whilst waiting for an interrupt; the active
+interrupt signal restarts the clock so processing resumes.
+</p>
+
+<p>
+A place where leakage power is dominant is in memory.  SRAM does not
+do much logic switching (compared to registers or logic) but does have
+a high transistor density.  If it is not being used for a period it is
+possible to reduce the supply voltage: the memory is able to retail
+its state although it cannot be accessed until the full supply is
+restored.  Whilst &lsquo;asleep&rsquo; the leakage power is reduced.
+This may be very significant in extremely low power (typically
+embedded) applications.
+</p>
+
+
+<h3>&ldquo;<a href="https://en.wikipedia.org/wiki/Dark_silicon">Dark
+    Silicon</a>&rdquo;</h3>
+
+<p>
+The ultimate power-saving option is to switch off.  &ldquo;Dark
+Silicon&rdquo; is a term coined to refer to parts of a system which
+are present but may be unpowered.
+</p>
+
+<p>
+By switching off domains of an SoC which are not in use at a
+particular time all the dissipation can be avoided, including leakage
+currents.
+</p>
+
+<p>
+This may be necessary &ndash; rather than just desirable &ndash; in
+some devices to stop the power dissipation exceeding that which keeps
+the temperature within operating limits.
+</p>
+
+<p>
+There are some disadvantages to this strategy: from the logic point of
+view it must be ensured that signals which emerge from a powered-down
+domain are clamped to harmless values.  More importantly, when
+switched off, all the register and memory (RAM) state is lost so there
+may be considerable work in restoring context when switched on
+again.<br>
+(<i>Future, non-volatile storage</i> may <i>address this, one
+  day</i>.)
+</p>
+
+<p>
+This technology may be expected proliferate as many-core processors
+become common and the need to maximise processor utilisation is no
+longer a major consideration.
+</p>
+
+<h4>Example</h4>
+
+<p>
+ARM has a mechanism called &lsquo;big.LITTLE&#8482&rsquo; which
+employs two (sets of) code-compatible ARM cores: a high-performance
+(high-power) one and a low-performance (low-power) device.  The
+high-performance core is turned on only when processing demand merits
+it and execution is then migrated to it.<br>
+More recently there might also be &lsquo;middle (sized)&rsquo;
+processors between the extremes, offering even more power/performance
+flexibility.
+</p>
+
+<p>
+Note that, to achieve high performance, various mechanisms such as
+speculation may be employed which use energy for acceleration rather
+than evaluating the actual problem.  For example, deeper pipelines
+will process more items which are, sometimes flushed and discarded.
+</p>
+
+<hr id=shifting>
+
+<h3>Level shifting</h3>
+
+<p>
+Running from different supplies can cause problems:
+</p>
+
+<center>
+<img src="figures/level_shift.png" alt="Level shift problem" width=40%>
+</center>
+
+<p>
+Static power is dissipated &hellip;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+output &lsquo;level&rsquo; may not fully switch next gate &hellip;
+</p>
+
+
+<h3>Crossing voltage domains</h3>
+
+<p>
+Normally &lsquo;ground&rsquo; is a common reference so, when crossing
+between domains with different supply rails it is the definition of
+&lsquo;high&rsquo; which will vary.  The primary problem occurs when
+an input &lsquo;high&rsquo; (say 0.8 V) may be below the threshold of
+a pMOS transistor in a higher voltage domain.  In this case the pMOS
+transistor will not turn &lsquo;off&rsquo;.  Even if the gate reads
+this signal as a &lsquo;high&rsquo; there will be a continuous current
+drawn from the supply, dissipating power in the interface transistors.
+</p>
+
+<p>
+In the case on depicted here the output (&lsquo;low&rsquo;) might be
+high enough to turn on the next nMOS transistor(s) partially too,
+propagating the problem further.
+</p>
+
+<p>
+What is needed is a reliable way of achieving the output levels in the
+new supply domain.
+</p>
+
+<h3>Level shifters</h3>
+
+<p>
+Need to transform a &lsquo;high&rsquo; when moving to a different
+supply domain.  Here's one way:
+</p>
+
+<a href="figures/level_shifter.png" target=_blank>
+<center>
+<img src="figures/level_shifter.png" alt="Level shifter circuit" width=80%>
+</center>
+</a>
+
+<p>
+In this design a &lsquo;low&rsquo; is always <span style="font-family:
+'Courier New', monospace;">0.0</span>&#160;<span style="font-family:
+'Courier New', monospace;">V</span>, so that needs no translation.
+</p>
+
+<p>
+There are many and varied level shifter designs.  In this example the
+input pulls one side of the differential amplifier low whilst not
+affecting the other.  This causes one of the pMOS transistors to turn
+&lsquo;on&rsquo; whereas the other is not sure.  The &lsquo;turned
+on&rsquo; pFET has nothing to oppose it and will pull up the gate of
+the other, turning it &lsquo;off&rsquo;.  This prevents further
+current flow through the nFETs whilst the output (or its inverse) is
+clamped to the higher voltage supply.
+</p>
+
+<p>
+This is not the fastest level shifter but it illustrates how the job
+can be done.
+</p>
+
+<h3>Alternatives</h3>
+
+<p>
+There are many other level shifter designs.  You might like to discover and
+sketch some.
+</p>
+
+
+<center>
+<div class="inset">
+
+<h4>Level shifting outside chips</h4>
+
+<p>
+If you're a microcontroller hobbyist (or sinilar) you might find a
+similar requirement at the circuit board level &mdash; typically
+between
+<span style="font-family: Courier New', monospace;">5.0</span>&#160;<span style="font-family:
+'Courier New', monospace;">V</span> and 
+<span style="font-family: 'Courier New', monospace;">3.3</span>&#160;<span style="font-family:
+'Courier New', monospace;">V</span>.
+</p>
+
+<p>
+There are <a href="https://en.wikipedia.org/wiki/Level_shifter">
+circuits</a> &ndash; including 
+<a href="https://uk.rs-online.com/web/c/semiconductors/logic-ics/translator-ics/?srsltid=AfmBOopKmve33C6r0QCzq-C_xBEggIAOd1Ed0LLvrsYJqfOBjySrgCMu"
+  target=_blank>integrated
+  circuits</a><sup>&dagger;</sup>
+&dash; to help with this.
+</p>
+
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>Supplier example: not <i>specifically</i> endorsed.
+</blockquote>
+
+</div>
+</center>
+
+<hr>
+
+<h3>DVFS</h3>
+
+<p>
+Dynamic Voltage/Frequency Scaling
+</p>
+
+<ul>
+<li> Power dissipation can be reduced (or increased) by reducing (increasing)
+clock frequency.</li>
+<li> Energy dissipation can be reduced by reducing supply voltage.</li>
+<li> Reducing supply voltage makes logic evaluate more slowly.</li>
+</ul>
+
+<p>
+If there is not much work to do:
+</p>
+
+<ul>
+<li> Reduce clock frequency &ndash; lower power but same energy/computation.</li>
+<li> Reduce supply voltage &ndash; lower energy/computation.</li>
+
+<p>
+When there is a high work demand:
+</p>
+
+<li> Increase supply voltage
+<li> Increase clock frequency
+</ul>
+
+<p>
+A similar approach may be employed if the power dissipation
+(i.e. temperature) gets too high.
+</p>
+
+
+<h3>Dynamic Voltage and Frequency Scaling</h3>
+
+<p>
+DVFS (Dynamic Voltage and Frequency Scaling) is, perhaps, currently
+falling out of favour because supply voltages are reducing such that
+there is not much &lsquo;headroom&rsquo; for scaling.  However the
+principle works like this:
+</p>
+
+<ul>
+<li> Power consumption in logic circuits is chiefly dynamic.
+<li> Dynamic power consumption is due to <i>energy</i> expenditure
+  during switching.
+  <ul>
+  <li> Thus the energy per operation is constant.  Halving the clock
+  frequency will halve the power but the job takes twice as long;
+the energy (demand on a battery) is the same.
+  </ul>
+<li> Dynamic energy consumption is dominated by the
+ <span style="font-family: Courier New', monospace;">C.V<sup>2</sup></span> term.
+<li> Halving the supply voltage divides this energy demand by <i>four</i>.
+  <ul>
+  <li> &hellip; as long as the circuit still switches fast enough that this
+term dominates: go too low and this assumption is dubious.
+  </ul>
+<li> Reducing the supply voltage slows the circuit.  Supply voltage and
+speed are (very) roughly proportional.
+</ul>
+
+<p>
+So, if it is <i>allowable</i> to run more slowly:
+</p>
+
+<ul>
+<li> Reduce the clock frequency by a factor &alpha; &hellip;
+<li> &hellip; increases time taken by a factor &alpha;.
+<li> Reduce the power supply voltage by a factor &alpha; &hellip;
+<li> &hellip; reduces energy for the whole computation by &alpha;<sup>2</sup>.
+<li> Overall <i>power</i> (heat dissipation) reduced
+  by <sup>1</sup>&frasl;<sub>&alpha;</sub><span style="font-size:10px;">3</span>.
+</ul>
+
+<blockquote style="font-size:80%;">
+These values are not exact but a reasonable &lsquo;rule-of-thumb&rsquo;.
+</blockquote>
+
+<p>
+This can be applied dynamically if the workload can be predicted, slowing down
+when there's no rush and speeding up when the demand is high.
+</p>
+
+<p>
+Note: reduce frequency before reducing supply voltage.  Increase supply voltage
+before increasing frequency.  (If you want it to work correctly!)
+</p>
+
+<hr>
+
+<h3>Power management</h3>
+
+<p>
+Power management can be vital in SoCs, especially now there are
+extreme levels of integration.  A modern SoC may be capable of
+dissipating enough power to overheat and destroy itself; thus it needs
+to keep domains not in use running at reduced power or turned off.
+This is likely to involve quite complex support from software
+(operating system), possibly with feedback from on-chip temperature
+sensors.
+</p>
+
+<p>
+There may be more facilities available than mentioned previously in
+this lecture: for example it is possible to reduce the supply voltage
+to SRAM (thus limiting leakage) such that the RAM cannot be used but
+still retains its data: good for long-duration &lsquo;sleeps&rsquo;.
+Similarly, many processors now support a <span style="font-family:
+'Courier New', monospace;">WFI</span> (&lsquo;Wait For Interrupt&rsquo;)
+instruction which gates-off the processor clock (mostly) to minimise
+activity (whirling around waiting for something to happen) when not in
+use.
+</p>
+
+<p>
+If you haven't come across it, you might also be interested to check
+out <a href="https://en.wikipedia.org/wiki/ARM_big.LITTLE">big.LITTLE</a>
+and its successors.
+</p>
+
+<p>
+These can combine with clock and supply voltage scaling, and
+temperature monitoring, and battery charge state, to deliver (in
+principle!) adequate performance with economy.
+</p>
+
+<hr>
+
+<p><a href="08_power.html#index">Up</a> to power index.</p>
+<p><a href="08b_gates.html">Back</a> to CMOS gates.</p>
+<p><a href="09_tape_out.html">Forwards</a> to ASIC production.</p>
+
+<hr><hr>
+
+</body>

@@ -1,0 +1,1172 @@
+<title>Power</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Create four equal columns that float next to each other */
+.column4 {
+  float: left;
+  width: 25%;
+  padding: 10px;
+}
+
+.column80 {
+  float: left;
+  width: 80%;
+  padding: 10px;
+}
+
+.column20 {
+  float: left;
+  width: 20%;
+  padding: 10px;
+}
+
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>Power and power distribution</h2>
+
+<img src="figures/heat_map.png" alt="Sketch of voltage/power dissipation
+				     floor plan" width=25% align=right>
+
+<p>
+Power may be important for two reasons (at least)
+</p>
+
+<ul>
+<li> Energy demands on batteries for mobile equipment
+<li> Cooling requirements
+</ul>
+
+<p>
+[Also general &lsquo;<span style="color:green">Green</span>&rsquo;
+efficiency issues.]
+</p>
+
+<p>
+The first issue is to get adequate power in to where it's needed
+</p>
+
+<ul>
+<li> The current requirement means there will be a supply voltage drop
+<li> Modelled/mapped by CAD tools
+<li> May want extra power <i>pins</i>
+</ul>
+
+<p>
+The second issue is to get the waste (heat) <i>out</i>
+</p>
+
+<ul>
+<li> Potential &lsquo;hot spots&rsquo; may be identified by CAD tools
+<li> Better to have high-power demands near to supplies
+<li> Overall power dissipation is a concern e.g. for packaging
+</ul>
+
+
+<h3>Power, Energy and Moore's law</h3>
+
+<p>
+As devices continue to shrink their energy demand per operation reduces.
+</p>
+
+<p>
+Roughly speaking:
+</p>
+
+<ul>
+<li>
+transistor gate length decreases &rArr; capacitance reduced &rArr; energy reduced
+</li>
+
+<li>
+transistor gate width decreases &rArr; capacitance reduced &rArr; energy reduced
+</li>
+
+<li>
+transistor gate &lsquo;height&rsquo; decreases &rArr; capacitance increased &rArr; energy increased
+</li>
+
+<li>
+local wiring length decreases &rArr; capacitance reduced &rArr; energy reduced
+</li>
+
+<li>
+more units integrated on chip &rArr; energy increased on <i>that</i> chip
+&rArr; power density increased
+</li>
+
+<li>
+clock speed(s) increased &rArr; power increased
+</li>
+
+<li>
+operating voltage decreased &rArr; energy decreased
+</li>
+</ul>
+
+<h3>Voltage drop</h3>
+
+<p>
+All active circuits have some demand for electric current: this
+depends on their capacitive load and their switching rate.  Load can
+be <b>extracted</b> from the layout; the <b>activity factor</b>
+(&alpha;) for the logic may be simply <i>estimated</i> or derived from
+activity in a &lsquo;typical&rsquo; set of functional simulations.
+</p>
+
+<p>
+The power distribution network is made of metal wires which have some
+inherent <b>resistance</b>.  This means that there is a <b>voltage
+drop</b> from the supply at the <i>pad ring</i> to the circuit itself.
+</p>
+
+<p>
+[The figure assumes the power is supplied from the chip's periphery,
+which is typical.]
+</p>
+
+<p>
+Thus the supply voltage at the circuit will be less that the original
+specification.  This means the circuit is operating under (slightly)
+different conditions from those intended.
+</p>
+
+<p>
+These differences must be kept within controlled bounds for the system
+to work correctly.  CAD tools allow the <i>estimation</i> of the
+voltage drop, taking into account the logic circuits, their activity
+and the power distribution wiring.  This can translate into a map
+showing where problems may occur.  The response is usually to
+supplement wiring to those areas although, more drastically, a
+different floor-plan may be required.
+</p>
+
+<center>
+<div class="inset">
+
+<h3>Some definitions</h3>
+
+<p>
+It is normal to use subscripts to locate particular parameters: thus
+&lsquo;V<sub>d</sub>&rsquo; is used for the voltage of the drain of a
+transistor.
+</p>
+
+<p>
+The convention is to &lsquo;double&rsquo; the subscript to designate
+the power supply to such terminals, thus &lsquo;V<sub>dd</sub>&rsquo;
+is the drain supply voltage (or &lsquo;power&rsquo; in the
+vernacular).  Similarly &lsquo;V<sub>ss</sub>&rsquo; (source supply
+voltage) is sometimes used for the &lsquo;low&rsquo; supply rail,
+although &lsquo;ground&rsquo;/&lsquo;GND&rsquo; is often interchanged.
+</p>
+
+<p>
+&lsquo;V<sub>cc</sub>&rsquo; (collector supply voltage) is still seen
+occasionally (and incorrectly): this is analogous to V<sub>dd</sub> in
+bipolar transistor technology.  (It's a left-over from a previous
+generation.)
+</p>
+
+</div>
+</center>
+<!--
+<hr>
+
+<h3>Where the power goes in CMOS logic</h3>
+
+<p>
+Energy = work done.
+Power = work done per unit time
+Energy
+stored
+</p>
+
+<img src="figures/power_goes.png" alt="CMOS power dissipation mechanisms" width=100%>
+
+<div class="row";>
+
+<div class="column4";>
+<center>
+Charging/discharging load<br>
+Important factors:<br>
+f &alpha; C <b>V<sub>dd</sub><sup>2</sup></b>
+</center>
+</div>
+
+<div class="column4";>
+<center>
+Crowbar when switching<br>
+Important factors:<br>
+f &alpha; V<sub>dd</sub> V<sub>th</sub>
+</center>
+</div>
+
+<div class="column4";>
+<center>
+Channel leakage<br>
+Important factors:<br>
+V<sub>dd</sub> V<sub>th</sub>
+</center>
+</div>
+
+<div class="column4";>
+<center>
+Gate leakage<br>
+Important factor:<br>
+V<sub>dd</sub>
+</center>
+</div>
+
+</div>
+
+<p>
+The dominant dissipation in active (switching) logic is the dynamic
+dissipation due to charging/ discharging load capacitance.  This
+depends on the network load,
+the <span style="color:red"><b>square</b></span> of the supply voltage
+and the amount of activity.
+</p>
+
+<p>
+The other dynamic component depends on the supply voltage, the
+transistor thresholds and the input edge speed.
+</p>
+
+<p>
+Static (leakage) currents depend on the supply voltage and (for
+sub-threshold leakage) the transistor thresholds.
+</p>
+
+<p style="color:green">
+[&lsquo;&alpha;&rsquo; is the &lsquo;activity factor&rsquo;,
+representing the probability of a signal switching on a given clock
+edge.]
+</p>
+
+
+<h3>Dynamic power dissipation</h3>
+
+<p>
+Dynamic dissipation is that which is caused by switching gates.  It is
+therefore proportional to the clock frequency; at double the frequency
+gates switch twice as often so power is doubled.  It is also related
+to the activity in the circuit: not every gate will switch on every
+cycle (except for the clock drivers) and, sometimes, logic blocks can
+be idle for long periods.
+</p>
+
+<p>
+Dynamic dissipation in CMOS circuits is made up from two components:
+the first component is related to the load capacitance of a network.
+To switch a node to &lsquo;high&rsquo; it is connected &ndash; via a
+pull-up tree &ndash; to the power supply and charge flows from there
+into the net (wires and transistors) until the voltage equalises.
+</p>
+
+<p>
+This charge is defined by: &nbsp; <span style="font-family:
+'Courier New', monospace;">Q&nbsp;=&nbsp;C.V&nbsp;</span>
+</p>
+
+<p>
+When the node discharges via the pull-down tree the charge flows to ground.
+The effect of the cycle is to move charge <span style="font-family:
+'Courier New', monospace;">Q</span> through the potential between the
+rails V, so the energy required/dissipated per cycle is: &nbsp;
+<span style="font-family:
+'Courier New', monospace;">E&nbsp;=&nbsp;Q.V&nbsp;=&nbsp;C.V<sup>2</sup></span>.
+</p>
+
+<p>
+This term does not depend on edge speeds, etc.  Note, particularly,
+that this is proportional to the <i>square</i> of the voltage: halving
+the supply voltage will reduce the energy dissipation by a factor of
+four.
+</p>
+
+<p>
+In more detail, this assumes a rail-to-rail swing of the signal.  In
+some cases this change can be reduced, saving energy, but other
+problems may ensue.
+</p>
+
+<p>
+The other dynamic dissipation comes from &lsquo;short circuit&rsquo;
+or &lsquo;crowbar&rsquo; current which results from both the pull-up
+and pull-down trees conducting (to some extent) as one turns off and
+the other turns on.  This is difficult to quantify in general as it
+depends on a number of factors, including transistor widths and which
+transistors are switching.  However there are two &lsquo;simple&rsquo;
+ways to reduce this:
+</p>
+
+<ul>
+<li> keep input edges fast &ndash; reduce the time both trees are on
+simultaneously.  This can be done by increasing the
+&lsquo;strength&rsquo; (transistor widths) of the input driving gate;
+however that, in turn, increases their capacitive load, slowing down
+their own inputs.
+
+<li> Use high threshold transistors &ndash; these will turn
+&lsquo;on&rsquo; later and &lsquo;off&rsquo; sooner, as appropriate,
+minimising time spent when charge is wasted.  However this slows down
+switching and increases the propagation delay of the gate.  This is a
+strategy better employed on gates off the <i>critical path</i>.
+</ul>
+
+<h3>Static power dissipation</h3>
+
+<p>
+Static power dissipation happens continuously, regardless of switching
+activity.  Historically it has been close to zero and therefore
+negligible except in very low power systems which are intended to do
+very little activity over very long periods using tiny batteries.
+However this source of inefficiency is increasing with technology
+advances.
+</p>
+
+<p>
+Static dissipation is basically charge <b>leakage</b> through paths where
+charge is not supposed to go.
+</p>
+
+<p>
+<b>Subthreshold leakage</b> is current through a transistor which is
+&lsquo;turned off&rsquo;.  Transistors are not switches and will
+conduct to some extent at all times.  A small current therefore flows
+through a gate even when it is not switching.
+</p>
+
+<p>
+Subthreshold leakage can be reduced by having a high transistor
+threshold.  However this slows down the gate switching speed by
+slowing &lsquo;turn on&rsquo; and possibly also decreasing the
+&lsquo;on&rsquo; transconductance.  It is gradually becoming a more
+significant component in the overall power budget as the transistor
+threshold is forced down by the need to reduce the overall supply
+voltage.
+</p>
+
+<p>
+<b>Gate leakage</b> is the leakage of charge from the transistor's
+gate to the silicon channel.  Electrons go through the thin insulating
+(&lsquo;oxide&rsquo;<sup>&dagger;</sup>) layer by quantum tunnelling;
+this effect increases exponentially with distance and so is an
+increasing problem as geometries shrink: the insulator thickness
+diminishes as well as the &lsquo;horizontal&rsquo; dimensions.
+</p>
+
+<p>
+Static power dissipation is still relatively small for most logic
+circuits but can account for a significant proportion of the power in
+memories, which have many transistors in a small space, most of which
+switch very infrequently.
+</p>
+
+<p>
+Static dissipation in logic can be reduced by power gating: placing a
+high threshold transistor in series with the power supply which is
+switched &lsquo;off&rsquo; when a set of gates is not in use.  See
+later notes.
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>Not usually SiO<sub>2</sub> any more.
+</blockquote>
+
+
+<h3>Transistor thresholds</h3>
+
+<div class="row";>
+
+<div class="column80";>
+
+<p>
+A CMOS transistor may be regarded as a <b>switch</b>.  (For digital
+purposes.)
+</p>
+
+<p>
+The <b>threshold</b> of a transistor is the gate voltage where it switches
+from &lsquo;off&rsquo; to &lsquo;on&rsquo;.
+</p>
+
+<div class="column4";>
+</div>
+<div class="column4";>
+<img src="figures/transistors_1.png" alt="pMOS threshold" width=60%>
+</div>
+<div class="column4";>
+<img src="figures/transistors_2.png" alt="nMOS threshold" width=60% align=right>
+</div>
+<div class="column4";>
+</div>
+
+</div>
+
+<div class="column20";>
+
+<img src="figures/transistors_3.png" alt="nMOS threshold displaced"
+     width=60% align=left>
+
+</div>
+
+</div>
+
+<ul>
+<li> This voltage is measured from the gate to the channel (source or drain)
+<br>
+&hellip; not always from the supply.
+
+<li> The threshold can be determined when the transistor is manufactured.
+
+<li> Applying different dopant concentrations allows the construction
+of different threshold devices &ndash; now have selections on a single
+  chip.
+</ul>
+
+<p>
+Note: the transistor threshold is not the same as the gate threshold!
+</p>
+
+<p>
+(i.e. where a logic element differentiates a logic &lsquo;<span style="font-family:
+'Courier New', monospace;">0</span>&rsquo; and
+&lsquo;<span style="font-family:
+'Courier New', monospace;">1</span>&rsquo;.)
+</p>
+
+<p>
+Different thresholds can be used to control energy flow.
+</p>
+
+<p>
+Inverter response to a (slow &ndash; for clarity) input edge:
+</p>
+
+<center>
+<img src="figures/transistor_Vth.png" alt="Threshold infulence on gate
+					   speed (& power)" width=75%>
+</center>
+
+<p>
+With <b>low threshold transistors</b> (left) the nMOS pull-down
+(<span style="color:green">green</span>) switches &lsquo;on&rsquo;
+earlier so the output edge starts sooner.  The pMOS pull-up
+(<span style="color:red">red</span>) switches &lsquo;off&rsquo; later
+so there is a significant time when they're both &lsquo;on&rsquo;
+allowing &lsquo;short circuit&rsquo; current to flow between the power
+rails.  This wastes energy.  <b>Fast but power-hungry.</b>
+</p>
+
+<p>
+With <b>high threshold transistors</b> (right) the nMOS pull-down
+switches &lsquo;on&rsquo; later so the output edge is delayed.  The
+pMOS pull-up switches &lsquo;off&rsquo; earlier so there is little (or
+possibly no) time when they're both &lsquo;on&rsquo;, minimising
+&lsquo;short circuit&rsquo; current.  <b>Low power but slow.</b>
+</p>
+
+
+<center>
+<div class="inset">
+
+<h4>&lsquo;Floating&rsquo; inputs</h4>
+
+<p>
+CMOS inputs should always be held at a logic level.  If an input is
+not connected (&ldquo;floating&rdquo;) it has a (very) high impedance and may
+adopt just about any voltage.  If it floats to somewhere between the
+logic levels then both the transistor stacks may turn &lsquo;on&rsquo;
+(to some degree) and current &lsquo;crowbars&rsquo; between the rails.
+This can be a significant power waste.
+</p>
+
+<p>
+As long as the inputs are defined logic levels this is avoided and
+only the much smaller subthreshold leakage flows.
+</p>
+
+</div>
+</center>
+
+<p>
+The threshold of a FET depends on the dopant concentrations in the
+channel and &lsquo;diffusion&rsquo; implant regions.  These are set by
+how many impurity atoms are embedded in the silicon substrate.  This
+is a statistical process as atoms impact the surface.
+</p>
+
+<p>
+For a given <i>mean</i> doping concentration, as transistor areas
+decrease the number of atoms decreases.  This means the difference of
+a few atoms more significant overall.
+</p>
+
+<p>
+The result is that the manufactured <b>threshold voltages vary</b> over an
+increasingly wide range as Moore's Law goes forwards.
+</p>
+
+
+<center>
+<div class="inset">
+
+<h4><a href="https://semiengineering.com/knowledge_centers/low-power/techniques/substrate-biasing/">Substrate biasing</a></h4>
+
+<p>
+Also called &ldquo;back-biasing&rdquo;, this is a mechanism where the
+&lsquo;bulk&rsquo; (at least locally) silicon voltage is altered to
+move the transistor thresholds.
+</p>
+
+<p>
+This can be used dynamically to influence the transistors' behaviour;
+it can also help counter threshold variations due to manufacturing
+variations (see later).
+</p>
+
+<p>
+There is, of course, an added cost, especially in generating and
+distributing extra bias supplies.  It is reported that the benefits
+are diminishing with sheinking feature  size.
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<center>
+<div class="inset">
+
+<h3>Gate threshold</h3>
+
+<p>
+Do not confuse the <i>transistor</i> threshold with a logic gate's
+threshold.  The gate threshold is the input voltage where the whole
+gate will switch its output's logic state.  This is <i>typically</i>
+around half the supply voltage.  It will vary according to the gate's
+internal structure and may be (slightly) different on different gate
+inputs due to the position of connected transistors in the
+&lsquo;stacks&rsquo;.
+</p>
+
+<p>
+Variation in <i>gate</i> threshold is a good reason to keep signal
+edges fast &ndash; to minimise differences in when they
+are <i>perceived</i> to change.
+</p>
+
+</div>
+</center>
+
+
+<h2>Transistors with different thresholds</h2>
+
+<p>
+A silicon foundry may offer a range of transistor thresholds, some
+subset of which may be available on a single SoC.  E.g.
+</p>
+
+<ul>
+<li> High-speed: low threshold, fast switching, leaky transistors
+<li> &lsquo;Normal&rsquo;: compromise
+<li> Low-power: high threshold, low leakage, slow switching
+</ul>
+
+<img src="figures/power_gate.png" alt="Example of power gating" width=25% align="right">
+
+<p>
+These may be selected as appropriate in a design.
+</p>
+
+<p>
+Example: use high-speed gates on the critical path and low-power
+gates away from there.
+</p>
+
+<p>
+Low-leakage devices can also be used to <span style="font-weight:bold;color:blue">power-gate</span> high-speed
+logic.
+</p>
+
+<ul>
+<li> Power &lsquo;off&rsquo; to curtail leakage when not in use
+<li> Power &lsquo;on&rsquo; when required
+  <ul>
+  <li> switch on necessarily slow
+(slow transistor plus time to repower gated supply)
+  </ul>
+</ul>
+
+<h3>Power gating</h3>
+
+<p>
+Power gating involves the creation of a separate, local supply rail
+for a gate of, more probably, a block of gates.  This is supplied from
+the &lsquo;real&rsquo; supply via a (large) <b>pass transistor</b>.
+</p>
+
+<p>
+When active the pass transistor conducts and the gate will switch with
+(close to) the properties of the logic transistors.  (There will be a
+slight penalty due to the additional channel impedance.)
+</p>
+
+<p>
+When the logic is inactive the power can be cut off (the pass
+transistor is high-threshold so its leakage is small) and the
+remaining charge will leak to ground, after which leakage is
+minimised.  Of course the gated &lsquo;supply&rsquo; will be highly
+capacitive (much metal wiring) which means that when it's turned on it
+will take a significant time to be restored to operating voltage; thus
+power gating needs to be managed over time.
+</p>
+
+<p>
+The slide shows a pMOS power gate: in practice, if a single transistor
+is used, it is more likely to be an nMOS device because it can be
+smaller for the same transconductance.  It is even possible to gate
+<i>both</i> supply rails to choke leakage even further.
+</p>
+
+
+<h3>More &lsquo;exotic&rsquo; FET structures</h3>
+
+<p>
+The threshold voltage is affected by the bulk silicon or
+&lsquo;body&rsquo; voltage.  It is possible to bias the body to affect
+the switching characteristics of the transistor.
+This is known as the &lsquo;<b>body effect</b>&rsquo;.
+</p>
+
+
+<img src="figures/back_gate.png" alt="Back gate: cross section" width=50% align="right">
+
+<p>
+Explicit &lsquo;<b>back gates</b>&rsquo; have also been proposed:
+these could be switched together with the &lsquo;front&rsquo; gate or,
+perhaps more easily, used to bias the channel and alter the
+transistor's threshold.<br clear=right>
+</p>
+
+<img src="figures/FinFET.png" alt="Architecture of a FinFET" width=30% align="right">
+
+<img src="figures/x_sect.png" alt="Transistor gate cross-sections" width=40% align="left">
+
+<p>
+Rather than have a planar transistor it is possible to
+&lsquo;surround&rsquo; the channel with the gate.  This is
+considerably more complex to manufacture but gives better
+electric field density in the channel, and hence more control.
+</p>
+
+<p>
+The results are higher switching speed and lower subthreshold leakage.
+</p>
+
+<p>
+Although there was a specific original meaning, such devices &ndash;
+which come in a variety of configurations &ndash; tend to all be known
+as &lsquo;<b>FinFETs</b>&rsquo;.<br clear=left>
+</p>
+
+<p>
+These, and similar, structures are of great interest both for fast
+switching and for leakage reduction.<br clear=right>
+</p>
+
+
+<center>
+<div class="inset">
+
+<h4>Ultra-low power applications</h4>
+
+<p>
+Very low power applications may have to work for years &ndash;
+possibly the lifetime of the device &ndash; of a small button cell.
+Alternatively they may need to run be <i>energy harvesting</i> from
+the environment (for example picking up energy from vibrations).
+</p>
+
+<p>
+These applications are often (very) low-performance so the dominant
+energy dissipation mode may be static leakage.
+</p>
+
+<p>
+A long-established low-power application is the wrist watch.  A
+contemporary example is the new (remotely read) gas meters where a
+single cell has to sustain 10+ years of operation.
+</p>
+
+<p>
+The design philosophy of this type of device is somewhat different
+from the typical, drive-for-more-performance- computing devices, but
+equally valid.
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<h3>Power domains</h3>
+
+
+<img src="figures/power_domains.png" alt="Supply voltage switching" width=25% align="right">
+
+<p>
+Extending the idea of power gating, <b>different parts</b>
+of a SoC may be powered from <b>different voltages</b>.
+</p>
+
+<p>
+Slower regions can be run off reduced voltage rails.
+</p>
+
+<h4>Problems</h4>
+
+<ul>
+<ul>
+  <li> More supply distribution networks.</li>
+  <li> Different signal levels need to cross borders between domains.</li>
+</ul>
+</ul>
+
+
+<h3>Domains</h3>
+
+<p>
+On a SoC it may be appropriate to run different parts of the device
+under different conditions, such as different supply voltages.
+</p>
+
+<p>
+Lower supply voltages typically mean slower switching speeds but that
+may be acceptable for some units on a SoC.  Lower voltages will also
+reduce power consumption.
+</p>
+
+<p>
+A problem encountered with different supply voltages is the
+interpretation of signals at domain boundaries.  (This is similar to
+the problem of crossing boundaries between differently clocked
+domains, but can be resolved reliably.)
+</p>
+
+<hr>
+
+<h4>Clock Gating</h4>
+
+<p>
+A clock distribution network is a high-load net (it fans out to many
+places) which switches frequently (twice per clock cycle).  It
+therefore can be a major contributor to power dissipation.
+</p>
+
+<p>
+It is now quite common to employ clock-gating to blocks which are
+idle, even if the rest of the logic is not switching.  CAD tools will
+support this.  Note &ndash; DIY gating is dangerous: clock gating must
+not introduce <i>glitches</i> when turned on and off, nor impose
+arbitrary clock <i>skew</i>.
+</p>
+
+<p>
+The power can remain on so register/memory state is retained.
+</p>
+
+<h4>Example</h4>
+
+<p>
+It is not uncommon for an embedded processor core to go into a gated
+&lsquo;sleep&rsquo; mode whilst waiting for an interrupt; the active
+interrupt signal restarts the clock so processing resumes.
+</p>
+
+<p>
+A place where leakage power is dominant is in memory.  SRAM does not
+do much logic switching (compared to registers or logic) but does have
+a high transistor density.  If it is not being used for a period it is
+possible to reduce the supply voltage: the memory is able to retail
+its state although it cannot be accessed until the full supply is
+restored.  Whilst &lsquo;asleep&rsquo; the leakage power is reduced.
+This may be very significant in extremely low power (typically
+embedded) applications.
+</p>
+
+
+<h3>&ldquo;<a href="https://en.wikipedia.org/wiki/Dark_silicon">Dark
+    Silicon</a>&rdquo;</h3>
+
+<p>
+The ultimate power-saving option is to switch off.  &ldquo;Dark
+Silicon&rdquo; is a term coined to refer to parts of a system which
+are present but may be unpowered.
+</p>
+
+<p>
+By switching off domains of an SoC which are not in use at a
+particular time all the dissipation can be avoided, including leakage
+currents.
+</p>
+
+<p>
+This may be necessary &ndash; rather than just desirable &ndash; in
+some devices to stop the power dissipation exceeding that which keeps
+the temperature within operating limits.
+</p>
+
+<p>
+There are some disadvantages to this strategy: from the logic point of
+view it must be ensured that signals which emerge from a powered-down
+domain are clamped to harmless values.  More importantly, when
+switched off, all the register and memory (RAM) state is lost so there
+may be considerable work in restoring context when switched on
+again.<br>
+(<i>Future, non-volatile storage</i> may <i>address this, one
+  day</i>.)
+</p>
+
+<p>
+This technology may be expected proliferate as many-core processors
+become common and the need to maximise processor utilisation is no
+longer a major consideration.
+</p>
+
+<h4>Example</h4>
+
+<p>
+ARM has a mechanism called &lsquo;big.LITTLE&#8482&rsquo; which
+employs two (sets of) code-compatible ARM cores: a high-performance
+(high-power) one and a low-performance (low-power) device.  The
+high-performance core is turned on only when processing demand merits
+it and execution is then migrated to it.<br>
+More recently there might also be &lsquo;middle (sized)&rsquo;
+processors between the extremes, offering even more power/performance
+flexibility.
+</p>
+
+<p>
+Note that, to achieve high performance, various mechanisms such as
+speculation may be employed which use energy for acceleration rather
+than evaluating the actual problem.  For example, deeper pipelines
+will process more items which are, sometimes flushed and discarded.
+</p>
+
+
+<h3>Level shifting</h3>
+
+<p>
+Running from different supplies can cause problems:
+</p>
+
+<center>
+<img src="figures/level_shift.png" alt="Level shift problem" width=40%>
+</center>
+
+<p>
+Static power is dissipated &hellip;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+output &lsquo;level&rsquo; may not fully switch next gate &hellip;
+</p>
+
+
+<h3>Crossing voltage domains</h3>
+
+<p>
+Normally &lsquo;ground&rsquo; is a common reference so, when crossing
+between domains with different supply rails it is the definition of
+&lsquo;high&rsquo; which will vary.  The primary problem occurs when
+an input &lsquo;high&rsquo; (say 0.8 V) may be below the threshold of
+a pMOS transistor in a higher voltage domain.  In this case the pMOS
+transistor will not turn &lsquo;off&rsquo;.  Even if the gate reads
+this signal as a &lsquo;high&rsquo; there will be a continuous current
+drawn from the supply, dissipating power in the interface transistors.
+</p>
+
+<p>
+In the case on the slide the output (&lsquo;low&rsquo;) might be high
+enough to partially turn on the next nMOS transistor(s) too,
+propagating the problem further.
+</p>
+
+<p>
+What is needed is a reliable way of achieving the output levels in the
+new supply domain.
+</p>
+
+<h3>Level shifters</h3>
+
+<p>
+Need to transform a &lsquo;high&rsquo; when moving to a different supply domain.
+Here's one way:
+</p>
+
+<a href="figures/level_shifter.png" target=_blank>
+<center>
+<img src="figures/level_shifter.png" alt="Level shifter circuit" width=40%>
+</center>
+</a>
+
+<p>
+In this design a &lsquo;low&rsquo; is always <span style="font-family:
+'Courier New', monospace;">0.0&nbsp;V</span>, so that needs no translation.
+</p>
+
+<p>
+There are many and varied level shifter designs.  The slide shows a
+typical structure.  In operation the input pulls one side of the
+differential amplifier low whilst not affecting the other.  This
+causes one of the pMOS transistors to turn &lsquo;on&rsquo; whereas
+the other is not sure.  The &lsquo;turned on&rsquo; PFET has nothing
+to oppose it and will pull up the gate of the other, turning it
+&lsquo;off&rsquo;.  This prevents further current flow through the
+NFETs whilst the output (or its inverse) is clamped to the higher
+voltage supply.
+</p>
+
+<p>
+This is not the fastest level shifter but it illustrates how the job
+can be done.
+</p>
+
+<h3>Alternatives</h3>
+
+<p>
+There are many other level shifter designs.  You might like to discover and
+sketch some.
+</p>
+
+
+<center>
+<div class="inset">
+
+<h4>Level shifting outside chips</h4>
+
+<p>
+If you're a microcontroller hobbyist (or sinilar) you might find a
+similar requirement at the circuit board level &mdash; typically
+between
+<span style="font-family: Courier New', monospace;">5.0&nbsp;V</span> and 
+<span style="font-family: 'Courier New', monospace;">3.30&nbsp;V</span>.
+</p>
+
+<p>
+There are <a href="https://en.wikipedia.org/wiki/Level_shifter">
+circuits</a> &ndash; including 
+<a href="https://uk.rs-online.com/web/c/semiconductors/logic-ics/translator-ics/?srsltid=AfmBOopKmve33C6r0QCzq-C_xBEggIAOd1Ed0LLvrsYJqfOBjySrgCMu"
+  target=_blank>integrated
+  circuits</a><sup>&dagger;</sup>
+&dash; to help with this.
+</p>
+
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>Supplier example: not <i>specifically</i> endorsed.
+</blockquote>
+
+</div>
+</center>
+
+<hr>
+
+<h3>DVFS</h3>
+
+<p>
+Dynamic Voltage/Frequency Scaling
+</p>
+
+<ul>
+<li> Power dissipation can be reduced (or increased) by reducing (increasing)
+clock frequency.</li>
+<li> Energy dissipation can be reduced by reducing supply voltage.</li>
+<li> Reducing supply voltage makes logic evaluate more slowly.</li>
+</ul>
+
+<p>
+If there is not much work to do:
+</p>
+
+<ul>
+<li> Reduce clock frequency &ndash; lower power but same energy/computation.</li>
+<li> Reduce supply voltage &ndash; lower energy/computation.</li>
+
+<p>
+When there is a high work demand:
+</p>
+
+<li> Increase supply voltage
+<li> Increase clock frequency
+</ul>
+
+<p>
+A similar approach may be employed if the power dissipation
+(i.e. temperature) gets too high.
+</p>
+
+
+<h3>Dynamic Voltage and Frequency Scaling</h3>
+
+<p>
+DVFS (Dynamic Voltage and Frequency Scaling) is, perhaps, currently
+falling out of favour because supply voltages are reducing such that
+there is not much &lsquo;headroom&rsquo; for scaling.  However the
+principle works like this:
+</p>
+
+<ul>
+<li> Power consumption in logic circuits is chiefly dynamic.
+<li> Dynamic power consumption is due to <i>energy</i> expenditure
+  during switching.
+  <ul>
+  <li> Thus the energy per operation is constant.  Halving the clock
+  frequency will halve the power but the job takes twice as long;
+the energy (demand on a battery) is the same.
+  </ul>
+<li> Dynamic energy consumption is dominated by the C.V<sup>2</sup> term.
+<li> Halving the supply voltage divides this energy demand by <i>four</i>.
+  <ul>
+  <li> &hellip; as long as the circuit still switches fast enough that this
+term dominates: go too low and this assumption is dubious.
+  </ul>
+<li> Reducing the supply voltage slows the circuit.  Supply voltage and
+speed are (very) roughly proportional.
+</ul>
+
+<p>
+So, if it is <i>allowable</i> to run more slowly:
+</p>
+
+<ul>
+<li> Reduce the clock frequency by a factor &alpha; &hellip;
+<li> &hellip; increases time taken by a factor &alpha;.
+<li> Reduce the power supply voltage by a factor &alpha; &hellip;
+<li> &hellip; reduces energy for the whole computation by &alpha;<sup>2</sup>.
+<li> Overall <i>power</i> (heat disssipation) reduced
+  by <sup>1</sup>&frasl;<sub>&alpha;</sub><span style="font-size:10px;">3</span>.
+</ul>
+
+<blockquote style="font-size:80%;">
+These values are not exact but a reasonable &lsquo;rule-of-thumb&rsquo;.
+</blockquote>
+
+<p>
+This can be applied dynamically if the workload can be predicted, slowing down
+when there's no rush and speeding up when the demand is high.
+</p>
+
+<p>
+Note: reduce frequency before reducing supply voltage.  Increase supply voltage
+before increasing frequency.  (If you want it to work correctly!)
+</p>
+
+<hr>
+
+<h3>Power management</h3>
+
+<p>
+Power management can be vital in SoCs, especially now there are
+extreme levels of integration.  A modern SoC may be capable of
+dissipating enough power to overheat and destroy itself; thus it needs
+to keep domains not in use running at reduced power or turned off.
+This is likely to involve quite complex support from software
+(operating system), possibly with feedback from on-chip temperature
+sensors.
+</p>
+
+<p>
+There may be more facilities available than mentioned previously in
+this lecture: for example it is possible to reduce the supply voltage
+to SRAM (thus limiting leakage) such that the RAM cannot be used but
+still retains its data: good for long-duration &lsquo;sleeps&rsquo;.
+Similarly, many processors now support a <span style="font-family:
+'Courier New', monospace;">WFI</span> (&lsquo;Wait For Interrupt&rsquo;)
+instruction which gates-off the processor clock (mostly) to minimise
+activity (whirling around waiting for something to happen) when not in
+use.
+</p>
+
+<p>
+If you haven't come across it, you might also bei interested to check
+out <a href="https://en.wikipedia.org/wiki/ARM_big.LITTLE">big.LITTLE</a>
+and its successors.
+</p>
+
+<p>
+These can combine with clock and supply voltage scaling, and
+temperature monitoring, and battery charge state, to deliver (in
+principle!) adequate performance with economy.
+</p>
+-->
+<hr id=index>
+
+<h3>Power: links</h3>
+
+<h4>In this session</h4>
+<ul>
+<li><a href="08a_dissipation.html">Power dissipation.</a></li>
+<li><a href="08b_thresholds.html">Transistor thresholds.</a></li>
+<li><a href="08c_power_domains.html">Power domains.</a></li>
+</ul>
+
+<h4>Other</h4>
+<ul>
+<li><a href="contents.html">Up</a> to contents.</li>
+<li><a href="07_CMOS.html">Previous session's notes</a>: CMOS.</li>
+<li><a href="09_tape_out.html">Next session's notes</a>: ASIC production.</li>
+</ul>
+
+<hr><hr>
+
+</body>

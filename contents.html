@@ -1,0 +1,269 @@
+<title>COMP32212: contents</title>
+
+<head>
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column4 {
+  float: left;
+  width: 25%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+
+</head>
+
+<body>
+<hr>
+
+<center><h1>COMP32211 (2025)</h1></center>
+
+<!--
+ class="row">
+
+<div class="column">
+<p><a href="contents.html" target="_blank">Pop out</a> or scroll
+  the iframe.  (It's built this way to minimise Blackboard
+  &lsquo;roll-forward&rsquo; nastiness.)</p>
+</div>
+
+<div class="column">
+<p align="right">Lab. manual available <a href="lab_manual.pdf">here</a>.</p>
+</div>
+
+</div>
+
+<hr>
+-->
+
+<center><h2>Contents</h2></center>
+
+<p align="center" style="color:green;">
+There may be some details to tidy up. &nbsp; <span style="font-size:30px">&#x1F642;</span><br>
+Please report any outstanding issues.
+</p>
+
+<h3>Notes</h3>
+
+<div class="row">
+
+<div class="column">
+
+<ol start=0>
+  <a href="00a_introduction.html">Introduction</a>
+  <li><a href="00b_display_systems.html">Display system overview</a></li>
+  <ul>
+  <li> <a href="00c_drawing.html">Graphics drawing introduction.</a>
+  </ul>
+
+<li><a href="01_Verilog.html">Verilog</a></li>
+  <ul>
+  <li> <a href="01a_Verilog_revision.html">Verilog revision</a></li>
+  <li> <a href="01b_Verilog_extras.html">Verilog extras</a></li>
+  <li> <a href="01c_SystemVerilog.html">SystemVerilog</a></li>
+  <li> <a href="01d_assertions.html">Assertions</a></li>
+  </ul>
+
+<li><a href="02_simulation.html">Simulation</a></li>
+  <ul>
+  <li><a href="02d_functional_sim.html">Functional simulation</a></li>
+  <li><a href="02e_parallel_sim.html">Simulation parallelism</a></li>
+  <li><a href="02f_simulation_time.html">Simulation time</a> &
+      <a href="02f_simulation_time.html#delays">delays</a></li>
+    <ul>
+    <li>Short aside on <a href="02a_event_driven_simulation.html">Event
+        Driven Simulation</a></li>
+    <li><a href="02c_trouble_with_glitches.html">Problems with glitches
+        in simulation</a></li>
+    </ul>
+  <li><a href="02h_simulation_events.html">Simulation events</a></li>
+  <li><a href="02i_simulation_init.html">Simulation initialisation</a></li>
+  <li><a href="02j_simulation_results.html">Simulation results</a></li>
+  <li><a href="02k_simulation_if_xxx.html">Simulation IFs and Unknowns</a></li>
+<!--
+  <li> <a href="02b_synth_errors.html">Synthesis errors</a></li>
+-->
+  </ul>
+
+<li><a href="03_testing.html">Design verification</a></li>
+  <ul>
+  <li>
+  <a href="03a_testing_what.html">Things to look for</a> when verifying
+     a design</li>
+  <li><a href="03b_test_coverage.html">Test coverage</a></li>
+  <li><a href="03c_test_design.html">Test design</a></li>
+  <li><a href="03d_test_ordering.html">Test ordering</a></li>
+  <li><a href="03e_test_debug.html">Debugging tests</a></li>
+  <li><a href="03f_test_delays.html">Test delays</a></li>
+  <li><a href="03g_test_tasks.html">Tasks for testing</a></li>
+  <li><a href="03h_test_reviews.html">Reviewing</a></li>
+  <li><a href="03i_test_regression.html">Regression testing</a></li>
+  </ul>
+
+<li><a href="04_tradeoffs.html">Trade-offs</a></li>
+  <ul>
+  <li><a href="04a_tradeoff_style.html">Code style</a></li>
+  <li><a href="04b_FSM_design.html">FSM design</a></li>
+  <li><a href="04c_sync_async.html">Synchronous &amp; asynchronous design</a></li>
+  <li><a href="04d_parallelism.html">Parallel design opportunities</a></li>
+  <li><a href="04e_example.html">Example: multiplication</a></li>
+  <li><a href="04f_RTL_parallelism.html">RTL parallelism</a></li>
+  </ul>
+
+</ol>
+
+</div>
+
+<div class="column">
+
+<ol start="5">
+
+<li><a href="05_timing.html">Timing &amp; clocking</a></li>
+  <ul>
+    <ul>
+    <li>Aside: <a href="05x_latches.html">Latches</a></li>
+    </ul>
+  <li><a href="05a_timing_closure.html">Timing closure</a></li>
+  <li><a href="05b_clock_domains.html">Clock domains</a></li>
+  <li><a href="05c_time_stealing.html">Time stealing</a></li>
+  <li><a href="05d_clock_generation.html">Clock generation</a></li>
+  <li><a href="05e_timing_misc.html">Timing miscellanea</a></li>
+  </ul>
+
+<li><a href="06_interconnect.html">Interconnection</a></li>
+  <ul>
+  <li><a href="06a_buses.html">Buses</a></li>
+  <li><a href="06b_NoC_etc.html">Hierarchy & NoCs</a></li>
+  </ul>
+
+<li><a href="07_CMOS.html">CMOS circuits</a></li>
+  <ul>
+  <li><a href="07a_layout.html">CMOS layout</a></li>
+    <ul>
+    <li><a href="07a_layout.html#standard">Standard cells.</a></li>
+    <li><a href="07a_layout.html#macrocells">Macrocells.</a></li>
+    </ul>
+  <li><a href="07b_gates.html">CMOS gates</a></li>
+    <ul>
+    <li><a href="07b_gates.html#complex">Complex gates</a></li>
+    </ul>
+  <li><a href="07c_exotics.html">Other CMOS structures</a>
+  </ul>
+
+<li><a href="08_power.html">Power</a></li>
+  <ul>
+  <li><a href="08a_dissipation.html">Power dissipation.</a></li>
+  <li><a href="08b_thresholds.html">Transistor thresholds.</a></li>
+  <li><a href="08c_power_domains.html">Power domains</a> (inc. 
+      <a href="08c_power_domains.html#shifting">level shifting</a>).</li>
+
+  </ul>
+
+<li><a href="09_tape_out.html">ASIC production</a></li>
+  <ul>
+  <li>More <a href="09a_CAD_tools.html">CAD tools.</a></li>
+  <li><a href="09b_production.html">Production test</a>
+  (including <a href="09b_production.html#scan">scan chains</a>).</li>
+  </ul>
+
+<li><a href="10_future.html">Further technology</a></li>
+  <ul>
+  <li><a href="10a_variability.html">Manufacturing variability.</a></li>
+  <li><a href="10b_technology.html">Newer technology.</a></li>
+  </ul>
+
+</ol>
+
+<p>&nbsp;</p><p>&nbsp;</p>
+
+<center>
+<p><a href="COMP322_notes.zip">Notes for download</a> 4&frac12;&nbsp;MiB<br>
+<span style="color:green;">(<i>fairly</i> complete &ndash; subject to some updates).</span></p>
+</center>
+
+</div>
+
+</div>
+
+<h3><a href="COMP322_slides.zip">Slides</a></h3>
+
+<div class="row">
+<div class="column4">
+&nbsp; &nbsp; &nbsp; <a href="slides/00a.pdf">Introduction</a><br>
+&nbsp; 0. <a href="slides/00b.pdf">Video systems</a><br>
+&nbsp; 1. <a href="slides/01.pdf">Verilog revisited</a><br>
+</div>
+
+<div class="column4">
+&nbsp; 2. <a href="slides/02.pdf">Simulation</a><br>
+&nbsp; 3. <a href="slides/03.pdf">Verification</a><br>
+&nbsp; 4. <a href="slides/04.pdf">Design tradeoffs</a><br>
+</div>
+
+<div class="column4">
+&nbsp; 5. <a href="slides/05.pdf">Timing</a><br>
+&nbsp; 6. <a href="slides/06.pdf">Interconnection</a><br>
+&nbsp; 7. <a href="slides/07.pdf">CMOS</a><br>
+</div>
+
+<div class="column4">
+&nbsp; 8. <a href="slides/08.pdf">Power</a><br>
+&nbsp; 9. <a href="slides/09.pdf">Production</a><br>
+10. <a href="slides/10.pdf">Future</a><br>
+</div>
+
+</div>
+
+<h3><a href="../PDF/lab_manual.pdf">Lab. manual</a> (developing)</h3>
+
+<h3>Past exam. papers</h3>
+
+<center>
+<p>
+&mdash; <a href="../Exams/Exam_15_16.pdf">2015</a>
+&mdash; <a href="../Exams/Exam_16_17.pdf">2016</a>
+&mdash; <a href="../Exams/Exam_17_18.pdf">2017</a>
+&mdash; <a href="../Exams/Exam_18_19.pdf">2018</a>
+&mdash; <a href="../Exams/Exam_19_20.pdf">2019</a>
+&mdash; <a href="../Exams/Exam_20_21.pdf">2020</a>
+&mdash; <a href="../Exams/Exam_21_22.pdf">2021</a>
+&mdash; <a href="../Exams/Exam_22_23.pdf">2022</a>
+&mdash; <a href="../Exams/Exam_23_24.pdf">2023</a>
+&mdash; <a href="../Exams/Exam_24_25.pdf">2024</a>
+&mdash;
+</p>
+
+<p style="color:green;">
+Note that there has been some evolution in the syllabus over time.<br>
+Thus some more &lsquo;distant&rsquo; papers will cover material no
+longer in the syllabus.
+</p>
+</center>
+
+<hr><hr>
+
+</body>

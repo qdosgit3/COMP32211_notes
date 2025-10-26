@@ -1,0 +1,745 @@
+<title>Interconnect: buses</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>Processor buses and implementation</h2>
+
+<p>
+This subsection explores the basic principles of a bus and
+continues to look at some standard implementations, including their
+timing characteristics.
+</p>
+
+
+
+<h2>
+&lsquo;Traditional&rsquo; bus</h2>
+
+<p>Example</p>
+
+<center>
+<img src="figures/simple_bus.png" alt="Simple bus transactions" width=70%>
+</center>
+
+
+<ul>
+<li> <b>Asynchronous</b> bus (timed by strobes from master)</li>
+  <ul>
+  <li> Timing <i>generated</i> by clocked circuit but no clock on the bus</li>
+  </ul>
+<li> Everything happens successively during cycle</li>
+<li> Cycle may be extended with &lsquo;wait&rsquo; states</li>
+</ul>
+
+<!--
+<p>
+As seen in the lab. on:
+</p>
+
+<ul>
+<li> ARM-FPGA interface</li>
+<li> Framestore SRAM</li>
+</ul>
+-->
+
+<p>
+In our SoC in the lab. this is done in the framestore SRAM interface,
+although the timing there is known and input data are resynchronised
+within the interface.
+</p>
+
+<h3>Asynchronous bus</h3>
+
+<p>
+The example above is not the only protocol for bus timing.  Another
+common approach uses an enable (CE) and a direction signal to specify
+the operation.
+</p>
+
+<center>
+<img src="figures/simple_bus_2.png" alt="More simple bus transactions" width=70%>
+</center>
+
+<p>
+Although the data is shown here as <b>unidirectional</b>, <i>off
+chip</i> buses typically use <b>bidirectional</b> data signals so must
+be either reading or writing when active.  This is due to <b>pin
+restriction</b> on the package (and wiring on the PCB).
+</p>
+
+<p>
+On chip buses are limited by distance but not (particularly)
+restricted by width because there is a considerable wiring resource on
+a chip.  However on-chip signals are now &lsquo;universally&rsquo;
+unidirectional so that electrical buffers can be inserted along the
+wire to keep switching edge speed reasonably rapid.
+</p>
+
+<center>
+<img src="figures/Interconnect_buffers.png" alt="Buffering on long
+						 signal wires" width=60%>
+</center>
+
+
+<h3>Wiring</h3>
+
+<img src="figures/Interconnect_delays.png" alt="Delay differences due
+			to signal loading" width=40% align=right>
+
+<p>
+Let's elaborate on that point.
+</p>
+
+<p>
+A simple model of &lsquo;load&rsquo; on a gate estimates a
+&lsquo;lumped<sup>&dagger;</sup>&rsquo; capacitance.  200&nbsp;&mu;m
+of wire will have twice the capacitance of 100&nbsp;&mu;m.  Assuming
+the same driver, the edge time on the longer wire will be
+correspondingly greater; thus the signal delay will be greater.
+</p>
+
+<p>
+Possible solutions:
+</p>
+
+<ul>
+<li> Increase the drive strength.</li>
+<li> Decrease the load.</li>
+</ul>
+
+<p>
+However the wires also have resistance which slows down the edge more
+at greater distances from the driver.  The first solution is therefore
+not as effective as might be though at driving longer wires.
+</p>
+
+<p>
+The load can be decreased by &lsquo;cutting&rsquo; the wire and
+inserting buffers (amplifiers) at intervals.  These also insert delay
+but keep the edges fast.
+</p>
+
+<p>
+Buffers have an input and an output so the wires, necessarily, are
+unidirectional.<br clear=right>
+</p>
+
+<center>
+<div class="inset">
+
+<h4>Buffers</h4>
+
+<p>
+The term &ldquo;buffer&rdquo; as applied here refers purely to an
+electrical amplifier.  &ldquo;Buffer&rdquo; is also used to refer to,
+for example, latches which hold data and are thus part of the logic.
+Beware of potential confusion!
+</p>
+
+</div>
+</center>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>I.e. all the capacitive load is in a single place.
+In practice it is <i>distributed</i> along the length of the wire
+which, itself, is resistive: thus the model can be somewhat more complicated.
+</blockquote>
+
+<!-- Inset?  Include figure showing RC path -->
+
+<hr>
+
+<h4>Single-master vs. multi-master buses</h4>
+
+<p>
+Simple buses are often &lsquo;single-master&rsquo;, i.e. there is only
+one <i>initiator</i> which commands all transactions.  More complex
+systems may have &lsquo;multi-master&rsquo; buses where the right to
+initiate a transaction is transferred; this typically requires some
+form of <b>arbitration</b>.
+</p>
+
+<p>
+A simple multi-master example might be a CPU with DMA support.  Here
+the CPU might act both as default bus master <i>and</i> arbiter, with
+the DMAC requesting (and being granted) bus cycles.  More complex
+systems may have more equality and an external arbiter.
+</p>
+
+<p>
+Although often still referred to as &lsquo;buses&rsquo; many SoCs have
+multiple, parallel communications channels and their &lsquo;bus&rsquo;
+structure is more akin to a Network-on-Chip (NoC).  <b>AXI</b> systems
+(q.v.) have this sort of characteristic.  This form of connection is
+probably better described as a
+&ldquo;<a href="https://en.wikipedia.org/wiki/Switched_fabric">switched
+fabric</a>&rdquo; than a &lsquo;bus&rsquo; although the
+shorter term is still in common use!
+</p>
+
+<hr>
+
+<h2>Overview of some bus standards</h2>
+
+<h3><a href="https://en.wikipedia.org/wiki/Advanced_Microcontroller_Bus_Architecture">Advanced Microcontroller Bus Architecture</a> (AMBA)</h3>
+
+<p>
+AMBA is an open standard (or set of standards) which have become a de
+facto standard for on chip interconnect.  The standards specify the
+list of signals used in the interconnection and their timing
+relationship on a cycle-by-cycle basis.  It was first introduced by
+ARM Ltd. in the 1990s and has been developed continually, since.
+</p>
+
+<p>
+AMBA comes in several &lsquo;flavours&rsquo;, including:
+</p>
+
+<ul>
+<li> Advanced Peripheral Bus (APB)</li>
+<li> Advanced High-performance Bus (AHB)</li>
+<li> Advanced eXtensible Interface (AXI)</li>
+</ul>
+
+<p>
+which are used here as examples.
+</p>
+
+<p>
+The different standards represent different points in the
+complexity/performance spectrum.  Thus APB is simple but slow &ndash;
+intended for communication with many, low-bandwidth peripheral
+devices.  Because peripheral accesses are rare in comparison with
+memory reads and writes a few slow cycles do not impact overall
+performance significantly.
+</p>
+
+<p>
+AXI is better suited for high-bandwidth communications.  An example
+would be the data bus from a memory controller which was frequently
+used.  It allows bursts of data to be communicated and several
+outstanding transactions at any time, so operations can be pipelined.
+The price is a significant increase in complexity at the interfaces.
+</p>
+
+<center>
+<div class="inset">
+
+<h4>Other standards</h4>
+
+<p>
+AMBA is not the only standard in use for on-chip interconnect.
+<a href="http://en.wikipedia.org/wiki/Open_Core_Protocol"><b>Open
+Core Protocol</b></a> (OCP) is an attempt to provide a standardised
+&lsquo;socket&rsquo; for plugging together Intellectual Property (IP)
+blocks to make a chip.  It is now supported by the
+<a href="https://en.wikipedia.org/wiki/Accellera"><b>Accellera</b> Systems
+initiative</a>; see: <a href="http://www.ocpip.org">http://www.ocpip.org</a>
+for further details.  
+</p>
+
+<p>
+The <a href="https://en.wikipedia.org/wiki/Wishbone_(computer_bus)"><b>Wishbone
+Bus</b></a> is another open source bus, used in many
+<a href="https://en.wikipedia.org/wiki/OpenCores">OpenCores</a>
+projects.  Here is the
+<a href="https://cdn.opencores.org/downloads/wbspec_b4.pdf">latest
+specification</a> (at time of writing).
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<h3><a href="https://developer.arm.com/documentation/ihi0024/latest/">Advanced Peripheral Bus (APB)</a></h3>
+
+<p>
+APB is basically a straightforward microprocessor bus.  The bus master
+puts out a command, address and (possibly) write data or (possibly)
+latches read data at the end of the cycle.
+</p>
+
+<center>
+<img src="figures/APB.png" alt="APB timing" width=70%>
+</center>
+
+<ul>
+<li> Simple</li>
+<li> Single master</li>
+<li> Used for low speed peripherals</li>
+</ul>
+
+
+<p>
+APB is a simple bus model where commands and addresses &ndash; and
+possibly write data &ndash; are output at the beginning of the bus
+cycle and any read data is read at the end of the cycle.  Thus there
+needs to be adequate time for a &lsquo;round trip&rsquo; within the
+bus cycle.
+</p>
+
+<center>
+<img src="figures/APB_op.png" alt="APB read operation" width=60%>
+</center>
+
+<p>
+The first APB spec. performed every transfer unconditionally in two
+clock cycles.  This was subsequently extended so that slow peripherals
+can insert extra &lsquo;<b>wait</b>&rsquo; states to extend the cycle
+time if they cannot respond quickly enough.  Wait states may be
+acceptable when communicating with peripheral devices because such
+accesses are infrequent so the penalty is small.
+</p>
+
+<p>
+Another extension was an error signal, so the failure (abort) of a bus
+cycle can be signalled.
+</p>
+
+<h4>Bus Errors</h4>
+
+<p>
+When a bus master is designed it is not always determined what will be on the
+other end of it.
+</p>
+
+<ul>
+<li> On a &lsquo;motherboard&rsquo; different &lsquo;expansion
+  cards&rsquo; may be inserted</li>
+<li> On a SoC the hardware is fixed &ndash; but SoC designs may differ and the
+designer may not want to customise the master each time</li>
+</ul>
+
+<p>
+A bus transaction may be successful &ndash; or it may fail for a
+number of reasons:
+</p>
+
+<ul>
+<li> Segmentation fault: the address is illegal for that process at that time:</li>
+  <ul>
+  <li> Outside the allowable range for that process.</li>
+  <li> Writing to a &lsquo;read&rsquo; only area.</li>
+  <li> User access to a privileged (operating system) address.</li>
+  </ul>
+<li> Page fault: the address is legal but there is no physical memory
+present at the time.</li>
+</ul>
+
+<p>
+Segmentation faults are typically &lsquo;fatal&rsquo; for a thread;
+page faults require some rearrangement of the memory map.
+</p>
+
+<p>
+Many of these are detected by a Memory Management Unit (MMU) before
+reaching the bus.  However, some requests are not, or cannot be,
+trapped there and cause a bus cycle.
+</p>
+
+<p>
+A bus will typically have a status signal returned from the slave
+device which indicates whether the cycle has completed successfully or
+if there was a <b>bus error</b> and it has been aborted.
+</p>
+
+<ul>
+<li> On a read bus error any returned &lsquo;data&rsquo; will be invalid.</li>
+<li> On a write bus error the write did not complete.</li>
+</ul>
+
+<h4>Example</h4>
+
+<p>
+A peripheral I/O device may have only a small number of registers
+(say&nbsp;16) but be allocated a &lsquo;page&rsquo;
+(say&nbsp;1&nbsp;KiB) of the memory map.  It could indicate if an
+access was apparently to that device but not to one of its valid
+registers.  Alternatively, it could indicate an attempt to write to a
+read-only register.
+</p>
+
+<p>
+This <i>cannot</i> be done by a typical MMU which will not resolve
+translations to individual words, only pages.
+</p>
+
+<hr>
+
+<h3><a href="https://developer.arm.com/documentation/ihi0033/latest/">Advanced
+    High-performance Bus (AHB)</a></h3>
+
+<p>
+<b>AHB</b> is a pipelined bus intended to perform one transfer per
+clock cycle.
+</p>
+
+<center>
+<img src="figures/AHB.png" alt="AHB timing" width=70%>
+</center>
+
+<ul>
+<li> Moderately complex.</li>
+<li> Multi-master via centralised arbitration.</li>
+<li> Bus cycles can be extended or aborted.</li>
+<li> Used for processor buses on medium performance devices (e.g.  ARM9).</li>
+</ul>
+
+<p>
+AHB increases performance by <b>pipelining</b>.  For example, in a read
+operation it outputs an address and status asking for the read on a
+rising clock edge.  This is decoded and selects the appropriate slave
+device.
+</p>
+
+<p>
+On the next active clock edge the slave is expected to latch the
+address and start the read.  At this point the bus master can start
+the <i>next</i> cycle.
+</p>
+
+<p>
+On the next active clock edge the master must:
+</p>
+
+<ul>
+<li> latch the first input data.</li>
+<li> provide output data if the second cycle was a write operation.</li>
+<li> start the third cycle (if appropriate).</li>
+</ul>
+
+<p>
+This sequencing allows faster bus throughput but causes certain difficulties
+when things don't go smoothly.
+</p>
+
+<ul>
+<li> If a peripheral is slow and needs to insert wait states it does this in
+the data phase.  Other peripherals need to monitor this because, if
+one is being addressed &lsquo;next&rsquo; it needs to defer starting.</li>
+
+<br>&nbsp;<br>
+<center>
+<img src="figures/AHB_timing_1.png" alt="AHB transfer timing sequence" width=70%>
+</center>
+
+
+<li> If a bus cycle is to abort the &lsquo;pipeline&rsquo; needs to be
+&lsquo;flushed&rsquo;.  All slave devices must watch for other devices
+aborting so they don't start the subsequent cycle, which may already
+be being requested.</li>
+
+<br>&nbsp;<br>
+
+<center>
+<img src="figures/AHB_timing_2.png" alt="AHB abort timing sequence" width=70%>
+</center>
+
+<ul>
+
+  <li>The wait cycle is detected by other bus targets (specifically
+  the target of the following transfer).</li>
+
+  <li>The second cycle is abandoned by all concerned: the bus becomes
+  ready without an active follow-up cycle.</li>
+
+  <li>The abort persists (whilst <font style="font-family: 'Courier
+  New', monospace;">ready</font>) causing the bus master to abort the
+  first transfer (with all cycles still &lsquo;in order&rsquo;).</li>
+
+  </ul>
+
+</ul>
+
+<p>
+Like instructions in a processor, keeping communications cycles <b>in
+    order</b> makes recovery from the exception (abort) very much simpler.
+</p>
+
+<center>
+<img src="figures/AHB_op_1.png" alt="APB read operation: phase 1" width=60%>
+
+<p>
+AHB operation is pipelined, so that as one set
+of <span style="color:red">data is transferred</span>
+the <span style="color:green">subsequent address</span> can be sent.
+</p>
+
+<img src="figures/AHB_op_2.png" alt="APB read operation: phase 2" width=60%>
+</center>
+
+<hr>
+
+<h3><a href="https://developer.arm.com/documentation/ihi0022/latest/">Advanced eXtensible Interface (AXI)</a></h3>
+
+
+<img src="figures/AXI.png" alt="AXI pipelines" width=40% align="right">
+
+<p>
+A different philosophy:
+</p>
+
+Write command/address
+Write data
+Write response
+Read command/address
+Read data/response
+
+<ul>
+<li> Oriented to <b>transactions</b> rather than &lsquo;bus cycles&rsquo;
+<li> Uses (semi-) independent channels to send information
+  <ul>
+  <li> Each channel is unidirectional
+  <li> may be pipelined
+  </ul>
+<li> <b>Latency</b> may be many cycles
+<li> <b>Throughput</b> improved by data <b>bursts</b>
+<li> May have out-of-order transaction completion.
+<li> Multi-master: in fact closer to a network than the traditional bus.
+
+<li> A <b>write</b> transaction comprises a write command {address, burst
+  size} accompanied by a burst of write data and concludes with a
+  response which may signal an abort.
+<li> A <b>read</b> transaction is similar but the data burst and
+  status response are returned together.
+<li> A transaction <b>ID</b> on each channel allows elements
+  from <b>multiple outstanding transactions</b> to be matched appropriately.
+</ul>
+
+<p>
+AXI is more like a network (or &lsquo;switched fabric&rsquo;) than a
+bus.  Transactions can be initiated from various units and will arrive
+at various destinations.  In between they may be arbitrated and
+multiplexed as desired.  The packet IDs allow steering so that the
+correct response is returned to the correct initiator.  AXI is quite
+widely supported and has gone through several generations: at time of
+writing the most recent was AXI4.
+</p>
+
+<h4>Example: Read transaction</h4>
+
+<ul>
+<li> Master sends a command on read channel specifying an address,
+data size and burst length.  Command also has an ID tag.
+<li> &hellip;  other things may happen &hellip;
+<li> Returned data burst arrives with appropriate ID tag and response status.
+  <ul>
+  <li> If okay, routed appropriately.
+  <li> If abort recovery may be complex, including receiving but discarding later data packets already in transit.
+  </ul>
+</ul>
+
+<h4>AXI: pipeline detail</h4>
+
+<p>
+Data can be pipelined to reduce the distance travelled per clock cycle
+and, consequently, allow faster clocking and higher throughput.
+</p>
+
+<p><b>Protocol</b></p>
+
+<center>
+<img src="figures/AXI_pipe.png" alt="AXI pipeline" width=60%>
+</center>
+
+<ul>
+<li> Data in a stage asserts <span style="font-family:
+'Courier New', monospace;">valid</span>, downstream.
+<li> A stage which will accept data asserts <span style="font-family:
+'Courier New', monospace;">ready</span>, upstream.
+<li> If <span style="font-family:
+'Courier New', monospace;">valid</span> <b>and</b> <span style="font-family:
+'Courier New', monospace;">ready</span> are both active, a transfer takes place.
+</ul>
+
+<p>
+This is faster than, for example, a handshake which might go through several
+states and take (no fewer than) four clock cycles to complete one operation.
+</p>
+
+<p>
+Data can move on every cycle if a pipeline stage can accept and pass on data
+simultaneously.  They may work on this assumption, providing they can cope
+with buffering data even if the output is denied.
+</p>
+
+
+<center>
+<img src="figures/AXI_timing.png" alt="AXI transfer timing sequence" width=70%>
+</center>
+
+<ul>
+<li>A Receiver ready, transmitter empty
+<li>B Transmitter just filled, attempting to output
+<li>C <b>Transfer</b>: receiver realises it needs to stall
+<li>D Stall, waiting for receiver; receiver now has capacity again
+<li>E <b>Transfer</b>: receiver wants to stall but no new data anyway
+</ul>
+
+<hr>
+
+<h3>AXI-like pipeline</h3>
+
+<img src="figures/AXI_stage.png" alt="AXI pipeline stage" width=30% align="right">
+
+<p>
+Consider a synchronous AXI pipeline stage.
+</p>
+
+<p>
+The intention is to pass data on every clock cycle.
+</p>
+
+<p>
+Data moves across an interface if both <span style="font-family:
+'Courier New', monospace;">valid</span> and <span style="font-family:
+'Courier New', monospace;">ready</span> are active.
+</p>
+
+<p>
+If you indicate (upstream) you are willing to accept data
+(<span style="font-family: 'Courier New', monospace;">ready</span>)
+that is a commitment.
+</p>
+
+<p style="color:red">
+<i>There is not time to propagate a control signal throughout the pipe!</i>
+</p>
+
+<p>
+
+<ul>
+<li> Solution 1
+  <ul>
+  <li> Don't indicate possible acceptance until you are empty
+  <li> Benefit: simple to design
+  <li> Consequence: the pipeline will never be more than half full
+  </ul>
+<li> Solution 2
+  <ul>
+  <li> Be prepared to accept new data even if you couldn't pass on the current packet
+  <li> Benefit: full bandwidth available
+  <li> Consequence: twice as many flip-flops in each stage, (half are normally unused)
+  </ul>
+</ul>
+
+<a href="figures/AXI_pipe_1.png" target=_blank><img src="figures/AXI_pipe_1.png" alt="AXI pipeline without slack" width=40% align="right"></a>
+
+<p>&nbsp</p>
+
+<h4>Single buffer per stage</h4>
+
+<p>&nbsp</p>
+
+<p>
+If a blockage propagates backwards at one stage per clock data in adjacent
+latches will collide &ndash; some data will be lost.
+</p>
+
+<p style="color:green">(Figures will &lsquo;pop out&rsquo;.)<br clear=right></p>
+
+
+<a href="figures/AXI_pipe_2.png" target=_blank><img src="figures/AXI_pipe_2.png" alt="AXI pipeline - bandwidth reduced." width=40% align="left"></a>
+
+
+<p>&nbsp</p>
+
+<p>
+With sparser occupancy data can stop safely; however throughput is
+reduced.
+</p>
+
+<p>&nbsp</p>
+
+<p>
+This is much like the traffic on a road.<br clear=left>
+</p>
+
+<a href="figures/AXI_pipe_3.png" target=_blank><img src="figures/AXI_pipe_3.png" alt="AXI pipeline with elastic buffering." width=40% align="right"></a>
+
+<p>&nbsp</p>
+
+<h4>Two buffers per stage</h4>
+
+<p>&nbsp</p>
+
+<p>
+With extra buffering it is possible to achieve &lsquo;full&rsquo;
+throughput and still stall the pipe locally.
+</p>
+
+<!-- <p style="color:red">** FIGURE ** (Animation?)</p> -->
+
+<p>&nbsp</p>
+
+<p>
+The disadvantage is the overhead in extra latches.
+</p>
+
+<p>&nbsp</p>
+
+<p>
+Note that in some pipelines there will be buffering implicit in the
+architecture to &lsquo;even out&rsquo; such flow irregularities.
+Examples could include network routers storing and forwarding
+packets.<br clear=right>
+</p>
+
+<hr>
+
+<p><a href="06_interconnect.html">Back/up</a> to Interconnection.</p>
+<p><a href="06b_NoC_etc.html">Forwards</a> to complex interconnection.</p>
+
+<hr>
+<hr>
+
+</body>

@@ -1,0 +1,442 @@
+<title>CMOS</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column_70 {
+  float: left;
+  width: 70%;
+  padding: 10px;
+}
+
+.column_30 {
+  float: left;
+  width: 30%;
+  padding: 10px;
+}
+
+.column_40 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+}
+
+.column_60 {
+  float: left;
+  width: 60%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>CMOS gates</h2>
+
+<p>
+Gates are formed using serial and parallel combinations of transistors:
+</p>
+
+<center><img src="figures/gates.png" alt="Basic CMOS gate schematics." width=60%></center>
+
+<p>
+Basic CMOS gates are always <b>inverting</b> (NOT, NAND, NOR)
+</p>
+
+<p>
+They provide a <b>load</b> on their inputs and actively <b>drive</b>
+their output.
+</p>
+
+<hr id=sizes_II>
+
+<h3>Transistor sizes II</h3>
+
+<p>
+The impedance of a transistor &lsquo;switched on&rsquo; is inversely
+proportional to its gate width.  This should be fairly obvious: double
+the width and there is twice as much material to carry the appropriate
+current density, thus twice the current.
+</p>
+
+<p>
+The impedance of the transistor is (roughly) proportional to the gate
+length; again this should be apparent from the geometry.  Normally
+(but not always) transistors are made with the minimum feasible gate
+length.
+</p>
+
+<p>
+Two &lsquo;on&rsquo; transistors in series are roughly equivalent to
+one transistor of twice the length.  (Again, check the geometry.)
+</p>
+
+<p>
+Thus a transistor &lsquo;stack&rsquo; of two transistors will have
+twice the impedance of a single transistor, &lsquo;weakening&rsquo;
+the gate's drive strength.  To counteract this the transistors' widths
+may also be doubled.  Alternatively, two parallel transistors (FETs)
+can be used.
+</p>
+
+<p>
+Bigger transistors:
+</p>
+
+<ul>
+<li> Occupy more space
+<li> Present a bigger capacitive load to their inputs (and other terminals)
+</ul>
+
+
+<h4>pMOS vs nMOS</h4>
+
+<p>
+pMOS channels are less conductive than nMOS ones (&ldquo;lower carrier
+mobility&rdquo;).  As a &lsquo;rule of thumb&rsquo; a pMOS transistor
+needs to be wider than its nMOS equivalent to provide similar
+channel impedance (or its reciprocal &lsquo;transconductance&rsquo;).
+Thus for an inverter, to provide equal rising and falling output
+edges:
+</p>
+
+<img src="figures/transistor_width_1.png" alt="Basic CMOS gate
+		       schematics." width=30% align=right>
+
+<p style="color:green">How much wider?</p>
+
+<p>
+This is hard to answer here, since the publicly available information
+is obscure and, sometimes, contradictory!  Historically, making pFETs
+about twice the width of nFETs was a fairly common rule (the author
+has done this, multiple times <span style="color:green">&#x1F642;</span>).
+This is appropriate at larger feature sizes such as 350&nbsp;nm.<br>
+<span style="color:green">2&times; has been assumed here <i>for
+  illustrative purposes</i>.</span>
+</p>
+
+<p>
+One school of thought, prevalent on the Internet, is that below these
+sizes (e.g. 90&nbsp;nm vicinity) 2&frac12;:1 or 3:1 is more
+appropriate.  On the other hand it is reported that techniques such
+as <i>straining</i> are more effective for pFETs thus <i>reducing</i>
+the ratio again to 2:1 or 1&frac12;:1.  Without personal experience
+it's hard to comment definitively, although pFETs being larger than
+their complementary nFETs still appears to hold true.
+</p>
+
+<p>
+Below around 22&nbsp;nm planar transistors become inappropriate,
+anyway.  The physics doesn't change but the structures change shape:
+more on that later.<br clear=right>
+</p>
+
+
+<h3>Transistor sizes in gates</h3>
+
+<p>
+To provide equal switching edges from gates, transistor widths are
+increased proportionate to the depth of the <b>series stack</b> they
+are in, from (appropriate) power supply to output.  Parallel
+transistors are <i>not</i> decreased in width: the assumption is that
+(worst case) only one input change (thus one transistor) will be
+responsible for the output change<sup>&dagger;</sup>.
+</p>
+
+<p>
+Thus, for NAND gates:
+</p>
+
+
+<center><img src="figures/transistor_width_2.png" alt="Basic CMOS gate schematics." width=50%></center>
+
+<p>
+The input (capacitive) load increases proportionately.
+</p>
+
+<p>
+NOR gates are &lsquo;worse&rsquo; because the pMOS transistors scale
+from a larger base; thus NAND logic is slightly preferable when
+feasible.
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>Reasonable, if you think about it.
+</blockquote>
+
+<hr>
+
+
+<center>
+<div class="inset">
+
+<h3><a href="https://en.wikipedia.org/wiki/Strained_silicon">Strained silicon</a></h3>
+
+<p>
+MOSFET function depends on its <i>charge carriers</i> (electrons &
+holes): their density and <i>mobility</i>.  Increasing
+<a href="https://en.wikipedia.org/wiki/Electron_mobility">carrier mobility</a>
+can enhance switching speed and reduce power consumption, so this
+technique is of interest!
+</p>
+
+<p>
+One way of increasing carrier mobility is to
+(physically) <i>strain</i> the silicon crystal lattice from its native
+atomic spacing.  If you're sufficiently interested you can look up
+ways this can be done; here we can be content with introducing the
+terminology.
+</p>
+
+</div>
+</center>
+
+<p>&nbsp;</p>
+
+<center>
+<div class="inset">
+
+<h3><a href="https://en.wikipedia.org/wiki/Silicon_on_insulator">Silicon
+    on insulator (SOI)</a></h3>
+
+<p>
+Instead of manufacturing the transistors on the surface of <i>bulk</i>
+silicon they can (at added cost) be &lsquo;backed&rsquo; by an
+insulating layer.  This can offer a whole list of (potential)
+advantages, such as better radiation hardening &ndash; significant in,
+for example, satellite applications.
+</p>
+
+<p>
+As an example, one term encountered in this space is Silicon on
+Sapphire (SOS), where a thin silicon layer is grown on an artificial
+sapphire substrate.  There a many other approaches which you can
+research, if interested.
+</p>
+
+</div>
+</center>
+
+<hr id="complex">
+
+<h3>Complex gates</h3>
+
+<p>
+Gates are formed using serial and parallel combinations of transistors:
+</p>
+
+<div class="row">
+  <div class="column_30">
+
+<p>
+aoi21 &ndash; and-or-invert
+</p>
+
+<p>
+&nbsp;
+</p>
+
+<p>
+if B high then Q=0<br>
+else if A1 and A2 high then Q=0<br>
+else Q = 1<br>
+</p>
+
+  </div>
+
+  <div class="column_40">
+<p>
+<center><img src="figures/complex_gate.png" alt="CMOS AND-OR-invert
+ schematic example." width=90%></center>
+</p>
+  </div>
+
+  <div class="column_30">
+
+<p>
+&nbsp;
+</p>
+
+<p>
+&nbsp;
+</p>
+
+<p>
+alternatively<br>
+if B=0 and ((A1 or A2)=0) Q = 1<br>
+else Q=0<br>
+</p>
+
+  </div>
+</div>
+
+<p>
+Basic CMOS gates are always inverting (NOT, NAND, NOR)
+</p>
+
+<p>
+They provide a load on their inputs and actively drive their output.
+</p>
+
+<hr>
+
+<h3>Complex gates</h3>
+
+<p>
+By using different, complementary series and parallel structures, more
+complex logic functions may be performed in a single evaluation stage.
+It is common for CMOS cell libraries to include a number of these
+gates.
+</p>
+
+<img src="figures/A222OI.png" alt="A *more* complex gate schematic." width=35% align=right>
+
+<h4>
+AND-OR-Invert
+</h4>
+
+<p>
+nMOS transistors are in series for each AND function and then the
+stacks are paralleled for the NOR.  Any specific AND pair of inputs
+being high will disconnect the pull-up tree and pull the output low.
+</p>
+
+<p>
+The complement has parallel pMOS transistors for the AND (either low
+may pull the output high) stacked for the NOR function, which requires
+at least one low in each pair.
+</p>
+
+<p>
+In a generalised AOI structure, different numbers of transistors
+(inputs) may be present in each &lsquo;tree&rsquo; (see previous
+figure for example).
+</p>
+
+
+<h4>
+OR-AND-Invert
+</h4>
+
+<p>
+&hellip; is basically an inversion of the AOI, swapping pMOS and nMOS
+structures.<br clear=right>
+</p>
+
+<img src="figures/O2A22OI.png" alt="An *even more* complex gate schematic." width=35% align=left>
+
+<h4>
+OR-AND-OR-Invert
+</h4>
+
+<p>
+An example of how structures can be further combined.  The theoretical
+limit will be the number of transistors which can reasonably be
+&lsquo;stacked&rsquo;.  However because there are many such possible
+gates they are not &lsquo;all&rsquo; likely to be available in a
+particular library.
+</p>
+
+<p>&nbsp;</p>
+
+<p>
+Puzzled?  There's a <a href="07z_truth_table.html">more explicit
+    description here.</a>
+<br clear=left>
+</p>
+
+<hr>
+
+<h3>Puzzle</h3>
+
+<div class="row">
+  <div class="column_40">
+
+<center>
+
+<img src="figures/puzzle.png" alt="A specialised transistor structure." width=90%>
+</center>
+ </div>
+
+  <div class="column_60">
+
+<p>
+This figure shows the transistor-level schematic of a specialised
+structure <i>based</i> on a complex gate and optimised to exploit
+common inputs.  It has only two series transistors in each
+&lsquo;tree&rsquo;.  Fewer series transistors&nbsp;&rArr;&nbsp;smaller
+(width) transistors&nbsp;&rArr;&nbsp;less capacitive load.
+</p>
+
+<p>In increasing order of difficulty, can you:</p>
+
+<ol>
+<li>Deduce the truth table.</li>
+<li>Identify a credible (familiar?!) application.</li>
+<li>The input labelled &lsquo;<span style="font-family: 'Courier New',
+ monospace;">C</span>&rsquo; has a lower input load than the other
+ inputs (only two transistors): how may this be exploited?</li>
+</ol>
+
+<p>&nbsp;</p>
+
+<p>
+Have a <u>proper</u> go before looking at the
+<a href="07x_answer.html">answer</a>.
+</p>
+
+ </div>
+ </div>
+
+<hr>
+
+<p><a href="07_CMOS.html#index">Up</a> to CMOS index.</p>
+<p><a href="07a_layout.html">Back</a> to CMOS layout.</p>
+<p><a href="07c_exotics.html">Forwards</a> to other CMOS structures.</p>
+
+<hr><hr>
+
+</body>

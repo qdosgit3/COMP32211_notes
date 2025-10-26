@@ -1,0 +1,773 @@
+<title>Display systems</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+<style>
+td {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<h1><a href="https://en.wikipedia.org/wiki/Computer_terminal#VDUs">Video
+Display Unit (VDU)</a></h1>
+
+<p>Historically derived from
+<a href="https://en.wikipedia.org/wiki/Cathode-ray_tube">Cathode Ray
+  Tube (CRT)</a> technology.</p>
+
+<center>
+<img src="figures/VDU.png" alt="VDU scanning">
+</center>
+
+<p>
+A CRT scanned the display incessantly, so needed a <b>real time</b> stream of
+pixel data.
+</p>
+
+<p>
+Although in principle LCDs could be &lsquo;abused&rsquo; here,
+the <b>standard interface</b> has been retained.
+</p>
+
+<hr>
+
+
+<h2>Analogue TV & Monitors</h2>
+
+<p>
+For many decades televisions were analogue devices which worked as
+follows:
+</p>
+
+<ul>
+
+<li> A &lsquo;spot&rsquo; was <b>raster-scanned</b> across the screen,
+     &lsquo;slowly&rsquo; in one direction (traditionally
+     left-to-right when viewed from in front) then rapidly in the
+     other direction to its starting point (&lsquo;fly-back&rsquo;).
+
+<li> Each <b>scan line</b> was displaced by a &lsquo;fixed&rsquo;
+     distance, stepping between sweeps (traditionally from top to
+     bottom); after sufficient scan-lines had been drawn the spot was
+     rapidly returned to the top line.
+
+<li> During these sweeps the spot&rsquo;s intensity was varied to
+     &lsquo;shade&rsquo; different intensities. Before, during and
+     after fly-back &ndash; both horizontal and vertical &ndash; the
+     spot was &lsquo;<b>blanked</b>&rsquo; (i.e. set to minimum
+     intensity &ndash; black) so the fly-back was invisible.
+
+<ul>
+  <li> Blanking covered an interval from near the end of a line until
+       the start of the next, and for several lines&rsquo; time for
+       vertical fly-back.
+
+  <li> Colour could be provided by directing three, independently
+       controlled spots onto adjacent
+       {<font style="color:red">red</font>, 
+        <font style="color:green">green</font>,
+        <font style="color:blue">blue</font>} phosphors.
+</ul>
+
+</ul>
+
+</p>
+The display generated is digital in the vertical dimension (it has
+discrete scan lines) but analogue horizontally as the spot sweeps
+continuously and its intensity is varied in real time.
+</p>
+
+<p>
+For a television it is important that the picture is displayed at the
+same rate as it is broadcast!  To achieve this, synchronisation
+signals are sent to initiate each fly-back. The display has
+Phase-Locked Loops (PLLs) which regulate its scan rates and these are
+governed by these &lsquo;<b>sync. pulses</b>&rsquo;.  Blanking is
+initiated some time before the sync. pulse (known as the &lsquo;front
+porch&rsquo;) and persists for some time afterwards (the &lsquo;back
+porch&rsquo;).
+</p>
+
+<p>
+Horizontal and vertical synchronisation is the same, in principle,
+although the vertical timing is much slower. The interval between
+vertical syncs. sets the <b>frame rate</b> of the display.  Analogue
+broadcast TV is an old standard and has/had relatively long blanking
+intervals when compared with the active video time.
+</p>
+
+<h3>Computer Interfaces (examples)</h3>
+
+<p>
+CRT computer monitors were derived from TV technology. The more modern
+devices have proportionately smaller blanking times so most of the time the
+interface is carrying active (useful) signals, but the principle is the same.
+</p>
+
+<h4><a href="https://en.wikipedia.org/wiki/VGA_connector">Video Graphics Array (VGA)</a></h4>
+
+<img src="figures/VGA_connector.png" alt="VGA connector" align="right" width=20%>
+
+<p>
+An ageing, though still useful, interface is the VGA, which
+has <b>analogue</b> signals driving the colour intensities and digital
+(true/false) sync. indicators.
+</p>
+
+<p>
+The use of analogue signals necessitates Digital to Analogue
+Converters (DACs) for the colour signals and makes electrical noise
+pick-up more of a problem.
+</p><br clear="right">
+
+
+<h4><a href="https://en.wikipedia.org/wiki/Digital_Visual_Interface">Digital
+Visual Interface (DVI)</a></h4>
+
+<center>
+<img src="figures/DVI.png" alt="DVI connector" width=35% align="right">
+</center>
+
+<ul>
+<li> <i>Primarily</i> digitally coded channels
+<li> Differential signal pairs in each colour
+  <ul>
+  <li>Not all the connections are implemented in all variants
+  </ul>
+<li> Two pixel channels (available) to increase potential bandwidth
+<li> Display Data Channel (DDC) for monitor type/status/control
+  <ul>
+  <li>Discover a particular monitor's resolution,
+  <a href="https://en.wikipedia.org/wiki/Display_aspect_ratio">aspect
+  ratio</a> etc. 
+  </ul>
+<li> Analogue signals for backwards compatibility
+</ul>
+
+<p>
+There are various DVI standards: DVI-A is a backward-compatible
+Analogue interface, DVI-D is the Digital form and DVI-I Integrates the
+two. In some digital interfaces, having two parallel links improves
+bandwidth allowing higher definition displays.
+</p>
+
+<p>
+As an example, in <b>DVI-D</b> high-speed digital data is conveyed on
+multiple serial channels.  Each channel comprises a Current Mode Logic
+(CML) twisted-wire differential pair; this helps to improve noise
+immunity. The data is encoded using a form of 8b/10b encoding.
+</p>
+
+<p>
+Data is sent uncompressed and in real time, thus the general pattern
+of the output scan is similar to that used for earlier displays such
+as CRTs.
+</p><br clear="right">
+
+
+<center>
+<div class="inset">
+
+<h3><a href="https://en.wikipedia.org/wiki/8b/10b_encoding">8b/10b encoding</a></h3>
+
+<p>
+In summary, when sending data across a synchronous serial line it is
+necessary to include enough information for the receiver to recover
+the clock (to discriminate between adjacent bits) as well as read the
+data itself.  Clearly a pure binary signal is not adequate as it may
+consist of many consecutive &lsquo;0&rsquo;s or consecutive
+&lsquo;1&rsquo;s.
+</p>
+
+<p>
+Many coding schemes have been devised. The link can only be switched
+at a certain maximum rate; to get the best useful bandwidth, a scheme
+needs to provide &lsquo;enough&rsquo; information to recover the clock
+but not so much redundancy that the data rate is compromised.
+</p>
+
+<p>
+8b/10b is one such scheme which codes 8 bits of data into 10 bit-time
+symbols (i.e. has a constant 25% overhead). It was first patented (now
+expired) by IBM in the 1980s.
+</p>
+
+<p>
+An important property is that it has
+<a href="https://en.wikipedia.org/wiki/DC_bias">DC balance</a>
+&ndash; meaning that, averaged over time, the <i>symbols</i> contain
+the same number of &lsquo;0&rsquo;s and &lsquo;1&rsquo;s. This
+requires two possible codes per 8-bit byte.
+</p>
+
+<p>
+When symbols with insufficient transitions for clock recovery are
+discarded there are 268 legal codes, which allows any 8-bit data value
+to be sent plus allowing some control codes
+(&ldquo;<a href="https://en.wikipedia.org/wiki/8b/10b_encoding#Control_symbols">K-codes</a>&rdquo;)
+for the link (which the user need not know about).
+</p>
+
+<p>
+8b/10b is in common use, including for
+<a href="https://en.wikipedia.org/wiki/Digital_Visual_Interface">DVI</a>,
+<a href="https://en.wikipedia.org/wiki/PCI_Express">PCI Express</a>,
+<a href="https://en.wikipedia.org/wiki/InfiniBand">Infiniband</a>,
+<a href="https://en.wikipedia.org/wiki/SATA">SATA</a> &hellip;
+</p>
+
+</div>
+</center>
+
+<h4><a href="https://en.wikipedia.org/wiki/HDMI">High-Definition
+Multimedia Interface (HDMI)</a></h4>
+
+<img src="figures/HDMI.png" alt="HDMI connector" width=40% align="right">
+
+<!-- https://web.archive.org/web/20160305072940/http://www.microprocessor.org/HDMISpecification13a.pdf -->
+
+<p>
+HDMI is basically similar to DVI-D, only providing a single set of
+digital channels (no analogue).  HDMI uses the blanking period between
+active video scans to encode control and other information, such as
+audio channels in &ldquo;data islands&rdquo;.
+</p>
+
+<p>
+The data may be encoded in ways other than RGB
+(e.g. <a href="https://en.wikipedia.org/wiki/YCbCr">Y&prime;CbCr</a>).
+</p>
+
+<p>
+A single, serial Consumer Electronics Control (CEC) channel is also
+included to carry data such as that from &lsquo;remote control&rsquo;
+handsets.
+</p><br clear="right">
+
+<hr>
+
+
+<center>
+<div class="inset">
+
+<h3><a href="https://en.wikipedia.org/wiki/Display_Data_Channel">Display
+    Data Channel (DDC)</a></h3>
+
+<p>
+With the economic availability of LCD (Liquid Crystal Display)
+flat-panel displays came a wider range of displays. In particular, the
+typical aspect ratio of displays has moved from 4:3 to 16:9. Rather
+than distorting the picture, a better solution is to output the
+display in an appropriate form but this requires the computer to be
+aware of the type of display.
+</p>
+
+<p>
+The first forms of data sensing merely detected the monitor type.
+Current communications are more sophisticated with the computer
+communicating with an embedded controller on the monitor allowing the
+downloading of information on a monitor's aspect ratio, resolution,
+orientation et cetera. If you are sufficiently interested you can look
+up &ldquo;EDID&rdquo; (Extended Display Identification Data). With
+some it is also possible to write commands to the monitor, for
+instance to control brightness or contrast.
+</p>
+
+<p>
+The usual DDC is based on the two-wire
+<a href="https://en.wikipedia.org/wiki/I2c">I<sup>2</sup>C</a>
+bus which allows fairly low bandwidth communication using a
+bidirectional serial protocol.  This only requires a small addition to
+the connector and wiring requirement.
+</p>
+
+<p>
+The information available from a monitor can identify the manufacturer
+and model as well as the different resolutions which are supported,
+the timing characteristics, colour resolution etc. There may be a
+&lsquo;preferred&rsquo; mode which the monitor is designed to use.
+</p>
+
+</div>
+</center>
+
+<p></p>
+
+
+<h4><a href="https://en.wikipedia.org/wiki/DisplayPort">DisplayPort</a></h4>
+
+<img src="figures/DisplayPort.png" alt="DisplaPort connector" width=40% align="right">
+
+<p>
+DisplayPort is a (comparatively) more recent departure; it uses
+a <i>similar</i> physical interface with sets of differential signals
+but transmits its data (video, audio &amp; other) as <i>packets</i>
+rather than a real-time stream.
+</p>
+
+<p>
+DisplayPort has been defined so that it can be connected to earlier
+standards using <i>passive</i><sup>&dagger;</sup> as well as active
+translation.
+</p>
+
+<p>
+However, we drift from the main topic &hellip;<br clear="right">
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>I.e. an appropriate cable which does not need a
+power supply.
+</blockquote>
+
+<hr>
+
+
+<h2>VDU controller</h2>
+
+<p>
+The VDU controller's job is to:
+</p>
+
+<ul>
+<li> Generate the timing signals for active, blanking and sync. phases
+<li> Generate addresses and read the frame store memory to determine
+pixel values (colours) when appropriate
+<li> Serialise the pixel values and send them to the display at the pixel
+rate
+</ul>
+
+<center><img src="figures/video_timing.png" alt="Video timing" width=50%></center>
+
+<p>
+It is a fairly simple state machine although the various parameters
+may be programmable for different display hardware and screen
+resolutions.
+</p>
+
+<hr>
+
+<h2>Frame store</h2>
+
+<p>
+Based on a <b>2D array</b> of memory (<b>frame store</b>) with a
+&lsquo;numeric&rsquo; representation of a <b>pixel</b>'s colour.
+</p>
+
+<center>
+<img src="figures/frame_store.png" alt="Frame store address & data
+					format" width=60%>
+</center>
+
+<p>
+The display is made of pixels (&lsquo;picture elements&rsquo;) which
+are &lsquo;dots&rsquo;; typically these are rectangular and preferably
+more-or-less square. The screen comprises a 2D array of pixels at a
+particular resolution (vertical & horizontal).
+</p>
+
+<p>
+Each location has an <b>address</b>; this may be a byte, or several
+bytes, or even less than a byte.<br>
+(The first address does not <i>have</i> to be 0000_0000.)
+</p>
+
+<p>
+Each pixel's data represents a colour: e.g. one byte/pixel gives
+256 possible colours.
+</p>
+
+<p>
+Colours are often separated into <font style="color:red;"><b>R</b>ed</font>,
+<font style="color:green;"><b>G</b>reen</font> and
+<font style="color:blue;"><b>B</b>lue</font> intensities.
+</p>
+
+<p>
+An LCD has physical pixels which determine its maximum resolution.
+Lower resolution is possible by shading adjacent groups of pixels in
+the same way: for example a square of four physical pixels could
+represent a single logical one. If the mapping is non-integer then
+some distortion may occur so similar pixels may look <i>slightly</i>
+different <i>reallly</i> close up.  Modern displays have very small
+pixels so the effect is less noticeable than it once was.
+</p>
+
+<p>
+A standard, but now &lsquo;low&rsquo;, resolution display is the
+640&times;480 VGA (Video Graphics Array). This is specified for the older
+4:3 monitor aspect ratio.
+</p>
+
+<p>
+The pixel shade/colour is held in a memory called a <b>frame
+store</b>. Pixels are read successively from the frame store and
+serialised onto the display. A complete frame refresh is done
+frequently enough to allow successive frames to give the impression of
+movement and to avoid disturbing flickering. For computer monitors
+typical <b>frame rates</b> are in the region 50-100&nbsp;Hz.
+</p>
+
+<p>
+Colour displays are now standard. Each pixel has a colour which is
+specified by a number of bits. The usual representation for computers
+is to code intensities of the colours Red, Green and Blue (RGB)
+separately. This works because human eyes have a limited range of
+colour sensors; the only colours we actually perceive are centred in
+these spectral bands and other colours (such as yellow) are perceived
+from appropriate mixtures of stimuli (red & green for yellow).
+</p>
+
+<p>
+The colour outputs are &lsquo;analogue&rsquo; (i.e. multi-levelled)
+outputs where the number of bits used determines how many shades are
+available. Human eyes are not very sensitive to colour intensities so
+8 bits per colour is more than adequate (especially for blue, where
+perception is worse). Eight bits is, of course, a convenient number
+for digital computer implementation.<br>
+The conversion from the digital representation was historically done
+at the computer &lsquo;end&rsquo; but modern interfaces (HDMI etc.)
+use digital interfaces and the standard carries eight bits for each
+colour.
+</p>
+
+<p>
+Having three colours is less convenient, so often the entire pixel is
+mapped into 32 bits; the extra 8 bits can find other uses which need
+not concern us.
+</p>
+
+
+<h3>Addressing</h3>
+
+<p>
+Note: the traditional address mapping is to have the lowest address at
+the top-left corner and increment addresses in rows. Thus the x axis
+runs left to right and the y axis top to bottom.  Thus to move right
+from one pixel address to the next means adding &lsquo;1&rsquo; to the
+address where that &lsquo;1&rsquo; is one <u>pixel</u> address.  In a
+typical byte-addressed memory this might, <i>numerically</i> be
+>b>4</b> in a &lsquo;full colour&rsquo; display, with 32-bits
+(4&nbsp;bytes) per pixel.
+</p>
+
+<p>
+To move down one pixel (i.e.&nbsp;y&nbsp;:=&nbsp;y&nbsp;+&nbsp;1)
+requires adding the length of a row (in pixels) to the address.
+If the frame store width was 1024 pixels, moving down one
+pixel means adding 4&times;1024&nbsp;=&nbsp;4096 to the address.
+</p>
+
+<p>
+To calculate the address of pixel (x, y):
+</p>
+
+<img src="figures/displayed_fs.png" alt="Display as subset of frame store" align="right" width=30%>
+
+<p>
+address&nbsp;=&nbsp;screen_start_address&nbsp;+&nbsp;(y&nbsp;&times;&nbsp;width_in_pixels&nbsp;+&nbsp;x)&nbsp;&times;&nbsp;bytes_per_pixel
+</p>
+
+<p>
+A frame store can be larger than the displayed area, although this may
+waste some memory. It could be made smaller, too, but that would make
+little sense!
+</p>
+
+<p>
+Typical screen widths (e.g.&nbsp;640, 1024, 1280) are intended to make
+these multiplications easy, typically by having factors which are
+&lsquo;mostly&rsquo; powers of&nbsp;2, which can be simplified to bit
+shifts.  (Note that the &lsquo;y&rsquo; coordinate multiplier here
+refers to the <i>framestore</i> coordinates if they differ from the
+displayed memory width.)
+</p><br clear=right>
+
+<div class="row">
+<!--  <div column-width: 200px; class="column" style="background-color:#aaa;"> -->
+
+  <div class="column">
+<center>
+  <table>
+  <tr>
+  <th>Resolution</th>
+  <th>Aspect ratio</th>
+  <th>Width, factored</th>
+  <th>KiPixels</th>
+  </tr>
+  <tr>
+  <td>640&times;480</td> <td>4:3</td> <td>2<sup>7</sup>&nbsp;&times;&nbsp;5<br>
+(=&nbsp;2<sup>9</sup>&nbsp;&plus;&nbsp;2<sup>7</sup>)
+</td><td>300</td>
+  </tr>
+  <tr>
+  <td>800&times;600</td> <td>4:3</td> <td>2<sup>5</sup>&nbsp;&times;&nbsp;5<sup>2</sup></td><td>468&frac34;</td>
+  </tr>
+  <tr>
+  <td>1024&times;768</td> <td>4:3</td> <td>2<sup>10</sup></td><td>768</td>
+  </tr>
+  <tr>
+  <td>960&times;540</td> <td>16:9</td> <td>2<sup>10</sup>&nbsp;&minus;&nbsp;2<sup>6</sup></td><td>506&frac14;</td>
+  </tr>
+  <tr>
+  <td>1280&times;720</td> <td>16:9</td> <td>2<sup>8</sup>&nbsp;&times;&nbsp;5</td></td><td>900</td>
+  </tr>
+  <tr>
+  <td>1600&times;900</td> <td>16:9</td> <td>2<sup>8</sup>&nbsp;&times;&nbsp;5<sup>4</sup></td><td>1406&frac14;</td>
+  </tr>
+  <tr>
+  <td>1920&times;1080</td> <td>16:9</td> <td>2<sup>7</sup>&nbsp;&times;&nbsp;3&nbsp;&times;&nbsp;5<br>
+(=&nbsp;2<sup>11</sup>&nbsp;&minus;&nbsp;2<sup>7</sup>)</td><td>2025</td>
+  </tr>
+  </table>
+</center>
+
+  </div>
+
+  <div class="column">
+
+  <p>&nbsp;</p>
+  <p>
+  Here are some fairly common choices of display resolutions as an
+  illustration.
+  </p>
+
+  <p>
+  Note how most width multiplications reduce to simple shift and add/subtract.
+  </p>
+
+  </div>
+
+</div>
+
+
+
+<center>
+<div class="inset">
+
+<h2>Colour spaces</h2>
+
+<p>
+For (colour) display output purposes the
+<a href="https://en.wikipedia.org/wiki/RGB_color_model">RGB</a>
+<a href="https://en.wikipedia.org/wiki/Color_space">colour space</a>
+is usually used.  Note that it is not the only way to represent colour
+images though.
+</p>
+
+<p>
+For digital video streams and image compression
+(e.g. <a href="https://en.wikipedia.org/wiki/JPEG">JPEG</a>) other
+representations, such as
+<a href="https://en.wikipedia.org/wiki/YCbCr">YCbCr</a> may be more
+appropriate.  This separates the colour from the intensity.  There are
+a couple of advantages to this.
+</p>
+
+<ul>
+<li> It is easy to generate a monochrome image (discard the colour).
+<li> Eyes are more responsive to brightness than colour, so colours
+  can be stored at a <i>lower resolution</i> without noticeable
+  artefacts, saving space/bandwidth.
+</ul>
+
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<h2>Frame store accessing & bandwidth</h2>
+
+<p>Frame store can occupy significant memory.</p>
+
+<p align="center">
+Remember <i>doubling</i> the linear resolution multiplies the number
+of pixels by four.
+</p>
+
+<center>
+<img src="figures/VDU_control.png" alt="VDU controller" width=45%>
+</center>
+
+<ul>
+<li> Pixels need to be read many times per second to keep the display
+  stable. This impacts:
+  <ul>
+  <li> The output rate to the DVI (or whatever).
+  <li> The need for RAM access to the frame store.
+  </ul>
+</ul>
+
+<p align="right">
+Frame store bandwidth is critical.
+</p>
+
+<h3>Screen update</h3>
+
+<p>
+Although it is not germane to the drawing process, the frame store is
+also constantly being read by hardware which is updating the
+display. This shares access to (typically Time Division Multiplexing)
+the frame store memory. Memory accesses are relatively slow so frame
+store bandwidth is always an &lsquo;issue&rsquo;, made worse as the
+screen resolution increases.
+</p>
+
+<p>
+As it has to be shared, the frame store may not be available exactly
+when you want it. This influences the interface design. The highest
+priority for access goes to the VDU read-out because if that fails to
+meet its real-time constraint there will be glitches visible on the
+screen. More than one other device may share access too: for example
+in the lab. both the microprocessor and the graphics accelerator
+compete for the remaining bandwidth.
+</p>
+
+
+<h3>Double buffering</h3>
+
+<p>
+In a system which may animate a display there is a conflict between
+using the frame store for what can currently be seen and the future
+picture under construction. This is typically resolved by double
+buffering: having a larger-than-needed frame store and displaying from
+one area whilst drawing in another.
+</p>
+
+<center>
+<img src="figures/double_buffer.png" alt="Double buffering" width=40%>
+</center>
+
+<!--
+<p style="color:red;">
+This can also forward-reference some architecture: e.g. have 'separate'
+memory 'banks' if extra bandwidth is required. (Block diagram?)
+</p>
+-->
+
+<p>
+In the absence of dual-port memory the accesses either must interleave
+in time (a typical solution) or two (smaller) separate and switchable
+frame store memories are needed (expensive).
+</p>
+
+
+<h3>Bandwidth requirements</h3>
+
+<h4>Some sums &hellip; and sensible approximations</h4>
+
+<p>
+Let's take a &lsquo;High Definition&rsquo; (HD) display resolution of
+1920&times;1080&nbsp;pixels with 4&nbsp;bytes per pixel. This requires
+1920&times;1080&times;4&nbsp;=&nbsp;8294400&nbsp;bytes of storage.
+</p>
+
+<p>
+Rather than reach for a calculator, let's rough it out.
+</p>
+
+<p>
+&lsquo;Almost 2000&rsquo;&nbsp;&times;&nbsp;&lsquo;just over
+1000&rsquo; is going to be around two million pixels so we need
+2M&times;4&nbsp;=&nbsp;8&nbsp;MB of frame store.
+</p>
+
+<p>
+Let's say<sup>&dagger;</sup> this supports a frame rate of 50&nbsp;Hz:
+it has to be copied to the display 50&nbsp;times a second, so there is
+a bandwidth requirement of around 400&nbsp;MB.s<sup>-1</sup>.
+</p>
+
+<p>
+Note: that's megabytes, not megabits. Minimum. It doesn't allow for
+other data, pauses for blanking, sync. etc.
+</p>
+
+<p>
+If you want a bit rate, multiply by 8 and add a bit more for
+overheads: calling it 4&nbsp;Gb.s<sup>-1</sup> won't be far wrong.
+</p>
+
+<p>
+Looked at another way, the pixel rate will be two million times 50 plus whatever
+the overhead is, so something over 100&nbsp;MHz &ndash; not too scary a frequency on-chip
+(these days) but quite aggressive on a PCB!
+</p>
+
+<p>
+The frame store needs to be read to supply this demand. If a single
+pixel (32-bit word) were read at this rate the memory would need to
+cycle in &lt;10&nbsp;ns; not really feasible for the &lsquo;big&rsquo;
+(multi-megabyte even assuming a single frame store and there could be
+more than one) memory devices needed. Thus there needs to be a means
+of increasing the memory bandwidth. Fortunately the read-out patterns
+are entirely predictable; it's easy enough to read the frame store at
+many words wide and then serialise this data.
+</p>
+
+<p>
+Also note, if implementing animation, at least, there is another
+bandwidth requirement to allow concurrent writing of the pixels
+&ndash; and a real-time limit too.
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>To keep the numbers easy.
+</blockquote>
+
+<hr>
+<ul>
+<li> <a href="00c_drawing.html">Graphics drawing introduction.</a>
+<!-- <li> <a href="01a_Verilog_revision.html">Next set of notes.</a> -->
+<li> <a href="contents.html">Back to contents.</a>
+</ul>
+
+<hr><hr>
+
+</body>

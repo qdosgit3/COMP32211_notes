@@ -1,0 +1,206 @@
+<title>Variability</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column_3 {
+  float: left;
+  width: 33%;
+  padding: 10px;
+}
+
+.column_40 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+}
+
+.column_60 {
+  float: left;
+  width: 60%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+h3 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>Variability</h2>
+
+<p>
+Maybe the biggest challenge to future devices is random variability in
+the manufacturing processes.
+</p>
+
+<ul>
+<li> Diffusing atoms act statistically:
+<ul>
+	<li> with large numbers there is a strong likelihood that the actual number will be close
+to the mean
+	<li> with small numbers statistical variations are proportionately larger
+	<li> transistor properties are becoming less predictable &rArr; larger margins allowed
+</ul>
+</ul>
+
+<center><img src="figures/variability_1.png" alt="Statistical variation
+		  effects on diffusion."width=60%></center>
+
+<ul>
+<li> Etching of tracks (etc.) will experience similar edge roughness, thinning or bridging.
+</ul>
+
+<center><img src="figures/variability_2.png" alt="Manfacturing variations
+effects on features."width=60%></center>
+
+
+<h3>Reliability</h3>
+
+
+<p>
+Guaranteeing the reliability of future devices may be difficult.  One
+future challenge is making reliable computing devices from less
+reliable parts.  This type of engineering is common in certain
+applications areas through the use of redundancy &ndash; for example a
+commercial aeroplane may have two engines but can fly with only one,
+engines being regarded as one of the less reliable components.  (They
+also have multiple redundant instruments, hydraulics etc.)
+</p>
+
+<p>
+Integrated circuits have been regarded as quite reliable (once the
+manufacturing &lsquo;defects&rsquo; have been identified by testing
+and those chips discarded).  The reliability of the tests is threatened
+(do you want something which &lsquo;just passed&rsquo;?) as is the
+production <b>yield</b>.
+</p>
+
+<p>
+Two questions for the near future are &lsquo;where it is appropriate
+to introduce redundancy?&rsquo; and &lsquo;how should it be
+managed?&rsquo; It is easy to include more microprocessor systems in a
+Symmetric Multiprocessor (SMP), assuming that one or more may not
+work, and the software to handle this may be straightforward ...  or
+not.  Designing in redundancy at circuit level appears to be more
+difficult although this could be transparent to the software layer if
+achieved.
+</p>
+
+<p>
+One place where redundancy has been used extensively is RAM,
+especially on server systems.  Often error detection and correction
+codes (e.g.  Hamming codes) are employed to increase the memory's
+reliability.
+</p>
+
+<p>
+Figures from studies of DRAM error rates vary widely.  Some of the
+worst-case numbers suggest perhaps a one-bit &lsquo;drop&rsquo;
+(fault) in a gigabyte of DRAM every two hours.  A typical cause is
+cosmic radiation.  (Error rates on spacecraft are significantly
+higher!) See &ldquo;ECC memory&rdquo; for more details.
+</p>
+
+<h4>Smaller dice?</h4>
+
+<p>
+One trend is that the typical physical size of silicon die is
+shrinking &ndash; although capacity is still increasing.  This helps in
+keeping an economic yield.  A smaller die will, of course, still be
+able to accommodate significant functionality.
+</p>
+
+<p>
+On the other hand, ever-larger systems are still made incorporating
+ever-inreasing funcionality.
+</p>
+
+<h4>Yield</h4>
+
+<p>
+&ldquo;<b>Yield</b>&rdquo; is the term used for the proportion of
+manufactured devices which are verified as functional.  In the most
+part a single defect will render a chip useless.  As defects are
+typically randomly scattered across a silicon wafer &ndash; and quality
+control means they are <i>fairly</i> rare &ndash; the chance of one
+killing a chip is (roughly) proportional to the chip's area.  This
+means the yield is greater for smaller chips.
+<p>
+
+<blockquote>
+Example: say there are 20 defects across 1000 chips (the chance of two
+on one chip is small) the yield would be 98%.  If the chips are twice
+the area the would be (500&nbsp;-&nbsp;20)&nbsp;/&nbsp;500&nbsp;=&nbsp;96%.
+</blockquote>
+
+<p>
+<i>Sometimes</i> defective devices can still be put into service.
+Memory chips may have &lsquo;spare&rsquo; rows of cells which can be
+mapped into place post-manufacture, or rely
+on <a href="https://en.wikipedia.org/wiki/ECC_memory">ECC</a>; some
+(e.g.) multiprocessor devices may be operable with a (small)
+proportion of broken subsystems.  However many SoCs need to be
+defect-free and the yield<sup>&dagger;</sup> is very important,
+</p>
+
+<p>
+Yield for a particular process typically improves after introduction
+as the foundry gets more familiar with that process.
+</p>
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>Often kept secret.
+</blockquote>
+
+
+<hr>
+
+<p><a href="10_future.html#index">Up/back</a> to roadmap index.</p>
+<p><a href="10b_technology.html">Forwards</a> newer structures.</p>
+
+<hr><hr>
+
+</body>

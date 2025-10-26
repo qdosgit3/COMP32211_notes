@@ -1,0 +1,428 @@
+<title>Assertions</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column3 {
+  float: left;
+  width: 30%;
+  padding: 10px;
+}
+
+.column_space {
+  float: left;
+  width: 5%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+<style>
+.m_l { margin-left: 50px; }
+</style>
+
+</head>
+
+<body>
+
+<h1>Assertions</h1>
+
+<center>
+
+<p style="color:green;">This is not a complete guide!<br>  This is
+just here to give some glimpses at some of the capabilities of
+assertions, particularly for <b>verification</b> of designs
+in <b>SystemVerilog</b>.</p>
+
+</center>
+
+<p>
+Assertions are run-time checks for errors which appear in many
+variations in different language environments.  In one way assertions
+can be coded with existing tools but nowadays there is sometimes
+better support within the language environment.
+</p>
+
+<p>
+As a rough classification, consider a <i>software</i> example where an
+index might put an array reference outside the array.
+</p>
+
+<ul>
+
+<li>An active test (i.e. with instructions which are part of the
+  finished code) would be considered <b>error</b> handling.</li>
+
+<li>A run-time fault which is not trapped by the code but detected by
+  (for example) memory management would typically be called
+  an &lsquo;<b>exception</b>&rsquo;.</li>
+
+<li>An <b>assertion</b> is a check of the value for <i>verification</i>:
+  part of the source code but not part of the finalised design.</li>
+
+</ul>
+
+<p>
+Assertions should be able to raise the confidence that code works
+without needing to impact the final performance.
+</p>
+
+<hr>
+
+<h2>Verilog & SystemVerilog</h2>
+
+<p>
+In hardware terms we are primarily concerned with <i>verification</i>
+&ndash; finding faults before implementing and deploying the device.
+This is where assertions can provide a significant confidence boost.
+</p>
+
+<ul>
+
+<li>Basic Verilog did not <i>directly</i> support explicit assertions,
+  although a similar functionality can be programmed in a testbench
+  &hellip; with sufficient effort</li>
+
+<li>Various Verilog tool implementations have included a variety of
+  more powerful (possibly non-standard) assertion extensions.<br>
+  These <b>PSL</b> (Property Specification Language) assertions can be added
+  in what are otherwise comments; they are not described further here.</li>
+
+<li>SystemVerilog specifies an extensive range of standardised <b>SVA</b>
+  (SystemVerilog Assertions).</li>
+
+</ul>
+
+<p>
+This is an <i>overview</i> of the <b>SystemVerilog</b> facilities.
+It is here to give a starting point; refer ro something more
+definitive for fuller details.<br>
+(The description in the standard is 118&nbsp;pp.)
+</p>
+
+<p>
+Some associated keywords are:
+</p>
+
+<ul>
+
+<li>&lsquo;<font style="font-family: 'Courier New',
+ monospace;">assert</font>&rsquo; &mdash; specifies
+a property that should hold for the design.</li>
+
+<li>&lsquo;<font style="font-family: 'Courier New',
+ monospace;">assume</font>&rsquo; &mdash; specifies
+a property that should hold for the environment.</li>
+
+<li>&lsquo;<font style="font-family: 'Courier New',
+ monospace;">cover</font>&rsquo; &nbsp; &mdash; specifies a property to
+ be monitored for coverage.</li>
+
+</ul>
+
+<p>
+There are two types of SystemVerilog assertions: <b>Immediate Assertions</b>
+and <b>Concurrent Assertions</b>.
+</p>
+
+<hr>
+
+<h3>Immediate assertions</h3>
+
+<p>
+Immediate assertions are fairly straightforward: they are
+&lsquo;immediate&rsquo; in the sense that they are not dependent on
+time.  They can be used for things like checking values or signal
+combinations.
+</p>
+
+<div class="row">
+
+  <div class="column">
+
+<h4>In Verilog</h4>
+
+<p style="font-family: 'Courier New', monospace;">
+always @ (aa, bb)<br>
+&nbsp; if (aa && bb) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Nothing<br>
+&nbsp; &nbsp; $display("Signals aa and bb clashed");<br>
+</p>
+  </div>
+
+  <div class="column">
+
+  <h4>With SystemVerilog assertion</h4>
+
+<p style="font-family: 'Courier New', monospace;">
+always @ (aa, bb)<br>
+&nbsp; assert (!(aa && bb))<br>
+&nbsp; &nbsp; else $error("Signals aa and bb clashed");<br>
+</p>
+
+  <p>
+  If the <font style="font-family: 'Courier New', monospace;">else</font>
+  is omitted the tool will call 
+  <font style="font-family: 'Courier New', monospace;">$error</font> by
+  default, although with less information.
+  </p>
+
+  </div>
+</div>
+
+<p>
+Note that the <font style="font-family: 'Courier New', monospace;">assert</font>
+can have an action <i>before</i> the
+<font style="font-family: 'Courier New', monospace;">else</font> which
+is executed each time the assertion is satisfied.  An example function
+would be counting the number of times this has happened.<br>
+It's also possible (and sensible!) to give the assertion a <i>name</i>
+so it can be identified in a wave trace.
+</p>
+
+<h4>Example</h4>
+
+<div class=m_l>
+
+<p style="font-family: 'Courier New', monospace;">
+&hellip;<br>
+always @ (aa, bb)<br>
+ab_check: assert ((aa && bb) != 1) ab_pass++; &nbsp; &nbsp;// Count sucesses<br>
+else begin<br>
+&nbsp; &nbsp; &nbsp;ab_fail++; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;// Count failures<br>
+&nbsp; &nbsp; &nbsp;$warning("ab fail at %t.", $time);<br>
+&nbsp; &nbsp; &nbsp;end<br>
+<br>
+always @ (*)<br>
+cc_moved:  assert (cc == 0) else $info("cc went high!");<br>
+&hellip;<br>
+</p>
+</div>
+
+<a href="figures/trace_assert.png" target=_blank>
+<img src="figures/trace_assert.png" alt="Traces illustrating
+          immediate assertions" width=60% align="left"></a>
+
+<p>(Click to enlarge figure.)</p>
+<p>&nbsp;</p>
+
+<h4>&nbsp; &nbsp; Log report</h4>
+
+<div class="m_l">
+
+<p style="font-family: 'Courier New', monospace;">
+&nbsp; &nbsp; &hellip;<br>
+&nbsp; &nbsp; ab fail at &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 120000.<br>
+&nbsp; &nbsp; ab fail at &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 140000.<br>
+&nbsp; &nbsp; cc went high!<br>
+&nbsp; &nbsp; &hellip;
+<br clear="left">
+<p>
+</div>
+
+<p>
+The system tasks
+<font style="font-family: 'Courier New', monospace;">$info</font>,
+<font style="font-family: 'Courier New', monospace;">$warning</font>,
+<font style="font-family: 'Courier New', monospace;">$error</font> and
+<font style="font-family: 'Courier New', monospace;">$fatal</font> are
+all &lsquo;print&rsquo; outputs, intended for increasing severities of
+concern.
+</p>
+
+<p>
+An <font style="font-family: 'Courier New', monospace;">assert</font>
+is a statement, like any other, and needs to be told when to execute:
+the example above is sensitive to changes in
+<font style="font-family: 'Courier New', monospace;">aa</font> and
+<font style="font-family: 'Courier New', monospace;">bb</font> so it
+will be active throughout a simulation run.  However a simulation may
+be halted on the occurence of a failed exception of sufficient
+&lsquo;severity&rsquo; such as an <font style="font-family: 'Courier
+New', monospace;">$error</font> but not a
+<font style="font-family: 'Courier New', monospace;">$warning</font>.
+
+</p>
+
+<p>
+<font style="font-family: 'Courier New', monospace;"><b>assume</b></font> is
+similar to
+<font style="font-family: 'Courier New', monospace;">assert</font> in
+simulation but has added properties for formal verification.
+</p>
+
+<hr>
+
+<h3>Concurrent assertions</h3>
+
+<p>
+Immediate assertions happen when they are triggered by
+an <b>event</b>, such as a signal change.  Concurrent assertions check
+behaviour repetitively, <b>across time</b>, using <i>sampled
+values</i>.  As such they require some sort of timing reference
+&ndash; i.e. a <b>clock</b>.  This will often be a/the system clock
+(but need not be) but should provide some sort of <i>countable</i>
+cycles.
+</p>
+
+<p>
+As might be expected, there is considerable associated syntax which
+can provide an extensive range of facilities.  Let's start with a
+simple, <i>illustrative</i> example, requiring only a few new functions.
+</p>
+
+<div class="m_l">
+
+<p style="font-family: 'Courier New', monospace;">
+&hellip;<br>
+example: assert property(@ (posedge clk)<br>
+&nbsp; disable iff (reset)<br>
+&nbsp; &nbsp; req |-> ##1 ack)<br>
+&nbsp; &nbsp; else $error("Check failed");<br>
+&hellip;<br>
+</p>
+
+</div>
+
+<div class=m_l>
+<font style="font-size:0.8em">
+(There is an alternative syntax because &ndash; being Verilog &ndash;
+of course there is!)</font>
+</div>
+
+<ul>
+
+<li><font style="font-family: 'Courier New', monospace;"><b>property</b></font>
+     indicates this is a concurrent assertion.</li>
+
+<li><font style="font-family: 'Courier New', monospace;"><b>disable</b></font>
+     suppresses the test
+    <font style="font-family: 'Courier New', monospace;"><b>iff</b></font>
+     it would not be meaningful.</li>
+
+<li><font style="font-family: 'Courier New', monospace;"><b>|-></b></font>
+     is an <i>implication operator</i>; the left hand side
+     (&ldquo;antecedent&rdquo;) being true asserts that the right hand side
+     (&ldquo;consequent&rdquo;) should be true.</li>
+
+<li><font style="font-family: 'Courier New', monospace;"><b>##</b></font>
+     specifies the difference in time &ndash; in this case
+    <font style="font-family: 'Courier New', monospace;"><b>1</b></font>
+     cycle later.</li>
+
+</ul>
+
+<p>
+This therefore asserts that, as long as we are not being reset, if 
+<font style="font-family: 'Courier New', monospace;">req</font>
+is active at one clock edge
+<font style="font-family: 'Courier New', monospace;">ack</font>
+is expected to active at the next.  This is illustrated in the trace below.
+</p>
+
+<center>
+<a href="figures/trace_assert2.png" target=_blank>
+<img src="figures/trace_assert2.png" alt="Traces illustrating
+		concurrent assertions" width=90%></a>
+</center>
+
+<h4>Some more syntax</h4>
+
+<p>
+There is a plethora of accompanying &lsquo;new&rsquo; syntax: here are
+some more salient items.<br>
+
+</p>
+
+<p>
+The <font style="font-family: 'Courier New', monospace;"><b>|-></b></font>
+implication starts timing (counting) in the cycle(s) the implication
+is true.  There is also a
+<font style="font-family: 'Courier New', monospace;"><b>|=></b></font>
+implication which starts one cycle later. &nbsp;
+&ldquo;<font style="font-family: 'Courier New', monospace;">|=>&nbsp;##n</font>&ldquo;&nbsp;&#x2261;&nbsp;&ldquo;<font style="font-family: 'Courier New', monospace;">|->&nbsp;##(n+1)</font>&ldquo;
+</p>
+
+<p>
+The delay operator
+(&ldquo;<font style="font-family: 'Courier New',monospace;">##n</font>&ldquo;)
+can also specify time <b>ranges</b>:
+&ldquo;<font style="font-family: 'Courier New',monospace;"><b>##[m:n]</b></font>&ldquo;.
+</p>
+
+<p>
+You can have <i>sequences</i> on either side of implication operator,
+thus:<br>
+&ldquo;<font style="font-family: 'Courier New',monospace;">req ##1
+    grant |-> ack ##1 !ack</font>&ldquo;
+</p>
+
+<p>
+System tasks
+&ldquo;<font style="font-family: 'Courier New',monospace;">$stable()</font>&ldquo;,
+&ldquo;<font style="font-family: 'Courier New',monospace;">$rose()</font>&ldquo;
+and
+&ldquo;<font style="font-family: 'Courier New',monospace;">$fell()</font>&ldquo;
+allow changes in signal states to be detected whilst a concurrent
+assertion is active.
+<font style="color:red">BEWARE! Such changes are detected by comparing
+  <b><i>samples</i></b> at the chosen sample clock: they are not specified to
+  spot a short <i>glitch</i> if it occurs entirely between two
+  samples.</font><br>
+The system task
+&ldquo;<font style="font-family: 'Courier
+  New',monospace;">$past()</font>&ldquo;, allows expression from previous samples.</p>
+
+<p style="color:red">What else is worth including here?<br>
+(Work in progress!)</p>
+
+
+
+<hr>
+
+<p><a href="01c_SystemVerilog.html">Back</a> to general SystemVerilog</p>
+<p><a href="01_Verilog.html#index">Up</a> to Verilog index</p>
+
+<hr><hr>
+
+</body>

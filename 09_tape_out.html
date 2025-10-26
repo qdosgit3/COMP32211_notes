@@ -1,0 +1,330 @@
+<title>Tape out</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+h3 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h1> Design &rArr; Production</h1>
+
+The purpose of this lecture is:
+<ul>
+<li> to cover (in brief) a selection of the other processes and CAD
+  tools used to migrate a &lsquo;correct&rsquo; digital design into a
+  working chip.
+	<ul>
+	<li> Simulating the whole chip &ndash; manageably
+	</ul>
+to
+	<ul>
+	<li> Simulating the transistor-level behaviour
+	<li> Processes (and feedback) to get a workable 
+	     <b>physical</b> description
+	</ul>
+<li> to look at post-production testing and what may be done to assist this
+	<ul>
+	<li> Test strategy
+	<li> Design for Test
+	</ul>
+</ul>
+
+<h2>Packaging, etc.</h2>
+
+<p>
+Without delving deeply into the topic, a significant constraint on a
+chip is the number of external contacts it can have.  These may be
+referred to (often interchangeably) as &ldquo;pads&rdquo; (the contact
+position on the silicon) or &ldquo;pins&rdquo; (the metal contact
+outside the package).
+</p>
+
+<p>
+A &lsquo;traditional&rsquo; chip will have a &lsquo;pad ring&rsquo;
+around its periphery.  Each pad occupies a significant space because
+it has to be large enough for a bonding machine to attach a wire.  It
+also contains amplifiers to drive the much larger off-chip loads and
+significant electrical protection.  Pads will be linked with
+&lsquo;large&rsquo; tracks to aid power supply distribution.
+</p>
+
+<p>
+A (logically) very small device may be &lsquo;pad limited&rsquo; in
+that, once the pads are placed and spaced, the central
+&lsquo;core&rsquo; area is not filled.
+</p>
+
+<p>
+Because silicon costs &ndash; so smaller chips are cheaper &ndash;
+there may be a desire to reduce the &lsquo;pin count&rsquo;.  This is
+another trade-off for the chip designer to consider.
+</p>
+
+<center><img src="figures/pad_limited.png" alt="Fitting the core and pad-ring
+					in a balanced way." width=60%></center>
+
+<p>
+<b>Example:</b> many microcontroller chips have numerous peripheral
+interface devices on board.  It is probable that not all of these are
+wanted by any specific user.  It is common practice to multiplex I/O
+connections so that particular functions can appear on particular pins
+and the user can select his own variety.  This also means the chip is
+less specific to particular applications so fewer different types of
+devices have to be designed, built and tested.
+</p>
+
+<p>
+A current example of this may be observed with the Raspberry Pi's
+expansion port.
+</p>
+
+<p>
+Note: the chip core scales with the square of the linear dimensions,
+the pad wing scales linearly.
+</p>
+
+<p>
+A modern trend is away from a peripheral pad ring to
+&lsquo;flip-chip&rsquo; mounting.  This leads the external contacts to
+&lsquo;microbumps&rsquo; which protrude from the passivation over the
+top of the circuit, i.e. above the highest metal wiring layer.  The
+chip is mounted &lsquo;upside down&rsquo; in the package, the grid of
+bumps connecting with contacts on the package.
+</p>
+
+<p>
+This gives a couple of advantages:
+</p>
+
+<ul>
+<li> More contacts can be made than just around the edge
+<li> Wiring from PCB to chip can be shorter
+</ul>
+
+<p>
+A major reason that these can be important is supplying power where
+more wires are needed to satisfy the increasing current demands and
+the inductance of long (thin) bond wires exacerbates electrical noise
+problems.
+</p>
+
+<p>
+[Don't confuse this with the BGA mounting of packages to PCBs, which
+is geometrically similar but on a larger scale.]
+</p>
+
+<p>
+<b>Packages</b> also come in standard sizes.  This may also constrain
+the size of the die, since it must fit inside.
+</p>
+
+<h4>Package-on-Package (PoP)</h4>
+
+<p>
+Typical IC packages are built to mount onto a planar Printed Circuit
+Board (PCB), with contacts on (or around) the package &lsquo;bottom&rsquo;.
+<a href="https://en.wikipedia.org/wiki/Package_on_a_package">Package-on-Package</a>
+allows a package to be mounted in a stack on the &lsquo;back&rsquo; of
+another package.  This saves PCB space &ndash; useful in applications
+such as mobile 'phones &ndash; and reduces power dissipation because
+there is less capacitive load on the chip interconnection.  However it
+may be inappropriate for higher power systems since it increases the
+(physical) power density, exacerbating any cooling problems
+</p>
+
+<center><img src="figures/PoP.png" alt="Package on Package cross section." width=50%></center>
+
+<p>
+A &lsquo;familiar&rsquo; example is probably the
+<a href="https://www.raspberrypi.org">Raspberry Pi</a> which has its
+SDRAM mounted on the back of the main SoC.
+</p>
+
+<hr>
+
+<img src="figures/mixed_simulation.png" alt="Different simulators
+			     working together." align="right" width=40%>
+
+<p>&nbsp;</p>
+
+<h2>Mixed simulation</h2>
+
+<p>
+It is infeasible to simulate a whole SoC very precisely in one run.
+</p>
+
+<p>
+Instead, use different (precision/cost trade-off) simulators for
+different blocks.  Example:
+</p>
+
+
+<p>
+Each new block can be verified in an environment which has
+&lsquo;appropriate&rsquo; accuracy.
+</p>
+
+<p>
+In some cases this will be as high as a
+<a href="https://en.wikipedia.org/wiki/Transaction-level_modeling">Transaction
+   Level Model</a> (<b>TLM</b>).<br clear="right">
+</p>
+
+<h3>Low-level simulation</h3>
+
+<h4>&lsquo;SPICE&rsquo;</h4>
+
+<p>
+There are various analogue circuit simulators (e.g.  HSPICE, Spectre)
+which tend to be known, generically as &lsquo;SPICE&rsquo; (Simulation
+Program with Integrated Circuit Emphasis) after the original tool
+gained wide acceptance.
+</p>
+
+<p>
+SPICE takes, as input, a component netlist, an input stimulus file and
+detailed models of the components' characteristics.  It simulates
+circuit activity solving differential equations, giving an accurate
+model of the circuit's behaviour when fabricated.  Of course, this
+takes significant processing time so SPICE simulations tend to be
+limited to small circuits and limited time runs.
+</p>
+
+<p>
+A typical application of SPICE would be to <b>characterise</b>
+standard cells, producing simplified (if less accurate) models to be
+used in larger analogue simulations.  For example, a NAND gate may be
+&lsquo;Spiced&rsquo; to determine the propagation delay and output
+edge speeds into different loads when switched with each input (in
+each direction) with different input edge timings.
+</p>
+
+<p>
+Feedback from this process will be used to &lsquo;tune&rsquo; the
+performance of layout &ndash; for example to determine the transistor
+widths for different cells.
+</p>
+
+<p>
+SPICE may not be needed by a high-level designer but it (or an
+equivalent) will be used somewhere in the design flow and it becomes
+necessary if designing analogue or other custom circuits.
+</p>
+
+<h4>Process &lsquo;corners&rsquo;</h4>
+
+<p>
+Not every chip made will function in quite the same way due to
+variation in the manufacturing processes their transistor properties
+will vary.  Because they are manufactured in different steps, the pMOS
+and nMOS transistors may differ from the &lsquo;nominal&rsquo;
+properties in different ways.
+</p>
+
+<p>
+The operating environment of chips will vary.  The two greatest
+variables will be operating supply voltage and temperature.  Lower
+voltages or higher temperatures will slow down switching.
+</p>
+
+<p>
+These variations are normally classified as &lsquo;<b>PVT</b>&rsquo;
+(Process, Voltage, Temperature) variations.
+</p>
+
+<p>
+It is important that the chip works over a wide range of conditions.
+Thus, physical simulation will normally be carried out over a number
+of process &lsquo;corners&rsquo;, i.e. with different assumed
+transistor characteristics: {fast-fast, fast-slow, slow-fast,
+slow-slow, typical} processes are considered (the terms refer to p-
+and nMOS transistor speeds).  Voltage variations of 10% may be tried.
+Temperature ranges vary according to application, from -40&deg;C or 0&deg;C at
+the bottom end to 85&deg;C, 100&deg;C or maybe 125&deg;C at the high end.  The
+device should function (at the target speed) over all these
+variations.
+</p>
+
+<p>
+Note: this involves running a whole set of functionally identical
+simulations using a timing-accurate simulator/model.
+</p>
+
+<h4>Cell Phantoms</h4>
+
+<p>
+The chip manufacturer may regard the internal layout of their standard
+cells as confidential.  Layout will therefore not be available.
+Instead they supply a library of &lsquo;phantom&rsquo; cells which
+show the sizes and possible connection points.  These will be
+accompanied by simulation models characterised from the layout to
+allow development without revealing details.
+</p>
+
+
+<hr id=index>
+
+<h3>ASICs: links</h3>
+
+<h4>In this session</h4>
+<ul>
+<li>More <a href="09a_CAD_tools.html">CAD tools.</a></li>
+<li><a href="09b_production.html">Production test</a>
+  (including <a href="09b_production.html#scan">scan chains</a>).</li>
+</ul>
+
+<h4>Other</h4>
+<ul>
+<li><a href="contents.html">Up</a> to contents.</li>
+<li><a href="08_power.html">Previous session's notes</a>: Power.</li>
+<li><a href="10_future.html">Next session's notes</a>: Future technology.</li>
+</ul>
+
+<hr><hr>
+
+</body>

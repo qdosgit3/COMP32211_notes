@@ -1,0 +1,509 @@
+<title>ASICs: production test</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+h3 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h2>Production test</h2>
+
+<p>
+Not every chip manufactured will work.  Production tests should sort
+out which do.
+</p>
+
+<ul>
+<li> Want 100% test coverage including complete data coverage
+<li> Different from coverage of source: now testing the synthesized netlist
+<ul>
+	<li> different, and probably more, nodes
+	<li> Want this in sensibly small number of vectors
+</ul>
+</ul>
+
+<p>
+<b>BIG</b> problem. &nbsp; &nbsp; &nbsp; Difficult! &nbsp; &nbsp;
+&nbsp; Can be automated.
+</p>
+
+<p>
+Problem: need to apply vectors to logic deep inside sequential
+machines: may need long sequences.
+</p>
+
+<p>
+Contrived example: test the outputs (only) of a seven-segment decoder.
+</p>
+
+
+<div class="row";>
+
+<div class="column";>
+
+<p>
+In isolation:
+three patterns suffice to cover all on/off states.
+</p>
+
+<p>&nbsp;</p>
+
+<center><img src="figures/segment_test_1.png" alt="Test patterns for
+		seven segment decoder." width=40%></center>
+
+</div>
+
+<div class="column";>
+
+<p>
+Connected after a counter:
+(at least) five cycles are needed.
+</p>
+
+<center><img src="figures/segment_test_2.png" alt="Test sequence for
+	embedded seven segment decoder." width=60%></center>
+
+<p>
+The problem worsens as units are more deeply buried.
+</p>
+
+</div>
+
+</div>
+
+<center>
+<p>
+Usually important to: <span style="color:red;font-weight:bold">Design for Test</span> (DfT)
+</p>
+</center>
+
+<hr>
+
+<h4>Automatic Test Pattern Generation</h4>
+
+<p>
+The simplest tests are for &lsquo;stuck at&rsquo; faults &ndash;
+i.e. a network or node is always one digital value.  These can be
+detected by providing patterns where the node is intended to be in
+each of its states and there is an observable difference if it is
+wrong.
+</p>
+
+<p>
+It is quite difficult to find such patterns by hand.  Computers are
+quite good at searching large data sets with simple algorithms.
+Therefore ATPG is a convenient way to produce a test set which gives
+comprehensive coverage (for faults which follow this model).
+</p>
+
+<p>
+These patterns must be applied to the block on every chip manufactured
+to see if it is functional.  This requires an expensive machine, so
+time-on-tester should be minimised, i.e. use the fewest patterns
+commensurate with complete testing.  Again, software is good at
+solving these problems (and there is no great time constraint for
+doing so).  Considerable effort has been put into minimising the test
+sets for ICs.
+</p>
+
+<p>
+Unfortunately, with modern ICs the power constraints may be such that
+it is infeasible to operate all the blocks simultaneously.  A test
+strategy which tries to maximise the number of transitions in a short
+time can dissipate too much power and &hellip; blow up the chip!  Really!
+Clearly there are extra constraints when generating the test set.
+</p>
+
+<p>
+The description above refers to logic &lsquo;blocks&rsquo;.  When a
+complex SoC is operating, the blocks are not independent so it is
+typically not possible to apply a desired pattern directly.  What is
+desired is <b>controllability</b>, where block inputs can be set, even
+if deeply embedded in the logic.
+</p>
+
+<p>
+Similarly, the outputs need to be checked for (in)correctness and this
+is impeded if there is more logic between the block under test and the
+user.  What is desired is <b>observability</b>.
+</p>
+
+<h4>(ATPG) Built-In Self Test (BIST)</h4>
+
+<p>
+It is convenient if a chip can test itself; that way all that the
+tester needs to do is power on, clock for a while and check that a
+&lsquo;pass&rsquo; code is generated.  (Failure to produce this code at
+the correct time indicates a failure.)
+</p>
+
+<p>
+&lsquo;Traditionally&rsquo; ASIC BIST has involved the generation of
+test patterns using a ROM or (for a small area overhead) a
+pseudo-random number generator.  The output signature can be collected
+as (for example) an output CRC, again at reasonable cost.  With a long
+enough test sequence and CRC the chance of a false positive will be
+small.
+</p>
+
+<p>
+Nowadays it is likely that a SoC will have one or more processors on
+board which can be exploited for test purposes.  Self-test software can
+be built into a boot ROM &ndash; or downloaded into RAM via a test
+port and executed there &ndash; which can exercise the chip's
+functions and provide fault indications.
+</p>
+
+<p>
+Using an existing processor has several advantages.  The hardware
+overhead (and complexity) will be reduced slightly, but a big
+advantage is that a ROM's size will be known early but its contents
+can be fixed late in the design process, allowing extra time for test
+development.  As the programming of a ROM is probably done with a
+single metal layer it is even relatively cheap to change later, as
+only a few (expensive!) masks would need to be replaced.  If
+downloading test software from a tester it is possible to develop and
+upgrade tests after the chips are in fabrication, although download
+times may increase the cost of testing each chip.
+</p>
+
+<hr id="scan">
+
+<h2>Scan chains</h2>
+
+<p>
+A means of achieving controllability and observability of
+&lsquo;buried&rsquo; logic blocks.
+</p>
+
+<center><img src="figures/scanless.png" alt="Pipeline without scan chain." width=75%></center>
+
+<p>&nbsp;</p>
+
+<center><img src="figures/scanful.png" alt="Pipeline with scan chain." width=75%></center>
+
+<p>
+A pipeline is shown here for convenience: this applies to any
+sequential structure.
+</p>
+
+<hr>
+
+<h3>Scan chains</h3>
+
+<p>
+A scan path makes some or all of the flip-flops in a circuit directly
+<b>controllable</b> and directly <b>observable</b>.  It works this way:
+</p>
+
+<p>
+The flip-flops to be scanned are placed in the normal way but, late in
+the process replaced with scan flip-flops.  Scan flip-flops have a
+second mode of operation, controlled by a global input, which diverts
+their input from another scan flip-flop.  This makes a (long) shift
+register with a two additional connections, scanin and a scan-out.
+</p>
+
+<p>
+The ordering of the flip-flops in the scan chain may be arbitrary.  It
+need not be as &lsquo;neat&rsquo; as shown above: it can be
+determined <i>after</i> placement to minimise the wiring overhead by
+connecting physically adjacent flip-flops.  It is, of course, required
+that the connection order is known.
+</p>
+
+<p>
+To test a circuit:
+</p>
+<ul>
+<li> Stop the clock
+<li> Switch to &lsquo;scan&rsquo;
+<li> Repeat for length of scan chain
+<ul>
+	<li> Apply data bit to scan-in
+	<li> Clock
+</ul>
+<li> Switch to &lsquo;operate&rsquo;
+<li> Clock once
+<li> Switch to &lsquo;scan&rsquo;
+<li> Repeat for length of scan chain
+<ul>
+	<li> Read data bit from scan-out
+	<li> Clock
+</ul>
+</ul>
+
+<p>
+Clearly a subsequent pattern can be scanned in at the same time as the
+current one is extracted.  Although this process takes a (large) number
+of clocks for each pattern, the patterns can be applied to the
+combinatorial logic directly and all the blocks can be tested in
+parallel.  For non-trivial sequential circuits the process is almost
+always a significant time-saver.
+</p>
+
+<p>
+There is, of course, an area and a (small) performance cost to
+substituting the flip-flops.
+</p>
+
+<h3>&hellip; in detail</h3>
+
+<center>
+<img src="figures/scan_ff.png" alt="Single scan flip-flop." width=40%>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+<img src="figures/scan_chain.png" alt="Chain of scan flip-flops." width=15%>
+</center>
+
+<p>
+Note that, in practice, the ordering of the flip-flops on the scan
+chain does not have to be &lsquo;logical&rsquo; for the user (as shown
+in the figure).  As long as it is known, the order can be arbitrary.  It
+is probably governed more by the layout considerations, and may be set
+by the Place and Route process.
+</p>
+
+<hr>
+
+<h2>Boundary scan</h2>
+
+<p>
+IEEE standard 1149.1: Standard Test Access Port and Boundary Scan
+Architecture JTAG: five pin interface
+</p>
+
+<ul>
+<li> TDI Input Data In
+<li> TDO Output Data Out
+<li> TCLK Input Clock
+<li> TMS Input Test state
+<li> TRST Input Reset
+</ul>
+
+<p>
+The standard is a bit more complex than a single shift register:
+</p>
+
+<center><img src="figures/JTAG.png" alt="JTAG block paths." width=90%></center>
+
+<hr>
+
+<h4>JTAG</h4>
+
+<p>
+Boundary scan was originally intended for testing PCB assembly, using
+scan paths to check connections across a board.  It is now used for
+looking <i>inside</i> devices.  The scan chain runs around the
+boundary of the device (rather than through all the flip-flops) or,
+for SoC, around the boundary of significant blocks.
+</p>
+
+<p>
+An example may be a processor, where the external address, data and control
+bus(es) are accessible but not the internal registers.
+</p>
+
+<p>
+The usual boundary scan protocol is commonly referred to as
+&ldquo;<b>JTAG</b>&rdquo; after its developers the Joint Test Action
+Group.
+</p>
+
+<p>
+The scan is not a simple
+scan path.  In addition to
+the Boundary Scan Register (BSR) there is a bypass
+path and an identity register.  The bypass allows the
+local BSR to be &lsquo;shorted&rsquo;;
+remember that there may
+be a chain of several such
+paths so this allows more
+direct access to a particular scan chain.  The ID
+allows a particular device
+to be discovered/verified
+by the host.
+</p>
+
+<img src="figures/JTAG_ops.png" alt="JTAG boundary scan states."align="right" width=40%>
+
+<p>
+The operation is controlled by a Test Access Port (TAP) controller
+which is a finite state machine.  It is commanded (serially) by the
+state of TMS at each TCLK.  This allows instructions to be captured in
+an Instruction Register (IR) which, in turn, controls things like
+which &lsquo;Data Register&rsquo; is addressed.
+</p>
+
+<p>
+Note that DR may be more complex than shown in the figure, possibly
+with several serial stages, thus allowing one TAP to control many scan
+chains/bypasses.
+</p>
+
+
+<h4>Boundary scan &lsquo;not for test&rsquo;</h4>
+
+<p>
+Boundary scan chains, once present are frequently exploited for
+purposes other than device testing.  Here are a couple of common
+examples.
+</p>
+
+<h4>Device programming</h4>
+
+<p>
+FPGAs are typically programmable by various mechanisms, one of which
+may be via a JTAG port.  This allows a configuration to be downloaded
+without connection to the majority of the I/O pins.  It may also allow
+the internal state to be uploaded for diagnostic purposes.
+</p>
+
+<p>
+Some &lsquo;PROM&rsquo; devices may be programmed in-situ (after PCB
+assembly) via a JTAG port.
+</p>
+
+<h4>Software debug</h4>
+
+<p>
+ARMs (as an example) allow debug access via JTAG.  To extract the register
+contents it is possible to:
+</p>
+
+<p>
+<ul>
+<li> stop the processor
+<li> scan a <span style="font-family: 'Courier New', monospace;">STM</span> instruction onto the instruction input
+<li> clock an appropriate number of times
+<li> scan the register values off the data out bus &ndash; one per cycle
+<li> display, maybe modify the state on a debug computer
+<li> restore any state changes and optionally scan in new values with an
+     appropriate <span style="font-family: 'Courier New', monospace;">LDM</span>
+<li> start the clock again
+</ul>
+</p>
+
+<p>
+This can be applied to a selected processor on a multiprocessor device (etc.)
+with no additional pin connections.
+</p>
+
+<p>
+Access to memory contents (etc.) may also be achieved by manipulating
+address/data buses appropriately.
+</p>
+
+<p>
+<b>JTAG scan set up for one unit (others bypassed)</b>
+</p>
+
+<center><img src="figures/JTAG_bypass.png" alt="Chain of JTAG boundary scan blocks." width=70%></center>
+
+<hr>
+
+<h2>Test Interface</h2>
+
+<p>
+SoCs are often <b>bus-based</b>.  A multi-master bus provides a
+convenient means of external access to many of the chip's functions.
+</p>
+
+<center>
+<img src="figures/chip_test.png" alt="Chip test mechanisms." width=80%>
+</center>
+
+<hr>
+
+<h4>Test Interface</h4>
+
+<p>
+One convenient way of exploiting this may be to load code into an
+on-board RAM for subsequent internal execution.  It could also be used
+to read internally generated test results.  (Some way of controlling
+the processor's execution/reset is needed.)
+</p>
+
+<p>
+The tester can also access any slave devices on the buses so it can
+test peripheral devices etc.
+</p>
+
+<h4>Test access to a chip</h4>
+
+<p>
+Testing &ndash; especially if multiple bits are tested in parallel
+&ndash; may require a significant number of pads/pins on a chip.
+These are a precious resource.
+</p>
+
+<p>
+A common technique is to multiplex pins to give then one or more
+additional test functions.  These are selected by a dedicated input
+pin which is only used in testing.
+</p>
+
+
+<center>
+<img src="figures/test_access.png" alt="Test access from pins." width=70%>
+</center>
+
+<p>
+The presence of such functions is often noticeable on chip data where
+a pin may be documented as (e.g.) &ldquo;Tie to ground&rdquo;.
+Manufacturers will not disclose what happens if you don't.
+</p>
+
+<hr>
+
+<p><a href="09_tape_out.html#index">Up</a> to ASIC index.</p>
+<p><a href="09a_CAD tools.html">Back</a> to CAD tools.</p>
+<p><a href="10_future.html">Forwards</a> to Future technology.</p>
+
+<hr><hr>
+
+</body>

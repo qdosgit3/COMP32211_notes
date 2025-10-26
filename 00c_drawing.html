@@ -1,0 +1,461 @@
+<title>Display systems</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+</style>
+
+<style>
+td {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<h1>Drawing Straight Lines</h1>
+
+<p align="center">
+An example of mapping an algorithm to hardware.
+</p>
+
+<p>
+y&nbsp;=&nbsp;m.x&nbsp;+&nbsp;c
+</p>
+
+<p>
+Line is <i>aliased</i> onto pixel array.
+</p>
+
+
+<center>
+<img src="figures/Bresenham.png" alt="Bresenham line example" width=60%>
+</center>
+
+<p>
+Constant &lsquo;width&rsquo; of 1 pixel looks least lumpy
+</p>
+
+<p>
+Shade in the &lsquo;nearest&rsquo; pixel to the desired point.
+</p>
+
+<hr>
+
+<img src="figures/line.png" alt="Line" width=60% align="Right">
+
+<h2>How <u>not</u> to plot a line</h2>
+
+<p>
+<u>Don't</u> calculate every point independently.
+</p>
+
+<p>y = m.x + c</p>
+
+<h4>Coordinates</h4>
+<p>
+(X<sub>0</sub>, Y<sub>0</sub>)<br>
+(X<sub>0</sub>+1, int(Y<sub>0</sub>+m+0.5))<br>
+(X<sub>0</sub>+2, int(Y<sub>0</sub>+2m+0.5))<br>
+(X<sub>0</sub>+3, int(Y<sub>0</sub>+3m+0.5))<br>
+( ... , ... )<br>
+</p>
+<p>
+int(y+0.5) rounds y to the nearest integer
+</p>
+
+
+<h4>Problems:</h4>
+
+<ul>
+<li> Division needed once
+<li> Multiplication needed constantly
+<li> Rounding errors
+</ul>
+
+
+<h2>Anti-aliasing</h2>
+
+<p>
+Figures drawn in square pixels &ndash; especially at low resolution
+&ndash; end up &lsquo;pixellated&rsquo;; lines look stepped.
+</p>
+
+<p>
+Anti-aliasing is a method of blurring these steps. All pixels the
+theoretical line crosses are shaded but the degree of shading is
+proportional to how much of the pixel the true line passes
+through. The line's colour is blended with the background.
+</p>
+
+<div class="row">
+  <div class="column";>
+
+  <center>
+  <img src="figures/Bresenham.png" alt="Bresenham line example" width=80%>
+
+  <p>Bresenham line</p>
+  </center>
+
+  </div>
+
+  <div class="column";>
+  <center>
+  <img src="figures/line_aliased.png" alt="Anti-aliased line example" width=80%>
+
+  <p>Anti-aliased line</p>
+  </center>
+  </div>
+
+</div>
+
+<p>
+Anti-aliasing requires considerably more calculation and more memory
+operations (including reading the pre-existing background).
+</p>
+
+<hr>
+
+<h2>Bresenham's line algorithm</h2>
+
+<ul>
+<li> Calculate each point iteratively from its predecessor
+<li> Avoid multiplication/division (by using similar triangles)
+<ul>
+  <li> Uses only integers: no rounding problems
+</ul>
+</ul>
+
+<div class="row">
+  <div class="column";>
+  <p>Principle</p>
+
+  <p style="font-family: 'Courier New', monospace;">
+  x = X0;<br>
+  y = Y0;<br>
+  plot (x,y);<br>
+  length = X1 - X0;<br>
+  m = (Y1 - Y0) / (X1 - X0);<br>
+  e = 0;<br>
+  for (length)<br>
+  &nbsp; x = x + 1;<br>
+  &nbsp; e = e + m;<br>
+  &nbsp; if (e >= 0.5)<br>
+  &nbsp; &nbsp; y = y + 1; &nbsp; &nbsp; // y integer step<br>
+  &nbsp; &nbsp; e = e - 1; &nbsp; &nbsp; // Keep |e| < 0.5<br>
+  &nbsp; plot (x,y);<br>
+  </p>
+
+  </div>
+
+  <div class="column";>
+  <p>Integer code</p>
+
+  <p style="font-family: 'Courier New', monospace;">
+  x = X0;<br>
+  y = Y0;<br>
+  plot (x,y);<br>
+  dx = X1 - X0;<br>
+  dy = Y1 - Y0;<br>
+  e = -dx; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// Starting offset<br>
+  for (dx)<br>
+  &nbsp; x = x + 1;<br>
+  &nbsp; e = e + 2*dy;<br>
+  &nbsp; if (e >= 0) &nbsp; &nbsp; // Easy compare<br>
+  &nbsp; &nbsp; y = y + 1;<br>
+  &nbsp; &nbsp; e = e - 2*dx;<br>
+  &nbsp; plot (x,y);<br>
+  </p>
+  </div>
+
+</div>
+
+<hr>
+
+<h2>Octants</h2>
+
+<img src="figures/octants.png" alt="Octants" width=20% align="Right">
+
+<p>
+The foregoing assumes that the line is in the shaded octant, shown
+here. If it is not, the same approach can be followed with some slight
+variations.
+</p>
+
+<p>
+In this example, x is incremented and y is incremented conditionally.
+For the octant immediately below the x axis, x is incremented and y is
+conditionally <i>decremented</i>.  As long as the coordinates are
+modified in the correct way it the signs of the internal variables are
+irrelevant.
+</p>
+
+<p>
+Similarly, if the slope of the line is &gt;1 (i.e. &lsquo;steeper than
+45&deg;&rsquo;) then x and y are exchanged.  A similar transformation can
+be applied if the line is going &lsquo;right&rsquo; or
+&lsquo;down&rsquo;.<br clear="Right">
+</p>
+
+<h4>Similar triangles</h4>
+
+<img src="figures/triangles.png" alt="Similar triangles" align="left" width=30%>
+
+<p>
+The gradient (&lsquo;m&rsquo;) of a step from one pixel to the next is
+derived from the vertical/horizontal distances between end
+points.  Although &lsquo;m&rsquo; is typically fractional
+(0&nbsp;&le;&nbsp;m&nbsp;&le;&nbsp;1) the distances between endpoints
+are integers.
+</p>
+
+<p>
+Thus, when considering whether the y coordinate should change, instead
+of thinking of little steps (1, m) we can think of big ones (2dx, 2dy)
+and the decision will still be the same.
+</p>
+
+<p>
+(The extra factor of 2 is convenient because we want to step when
+half-way to round to the nearest pixel and this avoids the &frac12;).
+<br clear="Left">
+</p>
+
+
+<h2>Optimisation</h2>
+</p>
+
+<p>
+There is another optimisation which reduces the length of the loop by
+simplifying the &lsquo;plot&rsquo; operation.  Instead of translating
+coordinates on each iteration, simply work out the address of the
+starting point and retain that.  Using the assumptions of &lsquo;one
+address per pixel&rsquo; and &lsquo;640 pixels per line&rsquo;, the
+following translations take place:
+</p>
+
+<blockquote style="font-family: 'Courier New', monospace;">
+x = x + 1 &rArr; address = address + 1<br>
+y = y + 1 &rArr; address = address + 640<bt>
+</blockquote>
+
+<p>
+The plot no longer needs to do any translation, just the store.
+</p>
+
+<p>
+A disadvantage of this method is that running off the edge of the
+frame store is not apparent, as it may be if <i>clipping</i> the x and y
+coordinates.
+</p>
+
+<p>&nbsp;</p>
+
+<p>
+If you have more than one pixel/word in the frame store (as in the
+lab.) then one can speed up drawing by writing several pixels at
+once.  These pixels must be in the same word and so will form a
+horizontal group.  This is not very useful when drawing single lines
+because there will often not be several adjacent pixels within the
+same word.
+</p>
+
+<p>
+It is very useful when filling areas (e.g. clear screen) and similar
+(e.g. character drawing) where it can reduce drawing times by
+(e.g. 4&times;).
+</p>
+
+<hr>
+
+<h2>Parallelism</h2>
+
+<p>
+Identifying parallelism is a good plan: e.g. Bresenham's line
+algorithm.
+</p>
+
+
+<div class="row">
+  <div class="column";>
+  <p>2 clocks/iteration</p>
+  <p style="font-family: 'Courier New', monospace;">
+  &nbsp; x <= X0;<br>
+  &nbsp; y <= Y0;<br>
+  &nbsp; dx <= X1 - X0;<br>
+  &nbsp; dy <= Y1 - Y0;<br>
+  &nbsp; e <= -dx;<br>
+  &nbsp; for (dx)<br>
+  &nbsp; &nbsp; plot(x,y);<br>
+  &nbsp; &nbsp; x <= x + 1;<br>
+  &nbsp; &nbsp; e <= e + 2*dy;<br>
+  &nbsp; &nbsp; if (e >= 0)<br>
+  &nbsp; &nbsp; &nbsp; y <= y + 1;<br>
+  &nbsp; &nbsp; &nbsp; e <= e - 2*dx;<br>
+  &nbsp; plot(x,y);<br>
+  &nbsp;<br>
+  </p>
+
+  </div>
+
+  <div class="column">
+  <p> 1 clock/iteration</p>
+  <p style="font-family: 'Courier New', monospace;">
+  &nbsp; x <= X0;<br>
+  &nbsp; y <= Y0;<br>
+  &nbsp; dx <= X1 - X0;<br>
+  &nbsp; dy <= Y1 - Y0;<br>
+  &nbsp; e <= -dx;<br>
+  &nbsp; for (dx)<br>
+  &nbsp; &nbsp; plot(x,y);<br>
+  &nbsp; &nbsp; x <= x + 1;<br>
+  &nbsp; &nbsp; if (e + 2*dy >= 0)<br>
+  &nbsp; &nbsp; &nbsp; y <= y + 1;<br>
+  &nbsp; &nbsp; &nbsp; e <= e + 2*(dy - dx);<br>
+  &nbsp; &nbsp; else<br>
+  &nbsp; &nbsp; &nbsp; e <= e + 2*dy;<br>
+  &nbsp; plot(x,y);<br>
+  </p>
+  </div>
+
+</div>
+
+<p>
+Also note the <b>pipelining</b> here: plot overlaps with the next pixel
+calculation.
+</p>
+
+<p>
+In the second example the critical path is likely to be longer
+(&lsquo;if&rsquo; calculation followed by multiplexer) but not much
+worse (multiplexers are quick).
+</p>
+
+<p>
+Probably the biggest &lsquo;mistake&rsquo; made by people starting to
+develop HDL code is to think <i>serially</i>, as it a conventional
+(imperative) programming language.  In C, Java, assembly language
+etc. statements can be viewed as executing one after the other
+&hellip; because they need to (at least in principle).
+</p>
+
+<p>
+In hardware the only needs are due to dependencies and resources
+&ndash; and resources shouldn't be too much of an issue within this
+lab.  Thus statements need to be mapped into time slots but as many
+statements as possible can go in the same time.  This leads to a much
+faster implementation than a simple one-statement-per-clock machine.
+</p>
+
+<p>
+The number of serial processing steps which take place in a single
+cycle (i.e. the <b>critical path</b> length) also concerns the designer;
+however the cycle is generous in the lab. so it is not likely to be a
+major concern when describing logic.
+</p>
+
+<p>
+&nbsp;
+</p>
+
+<p>
+When developing your own code, <i>design</i> it before you implement.  Plan
+what should happen (e.g. on a piece of paper) in each clock cycle.
+</p>
+
+<p>
+Pay attention to which values are latched.  A common problem is that a
+value is only available after a clock edge when you want it in the
+current cycle.  The choice is then whether to derive the signal
+combinatorially so that it is available a bit earlier or whether to
+start work a cycle earlier.  See the problem on the right.
+</p>
+
+<hr>
+
+<h2>Problem</h2>
+
+<p>
+Fill in the timing diagram for this module.
+</p>
+
+<img src="figures/problem_1.png" alt="Timing diagram problem"
+  align="right" width=45%>
+
+<p style="font-family: 'Courier New', monospace;">
+  &nbsp; reg [3:0] counter;<br>
+  &nbsp; reg &nbsp; &nbsp; &nbsp; carry;<br>
+  &nbsp;<br>
+  &nbsp; always @ (posedge clk)<br>
+  &nbsp; if (en && carry_in) &nbsp; // Hint on fn. of 'carry'<br>
+  &nbsp; begin<br>
+  &nbsp; &nbsp; if (counter == 9)<br>
+  &nbsp; &nbsp; &nbsp; begin<br>
+  &nbsp; &nbsp; &nbsp; counter <= 0;<br>
+  &nbsp; &nbsp; &nbsp; carry &nbsp; <= 1;<br>
+  &nbsp; &nbsp; &nbsp; end<br>
+  &nbsp; &nbsp; else<br>
+  &nbsp; &nbsp; &nbsp; begin<br>
+  &nbsp; &nbsp; &nbsp; counter <= counter + 1;<br>
+  &nbsp; &nbsp; &nbsp; carry &nbsp; <= 1;<br>
+  &nbsp; &nbsp; &nbsp; end<br>
+  &nbsp; &nbsp; end<br clear="Right">
+</p>
+
+<p>
+The circuit is unlikely to be useful!  Rewrite the Verilog in <i>at least
+one</i> way to do what the designed (presumably) intended.
+</p>
+
+
+<hr>
+<ul>
+<li> <a href="contents.html">Back to contents.</a>
+<li> <a href="00b_display_systems.html">Back to display systems.</a>
+<li> <a href="01_Verilog.html">Next set of notes.</a>
+</ul>
+
+<hr><hr>
+
+</body>

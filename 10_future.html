@@ -1,0 +1,841 @@
+<title>Further technology</title>
+
+<html>
+<head>
+
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that float next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.column_3 {
+  float: left;
+  width: 33%;
+  padding: 10px;
+}
+
+.column_40 {
+  float: left;
+  width: 40%;
+  padding: 10px;
+}
+
+.column_60 {
+  float: left;
+  width: 60%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<style>
+.inset {
+  float: none;
+  width: 80%;
+  border: 2px outset red;
+  background-color: lightgray;
+  text-align: center;
+}
+div.left {text-align:left;}
+</style>
+
+<style>
+h1 {text-align: center;}
+h3 {text-align: center;}
+</style>
+
+</head>
+
+<body>
+
+<hr>
+
+<p align="right"; style="color:green">Notes revised 2024.</p>
+
+<h1>Moore's Law &hellip; & more</h1>
+
+<center>
+<img src="figures/Moore.png" alt="Moore's Law plot" width=100%>
+</center>
+
+<div class="row">
+
+<div class="column">
+<p>
+Note logarithmic scale.
+</p>
+</div>
+
+<div class="column">
+<p align=right>Taken shamelessly from Wikipedia.</p>
+</div>
+
+</div>
+
+<hr>
+
+<p>Alternatively, looking at the smallest available feature size:</p>
+<center>
+<img src="figures/shrink.png" alt="IC feature shrinkage." width=70%>
+</center>
+
+<div class="row">
+
+<div class="column_3">
+<p>
+Note logarithmic scale.
+</p>
+</div>
+
+<div class="column_3">
+<center>
+<p>
+<span style="color:red">Red</span> (2025) is speculative at time of writing.
+</p>
+</center>
+</div>
+
+<div class="column_3">
+<p align=right>Data from Wikipedia: plotted locally.</p>
+</div>
+
+</div>
+
+<hr>
+
+<h2>Limits to Moore's Law Some implications</h2>
+
+
+<h4>
+Design
+</h4>
+
+<p>
+Producing devices is all very well but they need to do something
+useful.  There is an increasing &lsquo;design gap&rsquo; between what
+can be made and how it is designed.
+Whilst CAD tools and synthesis make designers more productive much of
+the transistor budget is devoted to repetitive structures such as
+memories.  The expanding number of &lsquo;cores&rsquo; on processors is
+an obvious symptom.
+</p>
+
+<h4>Physical</h4>
+
+<p>
+Within an order of magnitude, all atoms are about the same size which
+is one angstrom (&#8491;) or 10<sup>-10</sup>&nbsp;m (or 0.1&nbsp;nm) in
+radius.  A 3&nbsp;nm gate length is therefore about 15&nbsp;atomic
+diameters across.  The dielectric thickness is already much less,
+perhaps ~1&nbsp;nm so only a few atoms thick.
+</p>
+
+<p>
+Clearly a single atom is a hard limit to anything physical.  However,
+at least using CMOS technology, the material must also retain its
+&lsquo;bulk&rsquo; properties.
+</p>
+
+<h4>Manufacturing</h4>
+
+<p>
+Chips are made using photolithography and the feature size (3&nbsp;nm
+[2024]) is already much smaller than the wavelength of the light used
+(193&nbsp;nm) which is towards the middle of the ultraviolet spectrum.
+Using shorter wavelength light is increasingly difficult as optics is
+hard &ndash; think about trying to make lenses for X-rays!
+</p>
+
+<p>
+It is possible to achieve higher resolutions using electron or ion
+beams; compare what is visible under a light and an electron
+microscope.  However a beam needs to be <i>scanned</i> whereas optical
+exposure can print over large areas.
+</p>
+
+<p>
+Therefore making structures photolithographically is akin to printing
+whereas using direct beams is more like handwriting.  It is clear
+which technique is amenable for mass production!
+</p>
+
+<h4>Economics</h4>
+
+<p>
+As chips get smaller they get harder to make.  The machinery needs to
+be more precise (so it gets more expensive) and there are more
+manufacturing steps (which increase the cost).  The resulting products
+still need to be cheap; if the cost rises more than the benefit then
+shrinking becomes uneconomic.
+</p>
+
+<h4>Supply voltage reduction</h4>
+
+<img src="figures/breakdown.png" alt="Dielectric breakdown &
+	      overheating in a FET." align="right" width=20%>
+
+<p>
+For many years &lsquo;popular&rsquo; logic devices used a 5&#160;V
+supply.  Two big problems as devices have shrunk:</p>
+
+<ul>
+<li> Power dissipation too great (esp.  CMOS V<sup>2</sup>)</li>
+<li> Transistor dielectric breakdown</li>
+</ul>
+
+<p>
+To combat these, <b></i>core</i><sup>&dagger;</sup> supply
+voltages</b> have been gradually reduced, now to below 1&nbsp;V, a
+trend which must continue.  This makes the transistor &lsquo;on&rsquo;
+and &lsquo;off&rsquo; states closer together (probably increasing
+&lsquo;off&rsquo; <b>leakage</b>) and <b>reduces the noise margins</b>
+available so that electromagnetic interference or radiation can
+produce upsets more easily.
+</p>
+
+<p>
+At PCB level, where different parts are assembled (and electromagnetic
+interference will be greater due to the larger &lsquo;aerials&rsquo;
+(tracks)) the voltage reduction has been more conservative, having
+largely reduced only to 3.3&nbsp;V (a.k.a.  &lsquo;3V3&rsquo;).  Of
+course this necessitates level shifting at the chip's pads.
+</p>
+
+
+<blockquote style="font-size:80%;">
+<sup>&dagger;</sup>At the logic core of the device.  <i>Pad</i>
+voltages interfacing with the PCB are higher to provide better
+electrical <i>noise immunity</i> and backward compatibility with
+pre-existing devices.
+</blockquote>
+
+
+<h4>High-K dielectric</h4>
+
+<p>
+&lsquo;K&rsquo; is the &lsquo;dielectric constant&rsquo;, more
+properly called the &lsquo;relative permittivity&rsquo;
+(&epsilon;<sub>r</sub>).  It is a measure of the electric field strength in the
+dielectric.  Replacing SiO<sub>2</sub> as a dielectric allows a
+thicker separator (less leakage) yet greater capacitance (which is
+what switches the FET).<br>
+</p>
+
+<p>
+Materials containing elements such as hafnium or zirconium are typical.
+</p>
+
+<p>
+For rough reference, window glass (SiO<sub>2</sub>) has a breakdown
+dielectric strength around 10&nbsp;MV/m (10&nbsp;V/&mu;m).
+</p>
+
+<!--
+
+<hr>
+
+<h2>Variability</h2>
+
+<p>
+Maybe the biggest challenge to future devices is random variability in
+the manufacturing processes.
+</p>
+
+<ul>
+<li> Diffusing atoms act statistically:
+<ul>
+	<li> with large numbers there is a strong likelihood that the actual number will be close
+to the mean
+	<li> with small numbers statistical variations are proportionately larger
+	<li> transistor properties are becoming less predictable &rArr; larger margins allowed
+</ul>
+</ul>
+
+<center><img src="figures/variability_1.png" alt="Statistical variation
+		  effects on diffusion."width=60%></center>
+
+<ul>
+<li> Etching of tracks (etc.) will experience similar edge roughness, thinning or bridging.
+</ul>
+
+<center><img src="figures/variability_2.png" alt="Manfacturing variations
+effects on features."width=60%></center>
+
+
+<h3>Reliability</h3>
+
+
+<p>
+Guaranteeing the reliability of future devices may be difficult.  One
+future challenge is making reliable computing devices from less
+reliable parts.  This type of engineering is common in certain
+applications areas through the use of redundancy &ndash; for example a
+commercial aeroplane may have two engines but can fly with only one,
+engines being regarded as one of the less reliable components.  (They
+also have multiple redundant instruments, hydraulics etc.)
+</p>
+
+<p>
+Integrated circuits have been regarded as quite reliable (once the
+manufacturing &lsquo;defects&rsquo; have been identified by testing
+and those chips discarded).  The reliability of the tests is threatened
+(do you want something which &lsquo;just passed&rsquo;?) as is the
+production <b>yield</b>.
+</p>
+
+<p>
+Two questions for the near future are &lsquo;where it is appropriate
+to introduce redundancy?&rsquo; and &lsquo;how should it be
+managed?&rsquo; It is easy to include more microprocessor systems in a
+Symmetric Multiprocessor (SMP), assuming that one or more may not
+work, and the software to handle this may be straightforward ...  or
+not.  Designing in redundancy at circuit level appears to be more
+difficult although this could be transparent to the software layer if
+achieved.
+</p>
+
+<p>
+One place where redundancy has been used extensively is RAM,
+especially on server systems.  Often error detection and correction
+codes (e.g.  Hamming codes) are employed to increase the memory's
+reliability.
+</p>
+
+<p>
+Figures from studies of DRAM error rates vary widely.  Some of the
+worst-case numbers suggest perhaps a one-bit &lsquo;drop&rsquo;
+(fault) in a gigabyte of DRAM every two hours.  A typical cause is
+cosmic radiation.  (Error rates on spacecraft are significantly
+higher!) See &ldquo;ECC memory&rdquo; for more details.
+</p>
+
+<h4>
+Smaller dice?
+</h4>
+
+<p>
+One trend is that the typical physical size of silicon die is
+shrinking &ndash; although capacity is still increasing.  This helps in
+keeping an economic yield.
+</p>
+-->
+<!--
+
+<hr>
+
+<img src="figures/DRAM_cell.png" alt="DRAM cell schematic."
+ align="right"width=20%>
+
+<h2><a href="https://en.wikipedia.org/wiki/Three-dimensional_integrated_circuit">Three
+dimensional structures</a></h2>
+
+<p>
+First ICs had <b>one</b> layer of metal interconnect.
+</p>
+
+<p>
+Current chips may have 10+ metal layers &hellip; but the logic is
+still, basically, <b>2D</b> on the silicon surface.
+</p>
+
+<p>
+There are arguable exceptions e.g. DRAM &lsquo;trench&rsquo;
+capacitor:<br clear="right">
+</p>
+
+<center><img src="figures/DRAM_section.png" alt="DRAM trench capacitor
+			 cross-section."width=60%></center>
+
+<p align ="center">
+Two DRAM cells (cross section)
+</p>
+
+<p>
+Making a truly 3D chip is a really serious challenge &ndash; not least
+in terms of power density.
+</p>
+
+<p>
+Making a stack of 2D chips is easier, and still:
+</p>
+
+<ul>
+<li> saves space from packaging view
+<li> reduces chip interconnection wire length
+</ul>
+
+
+<p>Problem</p>
+
+<ul>
+<li> How to connect chips together?
+</ul>
+
+<h3>Some other manufacturing techniques</h3>
+
+<h4>Strained silicon</h4>
+
+<p>
+A term you may come across.  Silicon is a semiconductor (you knew
+that) and the electrons (or holes) can move through the crystal
+lattice with a certain <i>mobility</i>.  Like any crystal structure it
+has a characteristic atomic spacing.
+</p>
+
+<p>
+<i>Straining</i> the silicon involves distorting the lattice
+distances, which can improve the carrier mobility and thus the
+<a href="https://en.wikipedia.org/wiki/Transconductance">transconductance</a>.
+In short, it makes a transistor of a given size &lsquo;faster&rsquo;.
+</p>
+
+<p>
+Straining may be achieved by overlaying the Si on a SeGe substrate
+(which has a different spacing).  More recently, doping the source and
+drain of PMOS transistors has been used to compress the channel
+between then (refer to a cross-section of a MOSFET).  To stretch the
+channel on NMOS FETs a silicon nitride (N<sub>4</sub>Si<sub>3</sub>)
+gate overlay is used.
+</p>
+
+<h4>Silicon on Insulator (SOI)</h4>
+
+<p>
+The parasitic capacitance of the &lsquo;bulk&rsquo; silicon acts to
+slow down switching.  This can be reduced by insulating the active
+silicon &mdash; various approaches may be used &mdash; a process
+referred to as 
+<a href="https://en.wikipedia.org/wiki/Silicon_on_insulator">Silicon
+  On Insulator</a> (SOI).  This can also help with <i>radiation
+  hardening</i> which is important in some applications, such as
+  spacecraft.
+
+</p>
+
+<h4>Interconnect</h4>
+
+<p>
+The &lsquo;traditional&rsquo; on-chip wiring has been aluminium which
+is a good electrical conductor and is easy to etch.  More recently
+this has been (largely?) superseded by copper which is a better
+conductor; the conductance of wires is increasingly important as the
+wires become ever thinner.  Copper is not as easy to work as
+aluminium; instead of deposit/plasma etch the chip's surface (at that
+stage) has a SiO<sub>2</sub> insulating layer which is patterned with
+etched trenches.  Copper is deposited over all and then mechanically
+polished away, leaving only the deposits in the protected trenches as
+the wires.  The process is repeated for higher layers.
+</p>
+
+
+<hr>
+
+<h3>More &lsquo;exotic&rsquo; FET structures</h3>
+
+<p>
+The threshold voltage is affected by the bulk silicon or
+&lsquo;body&rsquo; voltage.  It is possible to bias the body to affect
+the switching characteristics of the transistor.
+This is known as the &lsquo;<b>body effect</b>&rsquo;.
+</p>
+
+<img src="figures/back_gate.png" alt="Back gate: cross section" width=50% align="right">
+
+<p>
+Explicit &lsquo;<b>back gates</b>&rsquo; have also been proposed:
+these could be switched together with the &lsquo;front&rsquo; gate or,
+perhaps more easily, used to bias the channel and alter the
+transistor's threshold.<br clear=right>
+</p>
+
+<img src="figures/FinFET.png" alt="Architecture of a FinFET" width=30% align="right">
+
+<img src="figures/x_sect.png" alt="Transistor gate cross-sections" width=40% align="left">
+
+<p>
+Rather than have a planar transistor it is possible to
+&lsquo;surround&rsquo; the channel with the gate.  This is
+considerably more complex to manufacture but gives better
+electric field density in the channel, and hence more control.
+</p>
+
+<p>
+The results are higher switching speed and lower subthreshold leakage.
+</p>
+
+<p>
+Although there was a specific original meaning, such devices &ndash;
+which come in a variety of configurations &ndash; tend to all be known
+as &lsquo;<b>FinFETs</b>&rsquo;.<br clear=left>
+</p>
+
+<p>
+These, and similar, structures are of great interest both for fast
+switching and for leakage reduction.<br clear=right>
+</p>
+
+
+<img src="figures/Multigate_models.png" alt="Multigate transistor
+					     sections." width=70% align="left">
+
+<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+<p>Figure from Wikipedia.</p>
+
+<p>&nbsp;</p>
+
+<p><a href="https://www.youtube.com/watch?v=i3dDslo9ibw">This
+    video</a> &ndash; [2023] (15&nbsp;mins.) &ndash; may be of interest.<br clear="left"></p>
+
+<!--<h4>Exotic structures</h4>-->
+<!--
+<p>
+FinFETs and similar were mentioned in an earlier session.  It is likely
+that physical structures which improve transistors' switching
+characteristics will continue to be developed.  The objective is to
+conduct better when &lsquo;on&rsquo; yet avoid leakage when
+&lsquo;off&rsquo;.  See, for example, Intel's &lsquo;Tri-gate&rsquo;
+transistors.
+</p>
+
+<p>
+It is also likely that processes will allow more variety of different
+doping levels (&lsquo;speeds&rsquo;) within the same chip.
+</p>
+<!--
+<h4>Multigate devices</h4>
+
+<p>
+(See lecture on &lsquo;Power&rsquo;.)
+</p>
+
+<div class="row">
+
+<div class="column_40">
+
+<center><img src="figures/FinFET.png" alt="FinFET geometry."
+	     width=90%> &nbsp; 
+</center>
+
+</div>
+
+<div class="column_60">
+
+<p>&nbsp;</p>
+
+<center>
+<img src="figures/Multigate_models.png" alt="Multigate transistor sections." width=90%>
+</center>
+
+<p align=right>Figure from Wikipedia</p>
+
+</div>
+
+</div>
+-->
+<!--
+<p>
+As SoC feature sizes decrease, transistor gate <i>lengths</i>
+decrease.  At the same time the operating voltage must decrease to
+avoid breakdown of the materials.  This leads to transistors becoming
+increasingly &lsquo;leaky&rsquo; when &lsquo;off&rsquo; with
+deleterious effects on power wastage.<br>
+To increase the change in channel conductivity when switching
+the <b>electric field</b> can be <i>concentrated</i> by adding more
+gate surface(s).
+</p>
+
+<p>
+Foundries are developing transistor structures on top of &ndash; and
+in some cases embedded in &ndash; the substrate.
+</p>
+
+<p>
+&lsquo;FinFETs&rsquo; are one such structure although the term is used
+informally for other designs.  
+Another example is Intel's <i>tri-gate</i> transistor which features
+multiple parallel channels with &lsquo;wrap-around&rsquo; gates.
+Generically this can reach the (imaginatively named) Gate-All-Around
+(GAA) where the channels are completely wrapped by the gate.  (In this
+last form the <s>channels</s> &lsquo;nanowires&rsquo; may even be
+vertically stacked.)
+</p>
+
+<p>
+The various &lsquo;rules&rsquo; pertaining to transistor <i>widths</i>
+still apply, but not now to a linear scaling: instead the <i>number</i>
+of &lsquo;fins&rsquo; can be varied.
+</p>
+
+
+<center>
+<div class="inset">
+
+<h4>Ultra-low power applications</h4>
+
+<p>
+Very low power applications may have to work for years &ndash;
+possibly the lifetime of the device &ndash; of a small button cell.
+Alternatively they may need to run be <i>energy harvesting</i> from
+the environment (for example picking up energy from vibrations).
+</p>
+
+<p>
+These applications are often (very) low-performance so the dominant
+energy dissipation mode may be static leakage.
+</p>
+
+<p>
+A long-established low-power application is the wrist watch.  A
+contemporary example is the new (remotely read) gas meters where a
+single cell has to sustain 10+ years of operation.
+</p>
+
+<p>
+The design philosophy of this type of device is somewhat different
+from the typical, drive-for-more-performance- computing devices, but
+equally valid.
+</p>
+
+</div>
+</center>
+
+<hr>
+
+<h2>Through-Silicon Vias (TSVs)</h2>
+
+<center><img src="figures/TSV.png" alt="Through silicon via 
+			 cross-section."width=70%></center>
+
+<p>
+(For scale, a bond wire will be ~100&nbsp;&mu;m diameter: possibly thinner
+although thicker for power.)
+</p>
+
+<h3>Through-Silicon Vias (TSVs)</h3>
+
+<ul>
+<li> Wafer back-ground to thickness of (maybe) 50&nbsp;&mu;m
+<li> &lsquo;Deep Reactive-Ion Etching&rsquo; used to cut near-vertical
+  holes: maybe ~5-10&nbsp;&mu;m across
+<li> Holes insulated (SiO<sub>2</sub>), then metal filled
+<li> Resulting wires are &lsquo;big&rsquo; but not as big as bond wires
+<li> Still require some substantial driver amplifiers
+</ul>
+
+
+<p>
+TSVs with spacing as small as 10&nbsp;&mu;m have been demonstrated;
+initially, practicality may increase this distance for production.<br>
+For contrast, pad spacing for bond wires is limited to around 200&nbsp;&mu;m.
+</p>
+
+<p>
+Allows interfacing such as &lsquo;Wide I/O&rsquo; to provide greater
+off-chip bandwidth:
+</p>
+
+<ul>
+<li> faster due to lower load</li>
+<li> more wires so greater parallelism</li>
+</ul>
+
+<p>whilst occupying a smaller physical volume by <b>chip stacking</b>.</p>
+
+<center><img src="figures/chip_stack.png" alt="Chips stacked through
+					       TSVs."width=40%></center>
+<!--
+<p>
+This may be particularly useful for memory connections.
+</p>
+
+
+<h4>Chip stacking</h4>
+
+
+<h4 style="color:red">Stacked CMOS</h4>
+-->
+<!--
+<p>
+An obvious application is to increase the amount of RAM (i.e. SDRAM)
+in a small space with limited interconnect capacitance.  A
+&lsquo;classic&rsquo; example is
+the <a href="https://en.wikipedia.org/wiki/Hybrid_Memory_Cube">Hybrid
+Memory Cube</a> (HMC) which stacked multiple DRAM dice.  This has not
+(yet) been an unmitigated commercial success although it serves to
+illustrate an opportunity.  A similar (rival) technology is
+<a href="https://en.wikipedia.org/wiki/High_Bandwidth_Memory">High
+  Bandwidth Memory</a> (HBM).
+</p>
+
+<p>
+Another attractive proposition for chip stacking is
+integrating <i>sensors</i> with the processing logic.  Using different
+dice allows easier (cheaper) access to different manufacturing steps
+whilst stacking reduces the size and power consumption of the final
+device.  This is attractive for devices such as image sensors.
+</p>
+
+<hr>
+
+<h3>Interposers</h3>
+
+<p>
+Between a PCB layer and a direct chip stack,
+<a href="https://en.wikipedia.org/wiki/interposer">interposers</a>
+can form an intermediate commection medium.  There may be organic of
+silicon substrates, perhaps using
+&lsquo;<a href="https://en.wikipedia.org/wiki/Flip-chip">flip-chip</a>&rsquo;
+mounting.  They provide similar (if lesser) benefits and drawbacks as
+chip stacking &mdash; although the two may be combined.
+</p>
+
+<center>
+<img src="figures/interposer.png" alt="Silicon interposer
+				       sketch."width=60%>
+</center>
+
+<h4> Pros</h4>
+
+<ul>
+<li> Lots of functionality in a small volume
+<li> High-bandwidth interconnection (many wires)
+<li> Chips can be manufactured on different processes
+<ul>
+	<li> Logic
+	<li> DRAM
+	<li> EEPROM
+	<li> Analogue
+	<li> &hellip;
+</ul>
+</ul>
+
+</p>
+
+<h4>Cons</h4>
+<ul>
+<li> New and expensive
+<li> Problems with cooling/heat dissipation
+<li> Power supplies
+</ul>
+
+<p>
+True, monolithic
+<a href="https://en.wikipedia.org/wiki/Three-dimensional_integrated_circuit">three-dimensional
+    integrated circuits</a>, where there are <i>multiple layers</i> of
+transistors on the same chip are still under investigation but not
+(yet) feasible for commercial production.
+</p>
+
+<hr>
+-->
+
+<hr id=index>
+
+<h3>Further technology: links</h3>
+
+<h4>In this session</h4>
+<ul>
+<li><a href="10a_variability.html">Manufacturing variability.</a></li>
+<li><a href="10b_technology.html">Newer technology.</a></li>
+</ul>
+
+<h4>Other</h4>
+<ul>
+<li><a href="contents.html">Up</a> to contents.</li>
+<li><a href="09_tape_out.html">Previous session's notes</a>: ASIC production.</li>
+</ul>
+
+<hr>
+
+<h3>Future SoCs</h3>
+
+<ul>
+<li> Future SoCs are likely to contain many processors.
+<ul>
+  <li> Some explicitly will be &lsquo;multiprocessor&rsquo; chips.</li>
+  <li> Processors too useful not to be used for flexibility
+ 	(testing, redundancy ...)</li>
+</ul>
+&nbsp;<br>
+<li> Likely to comprise multiple regions using different clocks, power
+  supplies etc.</li>
+<ul>
+	<li> Regions may be asynchronous; communication may be
+	  asynchronous rather like computer networks now.</li>
+	<li> Some (most?) regions may be powered off much of the time.</li>
+</ul>
+&nbsp;<br>
+<li> Reconfigurable hardware likely.</li>
+<ul>
+	<li> Big FPGAs already contain &lsquo;hard&rsquo; processors
+	(e.g.  see Xilinx
+ &lsquo;<a href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/soc/zynq-7000.html">Zynq</a>&rsquo;).</li>
+	<li> Dynamically reconfigurable accelerators will allow (parts
+	  of) &lsquo;software&rsquo; algorithms to be executed in
+	  hardware (faster and lower power).</li>
+	<li> Distinction of &lsquo;software&rsquo; and
+	&lsquo;hardware&rsquo; may be more blurred.</li>
+</ul>
+</ul>
+
+<hr>
+
+<center>
+<p>
+Moore's Law <i>is</i> now reaching its limits.  Really!
+</p>
+</center>
+
+<p>
+For many years the
+<a href="https://en.wikipedia.org/wiki/International_Technology_Roadmap_for_Semiconductors">International
+Technology Roadmap for Semiconductors</a> (ITRS) described plans,
+expectations amd aspirations for the future development of the
+technololgy.  This is now superseded by the
+<a href="https://en.wikipedia.org/wiki/International_Roadmap_for_Devices_and_Systems">International
+Roadmap for Devices and Systems</a> (IRDS).  For future news, watch
+that space.
+</p>
+
+<hr>
+
+<div class="row">
+
+<div class="column_60">
+<p>
+Here's another <a href="https://www.youtube.com/watch?v=9vQ0T1fOvIA">
+video</a> &ndash; [2024] (25&nbsp;mins.).  Hopefully this is now all
+revision!
+</p>
+</div>
+
+<div class="column_40">
+<p align="right"; style="color:green">
+That's all folks!
+</p>
+</div>
+
+</div>
+
+<hr><hr>
+
+</body>
